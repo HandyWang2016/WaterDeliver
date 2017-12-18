@@ -22,3 +22,11 @@ F:\OSProject\WaterDeliver\Common\bin\Debug\Model.pdb
 F:\OSProject\WaterDeliver\Common\obj\Debug\Common.csprojResolveAssemblyReference.cache
 F:\OSProject\WaterDeliver\Common\obj\Debug\Common.dll
 F:\OSProject\WaterDeliver\Common\obj\Debug\Common.pdb
+F:\OSProject\WaterDeliver\WaterDeliver\Common\bin\Debug\Common.dll
+F:\OSProject\WaterDeliver\WaterDeliver\Common\bin\Debug\Common.pdb
+F:\OSProject\WaterDeliver\WaterDeliver\Common\bin\Debug\Model.dll
+F:\OSProject\WaterDeliver\WaterDeliver\Common\bin\Debug\MongoDB.dll
+F:\OSProject\WaterDeliver\WaterDeliver\Common\bin\Debug\Model.pdb
+F:\OSProject\WaterDeliver\WaterDeliver\Common\obj\Debug\Common.csprojResolveAssemblyReference.cache
+F:\OSProject\WaterDeliver\WaterDeliver\Common\obj\Debug\Common.dll
+F:\OSProject\WaterDeliver\WaterDeliver\Common\obj\Debug\Common.pdb

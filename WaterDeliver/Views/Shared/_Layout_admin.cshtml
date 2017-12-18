@@ -6,15 +6,30 @@
     <title>@ViewBag.Title</title>
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <script src="~/scripts/bootstrap.min.js"></script>
+    <script src="~/scripts/jquery-1.10.2.min.js"></script>
+
+    <script>
+        $(function () {
+            var flag='@ViewBag.flag';
+            if(flag!=null){
+                $("#"+flag).addClass("active");
+            }
+
+            //$('.nav li').click(function (e) {
+            //    e.preventDefault();
+            //    $(this).addClass('active').siblings().removeClass('active');
+            //});
+        });
+    </script>
 </head>
 <body>
-    <h2>桶装水管理系统</h2>
+    <div class="text-center container"><h2>桶装水管理系统</h2></div>
     <div class="container">
         <ul class="nav nav-pills nav-justified">
-            <li class="active">@Html.ActionLink("客户管理", "Index", "Customer")</li>
-            <li>@Html.ActionLink("产品管理", "Index", "Product")</li>
-            <li>@Html.ActionLink("员工管理", "Index", "Staff")</li>
-            <li>@Html.ActionLink("员工_客户关系管理", "Index", "StaffCustomer")</li>
+            <li id="customer">@Html.ActionLink("客户管理", "Index", "Customer")</li>
+            <li id="product">@Html.ActionLink("产品管理", "Index", "Product")</li>
+            <li id="staff">@Html.ActionLink("员工管理", "Index", "Staff")</li>
+            <li id="stacus">@Html.ActionLink("员工_客户关系管理", "Index", "StaffCustomer")</li>
         </ul>
     </div>
     <div class="container">

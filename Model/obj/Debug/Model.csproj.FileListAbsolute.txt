@@ -12,3 +12,8 @@ F:\OSProject\WaterDeliver\Model\bin\Debug\Model.dll
 F:\OSProject\WaterDeliver\Model\bin\Debug\Model.pdb
 F:\OSProject\WaterDeliver\Model\obj\Debug\Model.dll
 F:\OSProject\WaterDeliver\Model\obj\Debug\Model.pdb
+F:\OSProject\WaterDeliver\WaterDeliver\Model\bin\Debug\Model.dll
+F:\OSProject\WaterDeliver\WaterDeliver\Model\bin\Debug\Model.pdb
+F:\OSProject\WaterDeliver\WaterDeliver\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache
+F:\OSProject\WaterDeliver\WaterDeliver\Model\obj\Debug\Model.dll
+F:\OSProject\WaterDeliver\WaterDeliver\Model\obj\Debug\Model.pdb

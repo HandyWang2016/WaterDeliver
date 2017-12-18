@@ -11,6 +11,7 @@ namespace WaterDeliver.Controllers.Admin
         // GET: Product
         public ActionResult Index()
         {
+            ViewBag.flag = "product";
             return View();
         }
     }

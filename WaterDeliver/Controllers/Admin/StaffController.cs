@@ -11,6 +11,7 @@ namespace WaterDeliver.Controllers.Admin
         // GET: Staff
         public ActionResult Index()
         {
+            ViewBag.flag = "staff";
             return View();
         }
     }
