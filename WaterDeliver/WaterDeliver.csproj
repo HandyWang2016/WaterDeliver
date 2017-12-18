@@ -122,29 +122,11 @@
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\css\bootstrap-theme.css" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\css\bootstrap-theme.min.css" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\css\bootstrap.css" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\css\bootstrap.min.css" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\js\bootstrap.js" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\js\bootstrap.min.js" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\js\npm.js" />
-    <Content Include="Javascript\jquery-3.1.1\jquery-3.1.1.js" />
-    <Content Include="Javascript\jquery-3.1.1\jquery-3.1.1.min.js" />
     <Content Include="lib\MongoDB.dll" />
     <Content Include="scripts\ai.0.15.0-build58334.js" />
     <Content Include="scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="scripts\bootstrap.js" />
     <Content Include="scripts\bootstrap.min.js" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\css\bootstrap-theme.css.map" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\css\bootstrap-theme.min.css.map" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\css\bootstrap.css.map" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\css\bootstrap.min.css.map" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="Javascript\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff2" />
     <None Include="scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="scripts\jquery-1.10.2.js" />
     <Content Include="scripts\jquery-1.10.2.min.js" />
@@ -154,6 +136,10 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\Admin\Admin_HomeController.cs" />
+    <Compile Include="Controllers\Admin\CustomerController.cs" />
+    <Compile Include="Controllers\Admin\ProductController.cs" />
+    <Compile Include="Controllers\Admin\StaffController.cs" />
+    <Compile Include="Controllers\Admin\StaffCustomerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -174,6 +160,11 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Admin_Home\Index.cshtml" />
+    <Content Include="Views\Shared\_Layout_admin.cshtml" />
+    <Content Include="Views\Customer\Index.cshtml" />
+    <Content Include="Views\Staff\Index.cshtml" />
+    <Content Include="Views\Product\Index.cshtml" />
+    <Content Include="Views\StaffCustomer\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

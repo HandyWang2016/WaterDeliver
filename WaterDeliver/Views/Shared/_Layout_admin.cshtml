@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/scripts/bootstrap.min.js"></script>
+</head>
+<body>
+    <h2>桶装水管理系统</h2>
+    <div class="container">
+        <ul class="nav nav-pills nav-justified">
+            <li class="active">@Html.ActionLink("客户管理", "Index", "Customer")</li>
+            <li>@Html.ActionLink("产品管理", "Index", "Product")</li>
+            <li>@Html.ActionLink("员工管理", "Index", "Staff")</li>
+            <li>@Html.ActionLink("员工_客户关系管理", "Index", "StaffCustomer")</li>
+        </ul>
+    </div>
+    <div class="container">
+        @RenderBody()
+    </div>
+</body>
+</html>
