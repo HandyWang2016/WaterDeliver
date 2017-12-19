@@ -286,3 +286,8 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+
+#过滤文件夹Debug,Release,obj  
+Debug/  
+Release/  
+obj/  
