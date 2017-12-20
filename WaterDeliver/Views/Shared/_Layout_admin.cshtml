@@ -10,15 +10,10 @@
 
     <script>
         $(function () {
-            var flag='@ViewBag.flag';
-            if(flag!=null){
-                $("#"+flag).addClass("active");
+            var flag = '@ViewBag.flag';
+            if (flag != null) {
+                $("#" + flag).addClass("active");
             }
-
-            //$('.nav li').click(function (e) {
-            //    e.preventDefault();
-            //    $(this).addClass('active').siblings().removeClass('active');
-            //});
         });
     </script>
 </head>

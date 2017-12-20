@@ -33,6 +33,9 @@
     <Reference Include="MongoDB">
       <HintPath>..\WaterDeliver\lib\MongoDB.dll</HintPath>
     </Reference>
+    <Reference Include="MongoDB.Bson">
+      <HintPath>..\WaterDeliver\lib\MongoDB.Bson.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -57,9 +60,6 @@
       <Project>{11d59cdc-d5db-49e2-85b3-d08a77611fdf}</Project>
       <Name>Model</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Setting.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\Debug\" />
