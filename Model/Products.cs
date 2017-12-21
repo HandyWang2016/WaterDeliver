@@ -8,7 +8,7 @@ namespace Model
 {
     public class Products
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// 产品名称
         /// </summary>
@@ -20,11 +20,11 @@ namespace Model
         /// <summary>
         /// 成本价格
         /// </summary>
-        public decimal CostPrice { get; set; }
+        public double CostPrice { get; set; }
         /// <summary>
         /// 销售价格
         /// </summary>
-        public decimal SalePrice { get; set; }
+        public double SalePrice { get; set; }
         /// <summary>
         /// 库存更新时间
         /// </summary>

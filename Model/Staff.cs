@@ -8,7 +8,7 @@ namespace Model
 {
     public class Staff
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// 员工姓名
         /// </summary>

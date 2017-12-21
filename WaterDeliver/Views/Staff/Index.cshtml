@@ -12,15 +12,17 @@
             <thead><tr><td>ID</td><td>员工姓名</td><td>联系电话</td><td>其他信息</td><td>操作</td></tr></thead>
             @if (Model != null)
             {
+                int i = 0;
                 foreach (var item in Model)
                 {
                     <tr>
-                        <td>@item.Id</td>
+                        <td>@i</td>
                         <td>@item.StaffName</td>
                         <td>@item.StaffPhone</td>
                         <td>@item.Describe</td>
                         <td>@Html.ActionLink("删除", "Delete", "Staff", new { id = item.Id }, new { @class = "btn btn-xs btn-danger" })</td>
                     </tr>
+                    i++;
                 }
             }
 
@@ -42,7 +44,7 @@
             <div class="form-group">
                 <label for="txtDes">其他信息</label><input type="text" class="form-control" id="txtDes" name="Describe" />
             </div>
-            <input type="submit" value="提交" class="btn btn-primary"/>
+            <input type="submit" value="提交" class="btn btn-primary" />
         </div>
     </div>
 </form>

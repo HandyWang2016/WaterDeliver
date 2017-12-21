@@ -38,7 +38,7 @@ namespace Common.BusinessHelper
                 mongo.Connect();
                 var db = mongo.GetDatabase(_dbName);
                 var collection = db.GetCollection<CompanyPayRecord>();
-                return collection as List<CompanyPayRecord>;
+                return collection.FindAll().Documents.ToList();
             }
         }
 

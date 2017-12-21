@@ -4,7 +4,7 @@ namespace Model
 {
     public class Customer
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// 客户名称
         /// </summary>

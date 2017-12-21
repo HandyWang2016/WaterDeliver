@@ -1,8 +1,55 @@
-﻿
+﻿@model IEnumerable<Model.Products>
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout_admin.cshtml";
 }
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">产品信息</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead><tr><td>ID</td><td>产品名称</td><td>库存余量</td><td>成本价格</td><td>销售价格</td><td>库存更新时间</td><td>操作</td></tr></thead>
+            @if (Model != null)
+            {
+                int i = 0;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@i</td>
+                        <td>@item.ProductName</td>
+                        <td>@item.StockRemain</td>
+                        <td>@item.CostPrice</td>
+                        <td>@item.SalePrice</td>
+                        <td>@item.UpdateTime</td>
+                        <td>@Html.ActionLink("删除", "Delete", "Product", new { id = item.Id }, new { @class = "btn btn-xs btn-danger" })</td>
+                    </tr>
+                    i++;
+                }
+            }
 
-<h2>产品管理</h2>
-
+        </table>
+    </div>
+</div>
+<form class="form-inline" method="post" action="Product/Create">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">添加产品</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label for="txtProductName">产品名称</label><input type="text" required class="form-control" id="txtProductName" name="ProductName" />
+            </div>
+            <div class="form-group">
+                <label for="txtStockRemain">库存余量</label><input type="number" required class="form-control" id="txtStockRemain" name="StockRemain" />桶
+            </div>
+            <div class="form-group">
+                <label for="txtCostPrice">成本价格</label><input type="text" class="form-control" id="txtCostPrice" name="CostPrice" />元
+            </div>
+            <div class="form-group">
+                <label for="txtSalePrice">销售价格</label><input type="text" required class="form-control" id="txtSalePrice" name="SalePrice" />元
+            </div>
+            <input type="submit" value="提交" class="btn btn-primary" />
+        </div>
+    </div>
+</form>

@@ -21,19 +21,15 @@ namespace WaterDeliver.Controllers.Admin
         
         public ActionResult Create(Staff staff)
         {
+            staff.Id = ObjectId.NewObjectId().ToString();
             MongoBase.Insert<Staff>(staff);
-            return View("Index");
+            return RedirectToAction("index");
         }
 
-        //public ActionResult Update(int id)
-        //{
-        //    Staff mod = StaffHelper.GetById(id);
-        //}
-
-        public ActionResult Delete(int id)
+        public ActionResult Delete(string id)
         {
             StaffHelper.Delete(id);
-            return View("Index");
+            return RedirectToAction("Index");
         }
     }
 }

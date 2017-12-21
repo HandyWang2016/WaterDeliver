@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Common.BusinessHelper
 {
-    public class ProdutHelper : MongoBase
+    public class ProductHelper : MongoBase
     {
         /// <summary>
         /// 删除产品信息
         /// </summary>
         /// <param name="id"></param>
-        public static void Delete(int id)
+        public static void Delete(string id)
         {
             using (Mongo mongo = new Mongo(_connectionString))
             {
@@ -31,14 +31,14 @@ namespace Common.BusinessHelper
         /// 获取所有产品信息
         /// </summary>
         /// <returns></returns>
-        public static List<Products> StaffList()
+        public static List<Products> ProductList()
         {
             using (Mongo mongo = new Mongo(_connectionString))
             {
                 mongo.Connect();
                 var db = mongo.GetDatabase(_dbName);
                 var collection = db.GetCollection<Products>();
-                return collection as List<Products>;
+                return collection.FindAll().Documents.ToList();
             }
         }
 
@@ -64,7 +64,7 @@ namespace Common.BusinessHelper
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static Products GetById(int id)
+        public static Products GetById(string id)
         {
             using (Mongo mongo = new Mongo(_connectionString))
             {
