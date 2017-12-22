@@ -22,6 +22,8 @@ namespace WaterDeliver.Controllers.Admin
         public ActionResult Create(Products product)
         {
             product.Id = ObjectId.NewObjectId().ToString();
+            product.UpdateTime = DateTime.Now;
+
             MongoBase.Insert<Products>(product);
             return RedirectToAction("index");
         }

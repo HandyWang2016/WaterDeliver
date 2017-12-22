@@ -38,7 +38,7 @@ namespace Common.BusinessHelper
                 mongo.Connect();
                 var db = mongo.GetDatabase(_dbName);
                 var collection = db.GetCollection<Customer>();
-                return collection as List<Customer>;
+                return collection.FindAll().Documents.ToList();
             }
         }
 

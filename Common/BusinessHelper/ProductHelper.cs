@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace Common.BusinessHelper
 {
@@ -16,15 +17,24 @@ namespace Common.BusinessHelper
         /// <param name="id"></param>
         public static void Delete(string id)
         {
-            using (Mongo mongo = new Mongo(_connectionString))
+            try
             {
-                mongo.Connect();
-                var db = mongo.GetDatabase(_dbName);
-                var collection = db.GetCollection<Products>();
+                using (Mongo mongo = new Mongo(_connectionString))
+                {
+                    mongo.Connect();
+                    var db = mongo.GetDatabase(_dbName);
+                    var collection = db.GetCollection<Products>();
 
-                // 从集合中删除指定的对象  
-                collection.Remove(x => x.Id == id);
+                    // 从集合中删除指定的对象  
+                    collection.Remove(x => x.Id == id);
+                }
             }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw;
+            }
+
         }
 
         /// <summary>
@@ -33,12 +43,20 @@ namespace Common.BusinessHelper
         /// <returns></returns>
         public static List<Products> ProductList()
         {
-            using (Mongo mongo = new Mongo(_connectionString))
+            try
             {
-                mongo.Connect();
-                var db = mongo.GetDatabase(_dbName);
-                var collection = db.GetCollection<Products>();
-                return collection.FindAll().Documents.ToList();
+                using (Mongo mongo = new Mongo(_connectionString))
+                {
+                    mongo.Connect();
+                    var db = mongo.GetDatabase(_dbName);
+                    var collection = db.GetCollection<Products>();
+                    return collection.FindAll().Documents.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw;
             }
         }
 
@@ -48,15 +66,24 @@ namespace Common.BusinessHelper
         /// <param name="user"></param>
         public static void Update(Products user)
         {
-            using (Mongo mongo = new Mongo(_connectionString))
+            try
             {
-                mongo.Connect();
-                var db = mongo.GetDatabase(_dbName);
-                var collection = db.GetCollection<Products>();
+                using (Mongo mongo = new Mongo(_connectionString))
+                {
+                    mongo.Connect();
+                    var db = mongo.GetDatabase(_dbName);
+                    var collection = db.GetCollection<Products>();
 
-                // 更新对象  
-                collection.Update(user, item => item.Id == user.Id);
+                    // 更新对象  
+                    collection.Update(user, item => item.Id == user.Id);
+                }
             }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw;
+            }
+
         }
 
         /// <summary>
@@ -66,15 +93,24 @@ namespace Common.BusinessHelper
         /// <returns></returns>
         public static Products GetById(string id)
         {
-            using (Mongo mongo = new Mongo(_connectionString))
+            try
             {
-                mongo.Connect();
-                var db = mongo.GetDatabase(_dbName);
-                var collection = db.GetCollection<Products>();
+                using (Mongo mongo = new Mongo(_connectionString))
+                {
+                    mongo.Connect();
+                    var db = mongo.GetDatabase(_dbName);
+                    var collection = db.GetCollection<Products>();
 
-                // 查询单个对象  
-                return collection.FindOne(x => x.Id == id);
+                    // 查询单个对象  
+                    return collection.FindOne(x => x.Id == id);
+                }
             }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw;
+            }
+
         }
     }
 }

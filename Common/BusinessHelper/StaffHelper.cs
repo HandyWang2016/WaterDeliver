@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using log4net;
+using Model;
 using MongoDB;
 using System;
 using System.Collections.Generic;
@@ -16,14 +17,22 @@ namespace Common.BusinessHelper
         /// <param name="id"></param>
         public static void Delete(string id)
         {
-            using (Mongo mongo = new Mongo(_connectionString))
+            try
             {
-                mongo.Connect();
-                var db = mongo.GetDatabase(_dbName);
-                var collection = db.GetCollection<Staff>();
+                using (Mongo mongo = new Mongo(_connectionString))
+                {
+                    mongo.Connect();
+                    var db = mongo.GetDatabase(_dbName);
+                    var collection = db.GetCollection<Staff>();
 
-                // 从集合中删除指定的对象  
-                collection.Remove(x => x.Id == id);
+                    // 从集合中删除指定的对象  
+                    collection.Remove(x => x.Id == id);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw;
             }
         }
 
@@ -33,12 +42,20 @@ namespace Common.BusinessHelper
         /// <returns></returns>
         public static List<Staff> StaffList()
         {
-            using (Mongo mongo = new Mongo(_connectionString))
+            try
             {
-                mongo.Connect();
-                var db = mongo.GetDatabase(_dbName);
-                var collection = db.GetCollection<Staff>();
-                return collection.FindAll().Documents.ToList();
+                using (Mongo mongo = new Mongo(_connectionString))
+                {
+                    mongo.Connect();
+                    var db = mongo.GetDatabase(_dbName);
+                    var collection = db.GetCollection<Staff>();
+                    return collection.FindAll().Documents.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                return new List<Staff>();
             }
         }
 
@@ -48,15 +65,23 @@ namespace Common.BusinessHelper
         /// <param name="user"></param>
         public static void Update(Staff user)
         {
-            using (Mongo mongo = new Mongo(_connectionString))
+            try
             {
-                mongo.Connect();
-                var db = mongo.GetDatabase(_dbName);
-                var collection = db.GetCollection<Staff>();
+                using (Mongo mongo = new Mongo(_connectionString))
+                {
+                    mongo.Connect();
+                    var db = mongo.GetDatabase(_dbName);
+                    var collection = db.GetCollection<Staff>();
 
-                // 更新对象  
-                collection.Update(user, item => item.Id == user.Id);
+                    // 更新对象  
+                    collection.Update(user, item => item.Id == user.Id);
+                }
             }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+            }
+
         }
 
         /// <summary>
@@ -66,15 +91,24 @@ namespace Common.BusinessHelper
         /// <returns></returns>
         public static Staff GetById(string id)
         {
-            using (Mongo mongo = new Mongo(_connectionString))
+            try
             {
-                mongo.Connect();
-                var db = mongo.GetDatabase(_dbName);
-                var collection = db.GetCollection<Staff>();
+                using (Mongo mongo = new Mongo(_connectionString))
+                {
+                    mongo.Connect();
+                    var db = mongo.GetDatabase(_dbName);
+                    var collection = db.GetCollection<Staff>();
 
-                // 查询单个对象  
-                return collection.FindOne(x => x.Id == id);
+                    // 查询单个对象  
+                    return collection.FindOne(x => x.Id == id);
+                }
             }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                return new Staff();
+            }
+
         }
     }
 }

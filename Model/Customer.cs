@@ -18,7 +18,7 @@ namespace Model
         /// </summary>
         public string Contact { get; set; }
         /// <summary>
-        /// 练习电话
+        /// 联系电话
         /// </summary>
         public string Phone { get; set; }
         /// <summary>

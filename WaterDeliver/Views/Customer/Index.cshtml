@@ -1,8 +1,86 @@
-﻿
+﻿@model IEnumerable<Model.Customer>
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout_admin.cshtml";
 }
 
-<h2>客户管理</h2>
+@* 辅助方法：转换支付方式 *@
+@helper PayTypeDesc(int payType)
+{
+if (payType == 0)
+{
+        <td>月底结算</td>
+}
+else
+{
+        <td>预购水卡</td>
+}
+}
 
+<script>
+    function confirmDel() {
+        layer.alert('ok');
+    }
+</script>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">客户信息</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead><tr><td>ID</td><td>客户名称</td><td>单位地址</td><td>联系人</td><td>联系电话</td><td>支付方式</td><td>操作</td></tr></thead>
+            @if (Model != null)
+            {
+                int i = 0;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@i</td>
+                        <td>@item.CustomerName</td>
+                        <td>@item.Address</td>
+                        <td>@item.Contact</td>
+                        <td>@item.Phone</td>
+                        @PayTypeDesc((int)item.PayType)
+                        <td>@Html.ActionLink("删除", "Delete", "Customer", new { id = item.Id }, new { @class = "btn btn-xs btn-danger", onclick = "confirmDel()" })</td>
+                    </tr>
+                    i++;
+                }
+            }
+
+        </table>
+    </div>
+</div>
+<form class="form-horizontal" method="post" action="Customer/Create">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">添加客户</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="txtCustomerName">客户名称</label>
+                <input type="text" required class="form-control col-sm-2" style="width: 300px" id="txtCustomerName" name="CustomerName" />
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="txtAddress">单位地址</label>
+                <input type="text" required class="form-control col-sm-2" style="width: 600px" id="txtAddress" name="Address" />
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="txtContact">联系人</label>
+                <input type="text" class="form-control col-sm-2" style="width: 300px" id="txtContact" name="Contact" />
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="txtPhone">联系电话</label>
+                <input type="text" required class="form-control col-sm-2" style="width: 300px" id="txtPhone" name="Phone" />
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="PayType">支付方式</label>
+                <select name="PayType" id="PayType" class="selectpicker show-tick form-control col-sm-2" style="width: 150px" required data-live-search="true">
+                    <option value="0">月底结算</option>
+                    <option value="1">预购水卡</option>
+                </select>
+            </div>
+            <input type="submit" value="提交" class="btn btn-primary" />
+        </div>
+    </div>
+</form>

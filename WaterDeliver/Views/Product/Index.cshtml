@@ -31,25 +31,29 @@
         </table>
     </div>
 </div>
-<form class="form-inline" method="post" action="Product/Create">
+<form class="form-horizontal" method="post" action="Product/Create">
     <div class="panel panel-info">
         <div class="panel-heading">
             <h4 class="panel-title">添加产品</h4>
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label for="txtProductName">产品名称</label><input type="text" required class="form-control" id="txtProductName" name="ProductName" />
+                <label class="col-sm-1 control-label" for="txtProductName">产品名称</label>
+                <input type="text" required class="form-control" style="width: 200px" id="txtProductName" name="ProductName"/>
             </div>
             <div class="form-group">
-                <label for="txtStockRemain">库存余量</label><input type="number" required class="form-control" id="txtStockRemain" name="StockRemain" />桶
+                <label class="col-sm-1 control-label" for="txtStockRemain">库存余量</label>
+                <input type="number" required class="form-control col-sm-2" style="width: 100px" id="txtStockRemain" name="StockRemain"/>&nbsp;桶
             </div>
             <div class="form-group">
-                <label for="txtCostPrice">成本价格</label><input type="text" class="form-control" id="txtCostPrice" name="CostPrice" />元
+                <label class="col-sm-1 control-label" for="txtCostPrice">成本价格</label>
+                <input type="text" class="form-control col-sm-2" style="width: 100px" id="txtCostPrice" name="CostPrice"/>&nbsp;元
             </div>
             <div class="form-group">
-                <label for="txtSalePrice">销售价格</label><input type="text" required class="form-control" id="txtSalePrice" name="SalePrice" />元
+                <label class="col-sm-1 control-label" for="txtSalePrice">销售价格</label>
+                <input type="text" required class="form-control col-sm-2" style="width: 100px" id="txtSalePrice" name="SalePrice"/>&nbsp;元
             </div>
-            <input type="submit" value="提交" class="btn btn-primary" />
+            <input type="submit" value="提交" class="btn btn-primary"/>
         </div>
     </div>
 </form>
