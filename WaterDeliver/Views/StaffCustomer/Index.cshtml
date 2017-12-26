@@ -1,8 +1,82 @@
 ﻿
+@model Model.StaffCustomerViewModel
+
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout_admin.cshtml";
 }
 
-<h2>员工-产品关系管理</h2>
+@helper StaffInfo(string staffId)
+{
+    string staffName = Model.Staffs.First(item => item.Id == staffId).StaffName;
+    <td>@staffName</td>
+}
+
+@helper CustomerInfo(string customerId)
+{
+    var customer = Model.Customers.First(item => item.Id == customerId);
+    <td>@customer.CustomerName</td>
+    <td>@customer.Address</td>
+    <td>@customer.Phone</td>
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">员工客户关系管理</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead><tr><td>ID</td><td>员工姓名</td><td>客户名称</td><td>地址</td><td>联系方式</td><td>操作</td></tr></thead>
+            @if (Model != null)
+            {
+                int i = 0;
+                foreach (var item in Model.StaffCustomers)
+                {
+                    <tr>
+                        <td>@i</td>
+                        @StaffInfo(item.StaffId)
+                        @CustomerInfo(item.CustomerId)
+                        <td>@Html.ActionLink("删除", "Delete", "StaffCustomer", new { id = item.Id }, new { @class = "btn btn-xs btn-danger", onclick = "return confirm('确认删除？')" })</td>
+                    </tr>
+                    i++;
+                }
+            }
+
+        </table>
+    </div>
+</div>
+<form class="form-horizontal" method="post" action="StaffCustomer/Create">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">为员工添加客户</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="selStaff">员工</label>
+                <select name="StaffId" id="selStaff" class="selectpicker show-tick form-control col-sm-2" style="width: 150px" required data-live-search="true">
+                    @if (Model?.Staffs != null && Model.Staffs.Count > 0)
+                    {
+                        foreach (var item in Model.Staffs)
+                        {
+                            <option value="@item.Id">@item.StaffName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="selCustomer">客户</label>
+                <select name="CustomerId" id="selCustomer" class="selectpicker show-tick form-control col-sm-2" style="width: 400px" required data-live-search="true">
+                    @if (Model?.Customers != null && Model.Customers.Count > 0)
+                    {
+                        foreach (var item in Model.Customers)
+                        {
+                            <option value="@item.Id">@item.CustomerName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <input type="submit" value="提交" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
 

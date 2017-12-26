@@ -16,10 +16,10 @@ else
         <td>预购水卡</td>
 }
 }
-
+<script src="~/scripts/layer/layer.js"></script>
 <script>
     function confirmDel() {
-        layer.alert('ok');
+        layer.confirm('确定要删除该条记录？',function(index) {return true;});
     }
 </script>
 
@@ -42,7 +42,7 @@ else
                         <td>@item.Contact</td>
                         <td>@item.Phone</td>
                         @PayTypeDesc((int)item.PayType)
-                        <td>@Html.ActionLink("删除", "Delete", "Customer", new { id = item.Id }, new { @class = "btn btn-xs btn-danger", onclick = "confirmDel()" })</td>
+                        <td>@Html.ActionLink("删除", "Delete", "Customer", new { id = item.Id }, new { @class = "btn btn-xs btn-danger", onclick = "return confirm('确认删除？')" })</td>
                     </tr>
                     i++;
                 }

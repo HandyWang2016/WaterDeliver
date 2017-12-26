@@ -8,14 +8,14 @@ namespace Model
 {
     public class StaffCustomer
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// 员工Id
         /// </summary>
-        public int StaffId { get; set; }
+        public string StaffId { get; set; }
         /// <summary>
         /// 客户Id
         /// </summary>
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
     }
 }

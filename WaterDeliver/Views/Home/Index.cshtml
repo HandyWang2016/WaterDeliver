@@ -1,7 +1,17 @@
 ﻿
 @{
     ViewBag.Title = "Index";
+    Layout = null;
 }
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+<script src="~/scripts/layer/layer.js"></script>
+<script type="text/javascript">
+    function checkLayer()
+    {
+        layer.alert("ok from layer");
+    }
+</script>
 
 <h2>Index</h2>
+<button onclick="checkLayer();">测试layer</button>
 
