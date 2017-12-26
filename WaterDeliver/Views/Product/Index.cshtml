@@ -22,7 +22,7 @@
                         <td>@item.CostPrice</td>
                         <td>@item.SalePrice</td>
                         <td>@item.UpdateTime</td>
-                        <td>@Html.ActionLink("删除", "Delete", "Product", new { id = item.Id }, new { @class = "btn btn-xs btn-danger" })</td>
+                        <td>@Html.ActionLink("删除", "Delete", "Product", new { id = item.Id }, new { @class = "btn btn-xs btn-danger", onclick = "return confirm('确认删除？')" })</td>
                     </tr>
                     i++;
                 }

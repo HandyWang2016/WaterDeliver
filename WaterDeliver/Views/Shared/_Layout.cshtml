@@ -9,32 +9,27 @@
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-nav navbar-fixed-top" style="background-color:powderblue">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                </ul>
+                @Html.ActionLinkWithImage(Url.Content("~/Images/logo01.png"),"Index","Admin_Home")
             </div>
         </div>
     </div>
-
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
     </div>
-
+    <div class="navbar navbar-inverse navbar-fixed-bottom" style="background-color:powderblue">
+        <div class="container">
+            <ul>
+                <li>咨询热线：010-84505722</li>
+                <li>地址：北京市朝阳区青年路西里2号院9号楼1层 </li>
+                <li>Copyright &copy;@DateTime.Now.Year,All rights reserved版权所有 © 水递夫 技术支持北京网站建设公司企迪网 </li>
+            </ul>
+        </div>
+    </div>
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/scripts/layer/layer.js"></script>
 </body>
 </html>
