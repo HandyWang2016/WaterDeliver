@@ -143,7 +143,16 @@
     <Content Include="log4net.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="scripts\Font-Awesome-3.2.1\font\fontawesome-webfont.eot" />
+    <Content Include="scripts\Font-Awesome-3.2.1\font\fontawesome-webfont.ttf" />
+    <Content Include="scripts\Font-Awesome-3.2.1\font\fontawesome-webfont.woff" />
+    <Content Include="scripts\Font-Awesome-3.2.1\font\FontAwesome.otf" />
     <None Include="scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="scripts\Font-Awesome-3.2.1\css\font-awesome-ie7.css" />
+    <Content Include="scripts\Font-Awesome-3.2.1\css\font-awesome-ie7.min.css" />
+    <Content Include="scripts\Font-Awesome-3.2.1\css\font-awesome.css" />
+    <Content Include="scripts\Font-Awesome-3.2.1\css\font-awesome.min.css" />
+    <Content Include="scripts\Font-Awesome-3.2.1\font\fontawesome-webfont.svg" />
     <Content Include="scripts\jquery-1.10.2.js" />
     <Content Include="scripts\jquery-1.10.2.min.js" />
     <Content Include="scripts\jquery-3.1.1.min.js" />
@@ -195,6 +204,12 @@
     <Content Include="Views\Product\Index.cshtml" />
     <Content Include="Views\Staff\Index.cshtml" />
     <Content Include="Views\Customer\Index.cshtml" />
+    <Content Include="Views\Home\DailyWrite.cshtml" />
+    <Content Include="Views\Home\DailyRecord.cshtml" />
+    <Content Include="Views\Home\MonthEnd.cshtml" />
+    <Content Include="Views\Home\CompanyPay.cshtml" />
+    <Content Include="Views\Home\CompanyRecord.cshtml" />
+    <Content Include="Views\Home\CompanyEnd.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

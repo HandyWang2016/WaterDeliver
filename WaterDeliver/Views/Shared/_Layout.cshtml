@@ -6,18 +6,33 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/scripts/Font-Awesome-3.2.1/css/font-awesome.min.css" rel="stylesheet" />
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
 </head>
 <body>
     <div class="navbar navbar-nav navbar-fixed-top" style="background-color:powderblue">
         <div class="container">
             <div class="navbar-header">
-                @Html.ActionLinkWithImage(Url.Content("~/Images/logo01.png"),"Index","Admin_Home")
+                @Html.ActionLinkWithImage(Url.Content("~/Images/logo01.png"), "Index", "Admin_Home")
             </div>
         </div>
     </div>
     <div class="container body-content">
-        @RenderBody()
+        <div class="col-md-2" style="margin-top:30px">
+            <div class="well" style="padding: 8px 0;">
+                <ul class="nav nav-pills nav-stacked">
+                    <li id="DailyWrite"><a href="/Home/DailyWrite"><i class="icon-pencil"></i>&nbsp;每日一记</a></li>
+                    <li id="DailyRecord"><a href="/Home/DailyRecord"><i class="icon-align-justify"></i>&nbsp;日常记录</a></li>
+                    <li id="MonthEnd"><a href="/Home/MonthEnd"><i class="icon-money"></i>&nbsp;月底结算</a></li>
+                    <li id="CompanyPay"><a href="/Home/CompanyPay"><i class="icon-edit"></i>&nbsp;公司支出</a></li>
+                    <li id="CompanyRecord"><a href="/Home/CompanyRecord"><i class="icon-strikethrough"></i>&nbsp;公司记录</a></li>
+                    <li id="CompanyEnd"><a href="/Home/CompanyEnd"><i class="icon-book"></i>&nbsp;公司结算</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-10" style="padding:10px">
+            @RenderBody()
+        </div>
     </div>
     <div class="navbar navbar-inverse navbar-fixed-bottom" style="background-color:powderblue">
         <div class="container">
@@ -31,5 +46,13 @@
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/scripts/layer/layer.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var flag = '@ViewBag.flag';
+            if (flag != '') {
+                $("#" + flag).addClass("active");
+            }
+        });
+    </script>
 </body>
 </html>
