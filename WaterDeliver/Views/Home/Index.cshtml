@@ -1,9 +1,48 @@
-﻿
+﻿@model IEnumerable<Model.Staff>
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml"; ;
 }
+<script src="~/scripts/jquery-3.1.1.min.js"></script>
+<script src="~/scripts/layer/layer.js"></script>
 
+<script type="text/javascript">
+    var staffId = '';
+    $(function () {
+        layer.open({
+            title: "请选择登录用户",
+            skin: 'layui-layer-molv',
+            type: 1,
+            closeBtn: 0,
+            btn: ["确定"],
+            content: $("#selStaff").html(),
+            yes: function (index) {
+                if (staffId == '') {
+                    staffId = $("#selectStaff").val();
+                }
+                $.post("/Controllers/Common/DataHandle.ashx",
+                      {
+                          op: "SetStaff",
+                          staffId: staffId
+                      });
+                layer.close(index);
+            }
+        });
+    });
 
-
+    function setStaff(pam) {
+        staffId = pam.selectedOptions[0].value;
+    }
+</script>
+<div id="selStaff" class="tab-content" style="display: none;">
+    <select id="selectStaff" onchange="setStaff(this)" class="selectpicker show-tick form-control col-sm-2" style="width: 200px;margin:6px" required data-live-search="true">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <option value="@item.Id">@item.StaffName</option>
+            }
+        }
+    </select>
+</div>
 

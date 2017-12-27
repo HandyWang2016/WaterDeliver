@@ -8,19 +8,19 @@ namespace Model
 {
     public class DailyRecord
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// 员工Id
         /// </summary>
-        public int StaffId { get; set; }
+        public string StaffId { get; set; }
         /// <summary>
         /// 客户Id
         /// </summary>
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
         /// <summary>
         /// 所送产品Id(可能为饮水机)
         /// </summary>
-        public int SendProductId { get; set; }
+        public string SendProductId { get; set; }
         /// <summary>
         /// 送水桶数
         /// </summary>
@@ -32,19 +32,19 @@ namespace Model
         /// <summary>
         /// 收入押金金额
         /// </summary>
-        public decimal EarnDeposit { get; set; }
+        public double EarnDeposit { get; set; }
         /// <summary>
         /// 支出押金金额
         /// </summary>
-        public decimal PayDeposit { get; set; }
+        public double PayDeposit { get; set; }
         /// <summary>
         /// 收入月底结算金额
         /// </summary>
-        public decimal EarnMonthEndPrice { get; set; }
+        public double EarnMonthEndPrice { get; set; }
         /// <summary>
         /// 收入月卡金额
         /// </summary>
-        public decimal EarnWaterCardPrice { get; set; }
+        public double EarnWaterCardPrice { get; set; }
         /// <summary>
         /// 纪录日期
         /// </summary>

@@ -43,6 +43,7 @@
     <Compile Include="CompanyPayRecord.cs" />
     <Compile Include="CompanyPayTypeEnum.cs" />
     <Compile Include="Customer.cs" />
+    <Compile Include="CustomerProductViewModel.cs" />
     <Compile Include="DailyRecord.cs" />
     <Compile Include="PayTypeEnum.cs" />
     <Compile Include="Products.cs" />

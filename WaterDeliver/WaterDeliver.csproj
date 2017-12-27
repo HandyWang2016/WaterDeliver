@@ -143,10 +143,16 @@
     <Content Include="log4net.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="scripts\datetimepicker\bootstrap-datetimepicker.css" />
+    <Content Include="scripts\datetimepicker\bootstrap-datetimepicker.js" />
+    <Content Include="scripts\datetimepicker\bootstrap-datetimepicker.min.css" />
+    <Content Include="scripts\datetimepicker\bootstrap-datetimepicker.min.js" />
+    <Content Include="scripts\datetimepicker\bootstrap-datetimepicker.zh-CN.js" />
     <Content Include="scripts\Font-Awesome-3.2.1\font\fontawesome-webfont.eot" />
     <Content Include="scripts\Font-Awesome-3.2.1\font\fontawesome-webfont.ttf" />
     <Content Include="scripts\Font-Awesome-3.2.1\font\fontawesome-webfont.woff" />
     <Content Include="scripts\Font-Awesome-3.2.1\font\FontAwesome.otf" />
+    <Content Include="Controllers\Common\DataHandle.ashx" />
     <None Include="scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="scripts\Font-Awesome-3.2.1\css\font-awesome-ie7.css" />
     <Content Include="scripts\Font-Awesome-3.2.1\css\font-awesome-ie7.min.css" />
@@ -178,6 +184,10 @@
     <Compile Include="Controllers\Admin\ProductController.cs" />
     <Compile Include="Controllers\Admin\StaffController.cs" />
     <Compile Include="Controllers\Admin\StaffCustomerController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\Common\DataHandle.ashx.cs">
+      <DependentUpon>DataHandle.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MyHelper.cs" />
     <Compile Include="Global.asax.cs">
@@ -221,6 +231,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
     <Folder Include="obj\Debug\TempPE\" />
+    <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
