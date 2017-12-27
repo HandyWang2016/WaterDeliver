@@ -74,10 +74,24 @@ namespace WaterDeliver.Controllers
         /// <returns></returns>
         public ActionResult DailyRecord()
         {
+            //所有客户
+            List<Customer> customers = CustomerHelper.CustomerList();
+            //所有员工-客户关系信息
+            var staffCustomers = StaffCustomerHelper.StaffCustomerList();
+            //当前员工下的客户信息
+            List<StaffCustomer> currentCustomers = staffCustomers;
             string staffId = GetStaffId();
             if (staffId == "") { return RedirectToAction("index"); }
+            currentCustomers = staffCustomers.Where(item => item.StaffId == staffId).ToList();
+            //获取当前员工下的客户
+            customers = (from c in customers
+                         join cc in currentCustomers
+                         on c.Id equals cc.CustomerId
+                         select c).ToList();
+
             List<DailyRecord> records = DailyRecordHelper.StaffList();
             ViewBag.flag = "DailyRecord";
+            ViewBag.customers = customers;
             return View(records);
         }
 

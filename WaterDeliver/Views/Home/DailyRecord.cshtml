@@ -1,37 +1,74 @@
 ﻿@model IEnumerable<Model.DailyRecord>
 
-@{
-    ViewBag.Title = "DailyRecord";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+    @{
+        ViewBag.Title = "DailyRecord";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    <link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <script>
+        $(function () {
+            $('#txtDateBegin').datetimepicker({
+                language: 'zh',
+                todayBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                minView: "month",//设置只显示到月份
+                format: "yyyy-mm-dd"//日期格式
+            }).on('changeDate', function (ev) {
+                $(this).datetimepicker('hide');
+            });
+            $('#txtDateEnd').datetimepicker({
+                language: 'zh',
+                todayBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                minView: "month",//设置只显示到月份
+                format: "yyyy-mm-dd"//日期格式
+            }).on('changeDate', function (ev) {
+                $(this).datetimepicker('hide');
+            });
+        });
+    </script>
+    <form class="form-inline" method="post" action="/Home/QueryDailyRecord">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">查询条件</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group col-md-5">
+                    <label class="control-label" for="txtCustomerName">客户名称</label>
+                    <select name="CustomerId" id="selCustomer" class="selectpicker show-tick form-control" data-live-search="true">
+                        @if (ViewBag.customers != null)
+                        {
+                            foreach (var item in ViewBag.customers as List<Model.Customer>)
+                            {
+                                <option value="@item.Id">@item.CustomerName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="txtDateBegin">&nbsp;&nbsp;开始时间</label>
+                    <input type="text" readonly class="form-control" style="width: 130px" id="txtDateBegin" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="txtDateEnd">&nbsp;&nbsp;结束时间</label>
+                    <input type="text" readonly class="form-control" style="width: 130px" id="txtDateEnd" />
+                </div>
+                <br />
+                <br />
+                <div class="form-group col-md-4">
+                    <label class="control-label" for="PayType">支付方式</label>
+                    <select name="PayType" id="PayType" class="selectpicker show-tick form-control" style="width: 150px" required data-live-search="true">
+                        <option value="0">月底结算</option>
+                        <option value="1">预购水卡</option>
+                    </select>
+                </div>
+                <input type="submit" value="查询" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+    <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
 
-<form class="form-inline" method="post" action="/Home/QueryDailyRecord">
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <h4 class="panel-title">查询条件</h4>
-        </div>
-        <div class="panel-body">
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="txtCustomerName">客户名称</label>
-                <input type="text" required class="form-control col-sm-2" style="width: 300px" id="txtCustomerName" name="CustomerName" />
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="txtDateBegin">开始时间</label>
-                <input type="text" required class="form-control col-sm-2" style="width: 200px" id="txtDateBegin" name="Address" />
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="txtDateEnd">结束时间</label>
-                <input type="text" class="form-control col-sm-2" style="width: 200px" id="txtDateEnd" name="Contact" />
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" for="PayType">支付方式</label>
-                <select name="PayType" id="PayType" class="selectpicker show-tick form-control col-sm-2" style="width: 150px" required data-live-search="true">
-                    <option value="0">月底结算</option>
-                    <option value="1">预购水卡</option>
-                </select>
-            </div>
-            <input type="submit" value="查询" class="btn btn-primary" />
-        </div>
-    </div>
-</form>
 
