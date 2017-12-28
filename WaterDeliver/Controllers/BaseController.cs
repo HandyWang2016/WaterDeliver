@@ -8,18 +8,22 @@ namespace WaterDeliver.Controllers
 {
     public class BaseController : Controller
     {
-        private string staffId;
+        private static string staffId;
 
-        public string GetStaffId()
+        protected string GetStaffId()
         {
             if (string.IsNullOrEmpty(staffId))
-            {
-                return Session["staffId"] == null ? "" : Session["staffId"].ToString();
-            }
-            else
-            {
-                return staffId;
-            }
+                staffId = GetStaffIds();
+            return staffId;
+        }
+
+        /// <summary>
+        ///     获取登录用户id
+        /// </summary>
+        /// <returns></returns>
+        private string GetStaffIds()
+        {
+            return Session?["staffId"]?.ToString() ?? "";
         }
     }
 }
