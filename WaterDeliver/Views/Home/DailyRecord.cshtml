@@ -35,7 +35,7 @@
             <h4 class="panel-title">查询条件</h4>
         </div>
         <div class="panel-body">
-            <div class="form-group col-md-5">
+            <div class="form-group col-md-4">
                 <label class="control-label" for="txtCustomerName">客户名称</label>
                 <select name="CustomerId" id="selCustomer" class="selectpicker show-tick form-control" data-live-search="true">
                     @if (ViewBag.customers != null)
@@ -47,17 +47,17 @@
                     }
                 </select>
             </div>
-            <div class="form-group">
-                <label class="control-label" for="txtDateBegin">&nbsp;&nbsp;开始时间</label>
+            <div class="form-group col-sm-3">
+                <label class="control-label" for="txtDateBegin">开始时间</label>
                 <input type="text" readonly class="form-control" style="width: 130px" name="DateBegin" id="txtDateBegin" />
             </div>
-            <div class="form-group">
-                <label class="control-label" for="txtDateEnd">&nbsp;&nbsp;结束时间</label>
+            <div class="form-group col-sm-3">
+                <label class="control-label" for="txtDateEnd">结束时间</label>
                 <input type="text" readonly class="form-control" style="width: 130px" name="DateEnd" id="txtDateEnd" />
             </div>
             <br />
             <br />
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-2">
                 <label class="control-label" for="PayType">支付方式</label>
                 <select id="PayType" class="selectpicker show-tick form-control" style="width: 150px" required data-live-search="true">
                     <option value="0">月底结算</option>
@@ -88,7 +88,7 @@
                         <td>@item.PayDeposit</td>
                         <td>@item.EarnMonthEndPrice</td>
                         <td>@item.EarnWaterCardPrice</td>
-                        <td>@item.VisitDate</td>
+                        <td>@item.VisitDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     </tr>
                     index++;
                 }
@@ -102,7 +102,6 @@
 <script type="text/javascript">
     $(function() {
         var queryPam = '@ViewBag.queryPam';
-        debugger;
         if (queryPam != '') {
         }
     });
