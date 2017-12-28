@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Common;
 using Common.BusinessHelper;
 using Model;
+using System.Collections;
 
 namespace WaterDeliver.Controllers
 {
@@ -80,6 +81,9 @@ namespace WaterDeliver.Controllers
             var staffCustomers = StaffCustomerHelper.StaffCustomerList();
             //当前员工下的客户信息
             List<StaffCustomer> currentCustomers = staffCustomers;
+            //所有产品
+            var products = ProductHelper.ProductList();
+
             string staffId = GetStaffId();
             if (staffId == "") { return RedirectToAction("index"); }
             currentCustomers = staffCustomers.Where(item => item.StaffId == staffId).ToList();
@@ -88,16 +92,75 @@ namespace WaterDeliver.Controllers
                          join cc in currentCustomers
                          on c.Id equals cc.CustomerId
                          select c).ToList();
+            //添加空选项
+            customers.Insert(0, new Customer {CustomerName = ""});
 
-            List<DailyRecord> records = DailyRecordHelper.StaffList();
+            List<DailyRecord> records = TempData["DailyRecord"] == null
+                ? DailyRecordHelper.DailyRecordList().Where(item => item.StaffId == staffId).ToList()
+                : TempData["DailyRecord"] as List<DailyRecord>;
+            List<DailyRecordShow> newRecords = (from r in records
+                                                join c in customers
+                                                on r.CustomerId equals c.Id
+                                                join p in products
+                                                on r.SendProductId equals p.Id
+                                                select new DailyRecordShow
+                                                {
+                                                    CustomerName = c.CustomerName,
+                                                    ProductName = p.ProductName,
+                                                    SendBucketAmount = r.SendBucketAmount,
+                                                    ReceiveEmptyBucketAmount = r.ReceiveEmptyBucketAmount,
+                                                    EarnDeposit = r.EarnDeposit,
+                                                    PayDeposit = r.PayDeposit,
+                                                    EarnMonthEndPrice = r.EarnMonthEndPrice,
+                                                    EarnWaterCardPrice = r.EarnWaterCardPrice,
+                                                    VisitDate = r.VisitDate
+
+                                                }).ToList();
+
             ViewBag.flag = "DailyRecord";
             ViewBag.customers = customers;
-            return View(records);
+            ViewBag.queryPam = TempData["dailyQuery"];
+            return View(newRecords);
         }
 
-        public ActionResult QueryDailyRecord()
+        /// <summary>
+        /// 查询日常记录
+        /// </summary>
+        /// <param name="dailyQuery"></param>
+        /// <returns></returns>
+        public ActionResult QueryDailyRecord(DailyQueryMod dailyQuery)
         {
-            return View();
+            string staffId = GetStaffId();
+            if (staffId == "") { return RedirectToAction("index"); }
+            dailyQuery.StaffId = staffId;
+            var records = FilterRecordInfo(dailyQuery);
+            TempData["DailyRecord"] = records;
+            TempData["dailyQuery"] = dailyQuery;
+            return RedirectToAction("DailyRecord");
+        }
+
+        /// <summary>
+        /// 根据查询条件过滤数据
+        /// </summary>
+        /// <param name="dailyQuery"></param>
+        /// <returns></returns>
+        private List<DailyRecord> FilterRecordInfo(DailyQueryMod dailyQuery)
+        {
+            List<DailyRecord> records = DailyRecordHelper.DailyRecordList();
+            IEnumerable<DailyRecord> temRecords = records.Where(item => item.StaffId == dailyQuery.StaffId);
+            if (!string.IsNullOrEmpty(dailyQuery.CustomerId))
+            {
+                temRecords = temRecords.Where(item => item.CustomerId == dailyQuery.CustomerId);
+            }
+            if (dailyQuery.DateBegin > Convert.ToDateTime("2016-01-01"))
+            {
+                temRecords = temRecords.Where(item => item.VisitDate >= dailyQuery.DateBegin);
+            }
+            if (dailyQuery.DateBegin > Convert.ToDateTime("2016-01-01"))
+            {
+                temRecords = temRecords.Where(item => item.VisitDate <= dailyQuery.DateEnd);
+            }
+            return temRecords.ToList<DailyRecord>();
         }
 
         public ActionResult MonthEnd()

@@ -50,4 +50,12 @@ namespace Model
         /// </summary>
         public DateTime VisitDate { get; set; }
     }
+
+    public class DailyRecordShow : DailyRecord
+    {
+        public string CustomerName { get; set; }
+        public string ProductName { get; set; }
+    }
+
+
 }

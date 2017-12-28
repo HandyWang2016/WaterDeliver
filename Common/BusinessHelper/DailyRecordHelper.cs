@@ -31,7 +31,7 @@ namespace Common.BusinessHelper
         /// 获取所有日常纪录信息
         /// </summary>
         /// <returns></returns>
-        public static List<DailyRecord> StaffList()
+        public static List<DailyRecord> DailyRecordList()
         {
             using (Mongo mongo = new Mongo(_connectionString))
             {
