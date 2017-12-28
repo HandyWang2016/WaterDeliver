@@ -153,6 +153,7 @@
     <Content Include="scripts\Font-Awesome-3.2.1\font\fontawesome-webfont.woff" />
     <Content Include="scripts\Font-Awesome-3.2.1\font\FontAwesome.otf" />
     <Content Include="Controllers\Common\DataHandle.ashx" />
+    <Content Include="App_Data\Water表结构.xlsx" />
     <None Include="scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="scripts\Font-Awesome-3.2.1\css\font-awesome-ie7.css" />
     <Content Include="scripts\Font-Awesome-3.2.1\css\font-awesome-ie7.min.css" />
@@ -228,7 +229,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Models\" />
     <Folder Include="obj\Debug\TempPE\" />
     <Folder Include="Views\Base\" />

@@ -9,7 +9,7 @@
     </div>
     <div class="panel-body">
         <table class="table table-hover">
-            <thead><tr><td>ID</td><td>产品名称</td><td>库存余量</td><td>成本价格</td><td>销售价格</td><td>库存更新时间</td><td>操作</td></tr></thead>
+            <thead style="background-color:lightblue"><tr><th>ID</th><th>产品名称</th><th>库存余量</th><th>成本价格</th><th>销售价格</th><th>库存更新时间</th><th>操作</th></tr></thead>
             @if (Model != null)
             {
                 int i = 0;
@@ -31,7 +31,7 @@
         </table>
     </div>
 </div>
-<form class="form-horizontal" method="post" action="Product/Create">
+<form class="form-horizontal" method="post" action="/Product/Create">
     <div class="panel panel-info">
         <div class="panel-heading">
             <h4 class="panel-title">添加产品</h4>

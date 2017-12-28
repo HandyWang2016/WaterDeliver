@@ -163,8 +163,13 @@ namespace WaterDeliver.Controllers
             return temRecords.ToList<DailyRecord>();
         }
 
+        /// <summary>
+        /// 月底结算
+        /// </summary>
+        /// <returns></returns>
         public ActionResult MonthEnd()
         {
+
             ViewBag.flag = "MonthEnd";
             return View();
         }

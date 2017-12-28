@@ -26,7 +26,7 @@
     </div>
     <div class="panel-body">
         <table class="table table-hover">
-            <thead><tr><td>ID</td><td>员工姓名</td><td>客户名称</td><td>地址</td><td>联系方式</td><td>操作</td></tr></thead>
+            <thead style="background-color:lightblue"><tr><th>ID</th><th>员工姓名</th><th>客户名称</th><th>地址</th><th>联系方式</th><th>操作</th></tr></thead>
             @if (Model != null)
             {
                 int i = 0;
@@ -45,7 +45,7 @@
         </table>
     </div>
 </div>
-<form class="form-horizontal" method="post" action="StaffCustomer/Create">
+<form class="form-horizontal" method="post" action="/StaffCustomer/Create">
     <div class="panel panel-info">
         <div class="panel-heading">
             <h4 class="panel-title">为员工添加客户</h4>
