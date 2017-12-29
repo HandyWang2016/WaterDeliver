@@ -1,8 +1,98 @@
-﻿
+﻿@model Model.SumDailyRecordViewModel
+
 @{
     ViewBag.Title = "MonthEnd";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>MonthEnd</h2>
+<link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<script>
+    $(function () {
+        $('#txtDateBegin').datetimepicker({
+            language: 'zh',
+            todayBtn: 0,
+            autoclose: 1,
+            todayHighlight: 1,
+            format: "yyyy-mm",//日期格式
+            startView: 3,
+            minView: 3,
+            clearBtn: true
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+    });
+</script>
+<form class="form-inline" method="post" action="/Home/QueryMonthEnd">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">查询条件</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group col-sm-2">
+                <label class="control-label" for="txtDateBegin">选择时间</label>
+                <input type="text" readonly class="form-control" style="width: 130px" name="yearMonth" id="txtDateBegin" />
+            </div>
+            <div class="form-group col-sm-3">
+                <input type="submit" value="查询" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">查询结果</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover table-bordered">
+            <thead style="background-color:powderblue"><tr><th>交易月份</th><th>公司名称</th><th>送水桶数</th><th>收回空桶</th><th>收取押金(￥)</th><th>退还押金(￥)</th><th>月底结算(￥)</th><th>出售月卡(￥)</th></tr></thead>
+            @if (Model != null)
+            {
+                int sumIndex = 0;
+                string month = "";
+
+                foreach (var item in Model.SumDailyRecordByCP)
+                {
+                    if (month != "" && month != item.VisitMonth)//汇总月底数据
+                    {
+                        <tr class="warning" style="color:red">
+                            <td colspan="2">@Model.SumDailyRecord[sumIndex].VisitMonth 汇总:</td>
+                            <td>@Model.SumDailyRecord[sumIndex].SumSendBucketAmount</td>
+                            <td>@Model.SumDailyRecord[sumIndex].SumReceiveEmptyBucketAmount</td>
+                            <td>@Model.SumDailyRecord[sumIndex].SumEarnDeposit</td>
+                            <td>@Model.SumDailyRecord[sumIndex].SumPayDeposit</td>
+                            <td>@Model.SumDailyRecord[sumIndex].SumEarnMonthEndPrice</td>
+                            <td>@Model.SumDailyRecord[sumIndex].SumEarnWaterCardPrice</td>
+                        </tr>
+                        sumIndex++;
+                    }
+                    <tr>
+                        <td>@item.VisitMonth</td>
+                        <td>@item.CustomerName</td>
+                        <td>@item.SumSendBucketAmount</td>
+                        <td>@item.SumReceiveEmptyBucketAmount</td>
+                        <td>@item.SumEarnDeposit</td>
+                        <td>@item.SumPayDeposit</td>
+                        <td>@item.SumEarnMonthEndPrice</td>
+                        <td>@item.SumEarnWaterCardPrice</td>
+                    </tr>
+
+                    month = item.VisitMonth;
+                }
+                <tr class="warning" style="color:red">
+                    <td colspan="2">@Model.SumDailyRecord[sumIndex].VisitMonth 汇总:</td>
+                    <td>@Model.SumDailyRecord[sumIndex].SumSendBucketAmount</td>
+                    <td>@Model.SumDailyRecord[sumIndex].SumReceiveEmptyBucketAmount</td>
+                    <td>@Model.SumDailyRecord[sumIndex].SumEarnDeposit</td>
+                    <td>@Model.SumDailyRecord[sumIndex].SumPayDeposit</td>
+                    <td>@Model.SumDailyRecord[sumIndex].SumEarnMonthEndPrice</td>
+                    <td>@Model.SumDailyRecord[sumIndex].SumEarnWaterCardPrice</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
+@*<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.min.js"></script>*@
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
 

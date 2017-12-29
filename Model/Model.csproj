@@ -52,6 +52,7 @@
     <Compile Include="Staff.cs" />
     <Compile Include="StaffCustomer.cs" />
     <Compile Include="StaffCustomerViewModel.cs" />
+    <Compile Include="SumDailyRecord.cs" />
     <Compile Include="WaterCardType.cs" />
   </ItemGroup>
   <ItemGroup>

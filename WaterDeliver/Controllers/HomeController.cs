@@ -93,7 +93,7 @@ namespace WaterDeliver.Controllers
                          on c.Id equals cc.CustomerId
                          select c).ToList();
             //添加空选项
-            customers.Insert(0, new Customer {CustomerName = ""});
+            customers.Insert(0, new Customer { CustomerName = "" });
 
             List<DailyRecord> records = TempData["DailyRecord"] == null
                 ? DailyRecordHelper.DailyRecordList().Where(item => item.StaffId == staffId).ToList()
@@ -169,9 +169,77 @@ namespace WaterDeliver.Controllers
         /// <returns></returns>
         public ActionResult MonthEnd()
         {
+            var records = DailyRecordHelper.DailyRecordList();
+            var customers = CustomerHelper.CustomerList();
+            if (TempData["yearMonth"] != null && TempData["yearMonth"].ToString() != "")
+            {
+                int year = int.Parse(TempData["yearMonth"].ToString().Split('-')[0]);
+                int month = int.Parse(TempData["yearMonth"].ToString().Split('-')[1]);
+                records = records.Where(item => item.VisitDate.Year == year && item.VisitDate.Month == month).ToList();
+            }
+            //按月份、公司分组
+            List<SumDailyRecordByCP> sumRecordsByCP = records.OrderByDescending(i => i.VisitDate)
+                .GroupBy(item => new { item.VisitDate.Month, item.CustomerId })
+                .Select(g => new SumDailyRecordByCP
+                {
+                    SumSendBucketAmount = g.Sum(x => x.SendBucketAmount), //送水桶数
+                    SumReceiveEmptyBucketAmount = g.Sum(x => x.ReceiveEmptyBucketAmount), //收回空桶数
+                    SumEarnDeposit = g.Sum(x => x.EarnDeposit), //收取押金
+                    SumPayDeposit = g.Sum(x => x.PayDeposit), //退还押金
+                    SumEarnMonthEndPrice = g.Sum(x => x.EarnMonthEndPrice), //收入月底结算
+                    SumEarnWaterCardPrice = g.Sum(x => x.EarnWaterCardPrice), //收入水卡金额
+                    VisitMonth = g.First().VisitDate.Month + "月", //交易月份
+                    CustomerName = g.First().CustomerId,
+                    ProductName = g.First().SendProductId
+                }).Join(customers, x => x.CustomerName, y => y.Id, (x, y) => new { x, y }).Select(p => new SumDailyRecordByCP()
+                {
+                    CustomerName = p.y.CustomerName,
+                    SumSendBucketAmount = p.x.SumSendBucketAmount,
+                    SumReceiveEmptyBucketAmount = p.x.SumReceiveEmptyBucketAmount,
+                    SumEarnDeposit = p.x.SumEarnDeposit,
+                    SumPayDeposit = p.x.SumPayDeposit,
+                    SumEarnMonthEndPrice = p.x.SumEarnMonthEndPrice,
+                    SumEarnWaterCardPrice = p.x.SumEarnWaterCardPrice,
+                    VisitMonth = p.x.VisitMonth
+                }).ToList();
+
+
+            //按月份分组
+            List<SumDailyRecord> sumRecords = records.OrderByDescending(i => i.VisitDate)
+                .GroupBy(item => new { item.VisitDate.Month })
+                .Select(g => new SumDailyRecord
+                {
+                    SumSendBucketAmount = g.Sum(x => x.SendBucketAmount),//送水桶数
+                    SumReceiveEmptyBucketAmount = g.Sum(x => x.ReceiveEmptyBucketAmount),//收回空桶数
+                    SumEarnDeposit = g.Sum(x => x.EarnDeposit),//收取押金
+                    SumPayDeposit = g.Sum(x => x.PayDeposit),//退还押金
+                    SumEarnMonthEndPrice = g.Sum(x => x.EarnMonthEndPrice),//收入月底结算
+                    SumEarnWaterCardPrice = g.Sum(x => x.EarnWaterCardPrice),//收入水卡金额
+                    VisitMonth = g.First().VisitDate.Month + "月"//交易月份
+                }).ToList();
+
+            SumDailyRecordViewModel viewModel = new SumDailyRecordViewModel
+            {
+                SumDailyRecord = sumRecords,
+                SumDailyRecordByCP = sumRecordsByCP
+            };
 
             ViewBag.flag = "MonthEnd";
-            return View();
+            return View(viewModel);
+        }
+
+        /// <summary>
+        /// 查询月底日常汇总
+        /// </summary>
+        /// <param name="yearMonth"></param>
+        /// <returns></returns>
+        public ActionResult QueryMonthEnd(string yearMonth)
+        {
+            if (yearMonth != "")
+            {
+                TempData["yearMonth"] = yearMonth;
+            }
+            return RedirectToAction("MonthEnd");
         }
 
         public ActionResult CompanyPay()
