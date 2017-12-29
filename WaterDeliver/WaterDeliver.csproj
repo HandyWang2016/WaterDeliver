@@ -181,6 +181,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\Admin\Admin_HomeController.cs" />
+    <Compile Include="Controllers\Admin\CompanyPayTypeController.cs" />
     <Compile Include="Controllers\Admin\CustomerController.cs" />
     <Compile Include="Controllers\Admin\ProductController.cs" />
     <Compile Include="Controllers\Admin\StaffController.cs" />
@@ -190,6 +191,7 @@
       <DependentUpon>DataHandle.ashx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\Home_CompanyController.cs" />
     <Compile Include="Controllers\MyHelper.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -218,9 +220,10 @@
     <Content Include="Views\Home\DailyWrite.cshtml" />
     <Content Include="Views\Home\DailyRecord.cshtml" />
     <Content Include="Views\Home\MonthEnd.cshtml" />
-    <Content Include="Views\Home\CompanyPay.cshtml" />
-    <Content Include="Views\Home\CompanyRecord.cshtml" />
-    <Content Include="Views\Home\CompanyEnd.cshtml" />
+    <Content Include="Views\Home_Company\CompanyPay.cshtml" />
+    <Content Include="Views\Home_Company\CompanyRecord.cshtml" />
+    <Content Include="Views\Home_Company\CompanyEnd.cshtml" />
+    <Content Include="Views\CompanyPayType\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

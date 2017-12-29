@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompanyPayRecord.cs" />
+    <Compile Include="CompanyPayType.cs" />
     <Compile Include="CompanyPayTypeEnum.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="CustomerProductViewModel.cs" />

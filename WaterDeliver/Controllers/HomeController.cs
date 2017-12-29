@@ -241,23 +241,5 @@ namespace WaterDeliver.Controllers
             }
             return RedirectToAction("MonthEnd");
         }
-
-        public ActionResult CompanyPay()
-        {
-            ViewBag.flag = "CompanyPay";
-            return View();
-        }
-
-        public ActionResult CompanyRecord()
-        {
-            ViewBag.flag = "CompanyRecord";
-            return View();
-        }
-
-        public ActionResult CompanyEnd()
-        {
-            ViewBag.flag = "CompanyEnd";
-            return View();
-        }
     }
 }
