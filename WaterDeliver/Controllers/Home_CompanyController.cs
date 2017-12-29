@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Common;
+using Common.BusinessHelper;
+using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,8 +13,18 @@ namespace WaterDeliver.Controllers
     {
         public ActionResult CompanyPay()
         {
+            var companyPayType = CompanyPayTypeHelper.PayTypeList();
             ViewBag.flag = "CompanyPay";
-            return View();
+            return View(companyPayType);
+        }
+
+        public ActionResult CompanyCreate(CompanyPayRecord companyPayRecord)
+        {
+            companyPayRecord.Id = ObjectId.NewObjectId().ToString();
+            companyPayRecord.PayTime = DateTime.Now;
+
+            MongoBase.Insert<CompanyPayRecord>(companyPayRecord);
+            return RedirectToAction("CompanyPay");
         }
 
         public ActionResult CompanyRecord()

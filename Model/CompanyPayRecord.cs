@@ -8,15 +8,15 @@ namespace Model
 {
     public class CompanyPayRecord
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// 支付类型
         /// </summary>
-        public CompanyPayTypeEnum PayType { get; set; }
+        public string PayTypeId { get; set; }
         /// <summary>
         /// 支出金额
         /// </summary>
-        public decimal PaySum { get; set; }
+        public double PaySum { get; set; }
         /// <summary>
         /// 支付时间
         /// </summary>

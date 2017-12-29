@@ -14,7 +14,7 @@ namespace Common.BusinessHelper
      /// 删除公司纪录信息
      /// </summary>
      /// <param name="id"></param>
-        public static void Delete(int id)
+        public static void Delete(string id)
         {
             using (Mongo mongo = new Mongo(_connectionString))
             {
@@ -64,7 +64,7 @@ namespace Common.BusinessHelper
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static CompanyPayRecord GetById(int id)
+        public static CompanyPayRecord GetById(string id)
         {
             using (Mongo mongo = new Mongo(_connectionString))
             {
