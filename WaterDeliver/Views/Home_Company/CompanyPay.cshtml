@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Model.CompanyPayType>
+
+
+@{
+    ViewBag.Title = "CompanyPay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<script>
+    $(function () {
+        $('#txtPayTime').datetimepicker({
+            language: 'zh',
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            minView: "month",//设置只显示到月份
+            format: "yyyy-mm-dd"//日期格式
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+    });
+</script>
+
+<form class="form-horizontal" method="post" action="/Home_Company/CompanyCreate">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">公司消费信息</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="selCustomer">消费类别</label>
+                <select name="PayTypeId" id="selPayType" class="selectpicker show-tick form-control col-sm-2" style="width: 350px" required data-live-search="true">
+                    @foreach (var item in Model)
+                    {
+                        <option value="@item.Id">@item.PayType</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="txtPaySum">&nbsp;消费金额</label>
+                <input type="text" value="0" class="form-control col-sm-2" style="width: 200px" id="txtPaySum" name="PaySum" />&nbsp;元
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="txtPayTime">时间</label>
+                <input type="text" readonly class="form-control" style="width: 130px" name="PayTime" id="txtPayTime" />
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="txtDescribe">其他信息</label>
+                <textarea class="form-control" name="Describe" id="txtDescribe" rows="3"></textarea>
+            </div>
+            <div class="form-group" style="margin-left:80px">
+                <input type="submit" value="保存" class="btn btn-primary" />
+            </div>
+
+        </div>
+    </div>
+</form>
+
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>

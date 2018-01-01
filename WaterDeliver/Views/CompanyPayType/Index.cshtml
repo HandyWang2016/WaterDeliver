@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Model.CompanyPayType>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_admin.cshtml";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">类别信息</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead style="background-color:lightblue"><tr><th>ID</th><th>类别名称</th><th>描述</th><th>操作</th></tr></thead>
+            @if (Model != null)
+            {
+                int i = 0;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@i</td>
+                        <td>@item.PayType</td>
+                        <td>@item.PayTypeDescribe</td>
+                        <td>@Html.ActionLink("删除", "Delete", "CompanyPayType", new { id = item.Id }, new { @class = "btn btn-xs btn-danger", onclick = "return confirm('确认删除？')" })</td>
+                    </tr>
+                    i++;
+                }
+            }
+
+        </table>
+    </div>
+</div>
+<form class="form-horizontal" method="post" action="/CompanyPayType/Create">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">添加产品</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="txtPayType">类别名称</label>
+                <input type="text" required class="form-control" style="width: 200px" id="txtPayType" name="PayType" />
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="txtPayTypeDescribe">描述</label>
+                <textarea class="form-control" name="PayTypeDescribe" id="txtPayTypeDescribe" rows="3"></textarea>
+            </div>
+            <input type="submit" value="提交" class="btn btn-primary" />
+        </div>
+    </div>
+</form>

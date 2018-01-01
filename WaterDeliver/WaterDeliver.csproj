@@ -220,10 +220,10 @@
     <Content Include="Views\Home\DailyWrite.cshtml" />
     <Content Include="Views\Home\DailyRecord.cshtml" />
     <Content Include="Views\Home\MonthEnd.cshtml" />
-    <Content Include="Views\Home_Company\CompanyPay.cshtml" />
     <Content Include="Views\Home_Company\CompanyRecord.cshtml" />
     <Content Include="Views\Home_Company\CompanyEnd.cshtml" />
     <Content Include="Views\CompanyPayType\Index.cshtml" />
+    <Content Include="Views\Home_Company\CompanyPay.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

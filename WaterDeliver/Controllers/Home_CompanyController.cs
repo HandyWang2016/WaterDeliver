@@ -29,8 +29,9 @@ namespace WaterDeliver.Controllers
 
         public ActionResult CompanyRecord()
         {
+            var companyPayRecords = CompanyRecordHelper.StaffList();
             ViewBag.flag = "CompanyRecord";
-            return View();
+            return View(companyPayRecords);
         }
 
         public ActionResult CompanyEnd()
