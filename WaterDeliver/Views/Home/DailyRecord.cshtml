@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<link href="~/scripts/pager/pageStyle.css" rel="stylesheet" />
 <script>
     $(function () {
         $('#txtDateBegin').datetimepicker({
@@ -27,6 +28,33 @@
         }).on('changeDate', function (ev) {
             $(this).datetimepicker('hide');
         });
+
+        // 模拟ajax数据用以下方法，方便用户更好的掌握用法
+        //参数为当前页
+        ajaxTest(1);
+
+        function ajaxTest(num) {
+            $.ajax({
+                url: "/Home/QueryDailyRecord",
+                type: "get",
+                data: { "pageSize": num },
+                //dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    //分页
+                    $("#page")
+		                .paging({
+		                    pageNo: num,
+		                    totalPage: @ViewBag.totalPage,
+		                    totalSize: @ViewBag.totalSize,
+		                    callback: function (num) {
+		                        ajaxTest(num);
+		                    }
+		                });
+                }
+            });
+        }
+
     });
 </script>
 <form class="form-inline" method="post" action="/Home/QueryDailyRecord">
@@ -63,17 +91,18 @@
             </div>
             <div class="form-group col-sm-3">
                 <label class="control-label" for="txtDateBegin">开始时间</label>
-                <input type="text" readonly class="form-control" style="width: 130px" name="DateBegin" id="txtDateBegin"/>
+                <input type="text" readonly class="form-control" style="width: 130px" name="DateBegin" id="txtDateBegin" />
             </div>
             <div class="form-group col-sm-3">
                 <label class="control-label" for="txtDateEnd">结束时间</label>
-                <input type="text" readonly class="form-control" style="width: 130px" name="DateEnd" id="txtDateEnd"/>
+                <input type="text" readonly class="form-control" style="width: 130px" name="DateEnd" id="txtDateEnd" />
             </div>
             <div class="form-group col-sm-3" style="margin-top: 15px">
-                <input type="submit" value="查询" class="btn btn-primary"/>
+                <input type="submit" value="查询" class="btn btn-primary" />
             </div>
         </div>
     </div>
+    <input type="hidden" name="pageSize" value="1"/>
 </form>
 <div class="panel panel-info">
     <div class="panel-heading">
@@ -101,11 +130,13 @@
                 }
             }
         </table>
+        <div class="page_div" id="page"></div>
     </div>
 </div>
 
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="~/scripts/pager/paging.js"></script>
 <script type="text/javascript">
     $(function () {
         var queryPam = '@ViewBag.queryPam';

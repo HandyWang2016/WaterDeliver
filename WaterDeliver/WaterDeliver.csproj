@@ -176,6 +176,8 @@
     <Content Include="scripts\layer\skin\layer.css" />
     <Content Include="scripts\layer\skin\layer.ext.css" />
     <Content Include="scripts\modernizr-2.6.2.js" />
+    <Content Include="scripts\pager\pageStyle.css" />
+    <Content Include="scripts\pager\paging.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

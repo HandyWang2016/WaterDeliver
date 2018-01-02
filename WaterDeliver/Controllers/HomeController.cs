@@ -106,6 +106,8 @@ namespace WaterDeliver.Controllers
             ViewBag.flag = "DailyRecord";
             ViewBag.customers = customers;
             ViewBag.queryPam = TempData["dailyQuery"];
+            ViewBag.totalPage = TempData["totalPage"] == null ? records.Count % 20 : int.Parse(TempData["totalPage"].ToString());
+            ViewBag.totalSize = TempData["totalSize"] == null ? records.Count : int.Parse(TempData["totalSize"].ToString());
             ViewBag.Staffs = StaffHelper.StaffList();
             return View(newRecords);
         }
@@ -115,9 +117,9 @@ namespace WaterDeliver.Controllers
         /// </summary>
         /// <param name="dailyQuery"></param>
         /// <returns></returns>
-        public ActionResult QueryDailyRecord(DailyQueryMod dailyQuery)
+        public ActionResult QueryDailyRecord(DailyQueryMod dailyQuery, int pageSize)
         {
-            var records = FilterRecordInfo(dailyQuery);
+            var records = FilterRecordInfo(dailyQuery, pageSize);
             TempData["DailyRecord"] = records;
             TempData["dailyQuery"] = dailyQuery;
             return RedirectToAction("DailyRecord");
@@ -128,7 +130,7 @@ namespace WaterDeliver.Controllers
         /// </summary>
         /// <param name="dailyQuery"></param>
         /// <returns></returns>
-        private List<DailyRecord> FilterRecordInfo(DailyQueryMod dailyQuery)
+        private List<DailyRecord> FilterRecordInfo(DailyQueryMod dailyQuery, int pageSize)
         {
             List<DailyRecord> records = DailyRecordHelper.DailyRecordList();
             IEnumerable<DailyRecord> temRecords = records.Where(item => item.StaffId != "");
@@ -148,6 +150,16 @@ namespace WaterDeliver.Controllers
             {
                 temRecords = temRecords.Where(item => item.VisitDate <= dailyQuery.DateEnd);
             }
+            if (pageSize != 1)
+            {
+                temRecords = temRecords
+                    .OrderByDescending(item => item.VisitDate)
+                    .Skip((pageSize - 1) * 20)
+                    .Take(20);
+            }
+            TempData["totalPage"] = temRecords.Count() % 20;
+            TempData["totalSize"] = temRecords.Count();
+
             return temRecords.ToList<DailyRecord>();
         }
 
