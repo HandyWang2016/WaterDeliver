@@ -8,27 +8,27 @@
 
 <script type="text/javascript">
     var staffId = '';
-    $(function () {
-        layer.open({
-            title: "请选择登录用户",
-            skin: 'layui-layer-molv',
-            type: 1,
-            closeBtn: 0,
-            btn: ["确定"],
-            content: $("#selStaff").html(),
-            yes: function (index) {
-                if (staffId == '') {
-                    staffId = $("#selectStaff").val();
-                }
-                $.post("/Controllers/Common/DataHandle.ashx",
-                      {
-                          op: "SetStaff",
-                          staffId: staffId
-                      });
-                layer.close(index);
-            }
-        });
-    });
+    //$(function () {
+    //    layer.open({
+    //        title: "请选择登录用户",
+    //        skin: 'layui-layer-molv',
+    //        type: 1,
+    //        closeBtn: 0,
+    //        btn: ["确定"],
+    //        content: $("#selStaff").html(),
+    //        yes: function (index) {
+    //            if (staffId == '') {
+    //                staffId = $("#selectStaff").val();
+    //            }
+    //            $.post("/Controllers/Common/DataHandle.ashx",
+    //                  {
+    //                      op: "SetStaff",
+    //                      staffId: staffId
+    //                  });
+    //            layer.close(index);
+    //        }
+    //    });
+    //});
 
     function setStaff(pam) {
         staffId = pam.selectedOptions[0].value;

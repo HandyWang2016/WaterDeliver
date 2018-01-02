@@ -32,6 +32,10 @@ namespace Model
         /// </summary>
         public double SumEarnWaterCardPrice { get; set; }
         /// <summary>
+        /// 交易年份
+        /// </summary>
+        public string VisitYear { get; set; }
+        /// <summary>
         /// 交易月份
         /// </summary>
         public string VisitMonth { get; set; }

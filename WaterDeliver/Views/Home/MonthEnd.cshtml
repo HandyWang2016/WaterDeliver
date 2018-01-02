@@ -29,11 +29,24 @@
         </div>
         <div class="panel-body">
             <div class="form-group col-sm-2">
+                <label class="control-label" for="selStaffs">选择员工</label>
+                <select name="StaffId" onchange="setStaff(this)" id="selStaffs" class="selectpicker show-tick form-control" style="width: 130px" data-live-search="true">
+                    @if (ViewBag.Staffs != null)
+                    {
+                        <option value=""></option>
+                        foreach (var item in ViewBag.Staffs as List<Model.Staff>)
+                        {
+                            <option value="@item.Id">@item.StaffName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group col-sm-2">
                 <label class="control-label" for="txtDateBegin">选择时间</label>
-                <input type="text" readonly class="form-control" style="width: 130px" name="yearMonth" id="txtDateBegin" />
+                <input type="text" readonly class="form-control" style="width: 130px" name="yearMonth" id="txtDateBegin"/>
             </div>
             <div class="form-group col-sm-3">
-                <input type="submit" value="查询" class="btn btn-primary" />
+                <input type="submit" value="查询" class="btn btn-primary"/>
             </div>
         </div>
     </div>
@@ -45,7 +58,7 @@
     <div class="panel-body">
         <table class="table table-hover table-bordered">
             <thead style="background-color:powderblue"><tr><th>交易月份</th><th>公司名称</th><th>送水桶数</th><th>收回空桶</th><th>收取押金(￥)</th><th>退还押金(￥)</th><th>月底结算(￥)</th><th>出售月卡(￥)</th></tr></thead>
-            @if (Model != null)
+            @if (Model != null && Model.SumDailyRecordByCP.Count > 0)
             {
                 int sumIndex = 0;
                 string month = "";
@@ -55,7 +68,7 @@
                     if (month != "" && month != item.VisitMonth)//汇总月底数据
                     {
                         <tr class="warning" style="color:red">
-                            <td colspan="2">@Model.SumDailyRecord[sumIndex].VisitMonth 汇总:</td>
+                            <td colspan="2">@Model.SumDailyRecord[sumIndex].VisitYear@Model.SumDailyRecord[sumIndex].VisitMonth 汇总:</td>
                             <td>@Model.SumDailyRecord[sumIndex].SumSendBucketAmount</td>
                             <td>@Model.SumDailyRecord[sumIndex].SumReceiveEmptyBucketAmount</td>
                             <td>@Model.SumDailyRecord[sumIndex].SumEarnDeposit</td>
@@ -79,7 +92,7 @@
                     month = item.VisitMonth;
                 }
                 <tr class="warning" style="color:red">
-                    <td colspan="2">@Model.SumDailyRecord[sumIndex].VisitMonth 汇总:</td>
+                    <td colspan="2">@Model.SumDailyRecord[sumIndex].VisitYear@Model.SumDailyRecord[sumIndex].VisitMonth 汇总:</td>
                     <td>@Model.SumDailyRecord[sumIndex].SumSendBucketAmount</td>
                     <td>@Model.SumDailyRecord[sumIndex].SumReceiveEmptyBucketAmount</td>
                     <td>@Model.SumDailyRecord[sumIndex].SumEarnDeposit</td>

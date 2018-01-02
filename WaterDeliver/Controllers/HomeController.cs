@@ -31,23 +31,17 @@ namespace WaterDeliver.Controllers
             List<Customer> customers = CustomerHelper.CustomerList();
             //所有员工-客户关系信息
             var staffCustomers = StaffCustomerHelper.StaffCustomerList();
-            //当前员工下的客户信息
-            List<StaffCustomer> currentCustomers = staffCustomers;
-
-            string staffId = GetStaffId();
-            if (staffId == "") { RedirectToAction("index"); }
-            currentCustomers = staffCustomers.Where(item => item.StaffId == staffId).ToList();
             //获取当前员工下的客户
             customers = (from c in customers
-                         join cc in currentCustomers
+                         join cc in staffCustomers
                          on c.Id equals cc.CustomerId
-                         select c).ToList();
+                         select c).Distinct().ToList();
             CustomerProductViewModel cusProduct = new CustomerProductViewModel()
             {
                 Customers = customers,
                 Products = products
             };
-
+            ViewBag.Staffs = StaffHelper.StaffList();
             ViewBag.flag = "DailyWrite";
             return View(cusProduct);
         }
@@ -60,10 +54,7 @@ namespace WaterDeliver.Controllers
         public ActionResult CreateDailyWrite(DailyRecord dailyRecord)
         {
             dailyRecord.Id = ObjectId.NewObjectId().ToString();
-            dailyRecord.VisitDate = DateTime.Now;
-
-            dailyRecord.StaffId = GetStaffId();
-            if (dailyRecord.StaffId == "") { return RedirectToAction("index"); }
+            dailyRecord.VisitDate = dailyRecord.VisitDate < Convert.ToDateTime("2017-01-01") ? DateTime.Now : dailyRecord.VisitDate;
 
             MongoBase.Insert(dailyRecord);
             return RedirectToAction("DailyRecord");
@@ -79,24 +70,19 @@ namespace WaterDeliver.Controllers
             List<Customer> customers = CustomerHelper.CustomerList();
             //所有员工-客户关系信息
             var staffCustomers = StaffCustomerHelper.StaffCustomerList();
-            //当前员工下的客户信息
-            List<StaffCustomer> currentCustomers = staffCustomers;
             //所有产品
             var products = ProductHelper.ProductList();
 
-            string staffId = GetStaffId();
-            if (staffId == "") { return RedirectToAction("index"); }
-            currentCustomers = staffCustomers.Where(item => item.StaffId == staffId).ToList();
             //获取当前员工下的客户
             customers = (from c in customers
-                         join cc in currentCustomers
+                         join cc in staffCustomers
                          on c.Id equals cc.CustomerId
-                         select c).ToList();
+                         select c).Distinct().ToList();
             //添加空选项
             customers.Insert(0, new Customer { CustomerName = "" });
 
             List<DailyRecord> records = TempData["DailyRecord"] == null
-                ? DailyRecordHelper.DailyRecordList().Where(item => item.StaffId == staffId).ToList()
+                ? DailyRecordHelper.DailyRecordList()
                 : TempData["DailyRecord"] as List<DailyRecord>;
             List<DailyRecordShow> newRecords = (from r in records
                                                 join c in customers
@@ -120,6 +106,7 @@ namespace WaterDeliver.Controllers
             ViewBag.flag = "DailyRecord";
             ViewBag.customers = customers;
             ViewBag.queryPam = TempData["dailyQuery"];
+            ViewBag.Staffs = StaffHelper.StaffList();
             return View(newRecords);
         }
 
@@ -130,9 +117,6 @@ namespace WaterDeliver.Controllers
         /// <returns></returns>
         public ActionResult QueryDailyRecord(DailyQueryMod dailyQuery)
         {
-            string staffId = GetStaffId();
-            if (staffId == "") { return RedirectToAction("index"); }
-            dailyQuery.StaffId = staffId;
             var records = FilterRecordInfo(dailyQuery);
             TempData["DailyRecord"] = records;
             TempData["dailyQuery"] = dailyQuery;
@@ -147,16 +131,20 @@ namespace WaterDeliver.Controllers
         private List<DailyRecord> FilterRecordInfo(DailyQueryMod dailyQuery)
         {
             List<DailyRecord> records = DailyRecordHelper.DailyRecordList();
-            IEnumerable<DailyRecord> temRecords = records.Where(item => item.StaffId == dailyQuery.StaffId);
+            IEnumerable<DailyRecord> temRecords = records.Where(item => item.StaffId != "");
+            if (!string.IsNullOrEmpty(dailyQuery.StaffId))
+            {
+                temRecords = temRecords.Where(item => item.StaffId == dailyQuery.StaffId);
+            }
             if (!string.IsNullOrEmpty(dailyQuery.CustomerId))
             {
                 temRecords = temRecords.Where(item => item.CustomerId == dailyQuery.CustomerId);
             }
-            if (dailyQuery.DateBegin > Convert.ToDateTime("2016-01-01"))
+            if (dailyQuery.DateBegin > Convert.ToDateTime("2017-01-01"))
             {
                 temRecords = temRecords.Where(item => item.VisitDate >= dailyQuery.DateBegin);
             }
-            if (dailyQuery.DateBegin > Convert.ToDateTime("2016-01-01"))
+            if (dailyQuery.DateBegin > Convert.ToDateTime("2017-01-01"))
             {
                 temRecords = temRecords.Where(item => item.VisitDate <= dailyQuery.DateEnd);
             }
@@ -177,9 +165,13 @@ namespace WaterDeliver.Controllers
                 int month = int.Parse(TempData["yearMonth"].ToString().Split('-')[1]);
                 records = records.Where(item => item.VisitDate.Year == year && item.VisitDate.Month == month).ToList();
             }
+            if (TempData["StaffId"] != null && TempData["StaffId"].ToString() != "")
+            {
+                records = records.Where(item => item.StaffId == TempData["StaffId"].ToString()).ToList();
+            }
             //按月份、公司分组
             List<SumDailyRecordByCP> sumRecordsByCP = records.OrderByDescending(i => i.VisitDate)
-                .GroupBy(item => new { item.VisitDate.Month, item.CustomerId })
+                .GroupBy(item => new { item.VisitDate.Year, item.VisitDate.Month, item.CustomerId })
                 .Select(g => new SumDailyRecordByCP
                 {
                     SumSendBucketAmount = g.Sum(x => x.SendBucketAmount), //送水桶数
@@ -206,7 +198,7 @@ namespace WaterDeliver.Controllers
 
             //按月份分组
             List<SumDailyRecord> sumRecords = records.OrderByDescending(i => i.VisitDate)
-                .GroupBy(item => new { item.VisitDate.Month })
+                .GroupBy(item => new { item.VisitDate.Year, item.VisitDate.Month })
                 .Select(g => new SumDailyRecord
                 {
                     SumSendBucketAmount = g.Sum(x => x.SendBucketAmount),//送水桶数
@@ -215,6 +207,7 @@ namespace WaterDeliver.Controllers
                     SumPayDeposit = g.Sum(x => x.PayDeposit),//退还押金
                     SumEarnMonthEndPrice = g.Sum(x => x.EarnMonthEndPrice),//收入月底结算
                     SumEarnWaterCardPrice = g.Sum(x => x.EarnWaterCardPrice),//收入水卡金额
+                    VisitYear = g.First().VisitDate.Year + "年",
                     VisitMonth = g.First().VisitDate.Month + "月"//交易月份
                 }).ToList();
 
@@ -223,7 +216,7 @@ namespace WaterDeliver.Controllers
                 SumDailyRecord = sumRecords,
                 SumDailyRecordByCP = sumRecordsByCP
             };
-
+            ViewBag.Staffs = StaffHelper.StaffList();
             ViewBag.flag = "MonthEnd";
             return View(viewModel);
         }
@@ -232,12 +225,17 @@ namespace WaterDeliver.Controllers
         /// 查询月底日常汇总
         /// </summary>
         /// <param name="yearMonth"></param>
+        /// <param name="StaffId"></param>
         /// <returns></returns>
-        public ActionResult QueryMonthEnd(string yearMonth)
+        public ActionResult QueryMonthEnd(string yearMonth, string staffId)
         {
             if (yearMonth != "")
             {
                 TempData["yearMonth"] = yearMonth;
+            }
+            if (staffId != "")
+            {
+                TempData["StaffId"] = staffId;
             }
             return RedirectToAction("MonthEnd");
         }
