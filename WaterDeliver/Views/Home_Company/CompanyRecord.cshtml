@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Model.CompanyPayRecord>
+﻿@model IEnumerable<Model.CompanyPayRecordDesc>
 @{
     ViewBag.Title = "CompanyRecord";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -7,7 +7,7 @@
 <link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
 <script>
     $(function () {
-        $('#txtDateBegin').datetimepicker({
+        $('#txtPayTimeBegin').datetimepicker({
             language: 'zh',
             todayBtn: 1,
             autoclose: 1,
@@ -17,7 +17,7 @@
         }).on('changeDate', function (ev) {
             $(this).datetimepicker('hide');
         });
-        $('#txtDateEnd').datetimepicker({
+        $('#txtPayTimeEnd').datetimepicker({
             language: 'zh',
             todayBtn: 1,
             autoclose: 1,
@@ -29,43 +29,50 @@
         });
     });
 </script>
-<form class="form-inline" method="post" action="/Home/QueryDailyRecord">
+<form class="form-inline" method="post" action="/Home_Company/QueryCompanyRecord">
     <div class="panel panel-info">
         <div class="panel-heading">
             <h4 class="panel-title">查询条件</h4>
         </div>
         <div class="panel-body">
-            <div class="form-group col-sm-5">
-                <label class="control-label" for="txtCustomerName">客户名称</label>
-                <select name="CustomerId" id="selCustomer" class="selectpicker show-tick form-control" data-live-search="true">
-                    @if (ViewBag.customers != null)
+            <div class="form-group col-sm-2">
+                <label class="control-label" for="selStaffs">消费者</label>
+                <select name="StaffId" id="selStaffs" class="selectpicker show-tick form-control" style="width: 130px" data-live-search="true">
+                    @if (ViewBag.Staffs != null)
                     {
-                        foreach (var item in ViewBag.customers as List<Model.Customer>)
+                        <option value=""></option>
+                        foreach (var item in ViewBag.Staffs as List<Model.Staff>)
                         {
-                            <option value="@item.Id">@item.CustomerName</option>
+                            <option value="@item.Id">@item.StaffName</option>
                         }
                     }
                 </select>
             </div>
             <div class="form-group col-sm-3">
-                <label class="control-label" for="txtDateBegin">开始时间</label>
-                <input type="text" readonly class="form-control" style="width: 130px" name="DateBegin" id="txtDateBegin" />
-            </div>
-            <div class="form-group col-sm-3">
-                <label class="control-label" for="txtDateEnd">结束时间</label>
-                <input type="text" readonly class="form-control" style="width: 130px" name="DateEnd" id="txtDateEnd" />
-            </div>
-            <div class="form-group col-md-3" style="margin-top:15px">
-                <label class="control-label" for="PayType">支付方式</label>
-                <select id="PayType" class="selectpicker show-tick form-control" style="width: 150px" required data-live-search="true">
-                    <option value="0">月底结算</option>
-                    <option value="1">预购水卡</option>
+                <label class="control-label" for="selPayType">消费类别</label>
+                <select name="PayTypeId" id="selPayType" class="selectpicker show-tick form-control" style="width: 200px" data-live-search="true">
+                    @if (ViewBag.Paytypes != null)
+                    {
+                        <option value=""></option>
+                        foreach (var item in ViewBag.Paytypes as List<Model.CompanyPayType>)
+                        {
+                            <option value="@item.Id">@item.PayType</option>
+                        }
+                    }
                 </select>
             </div>
-            <div class="form-group col-sm-3" style="margin-top:15px">
-                <input type="submit" value="查询" class="btn btn-primary" />
+                <div class="form-group col-sm-3">
+                    <label class="control-label" for="txtPayTimeBegin">消费时间</label>
+                    <input type="text" readonly class="form-control" style="width: 130px" name="PayTimeBegin" id="txtPayTimeBegin" />
+                </div>
+                <div class="form-group col-sm-3">
+                    <label class="control-label" for="txtPayTimeEnd">至</label>
+                    <input type="text" readonly class="form-control" style="width: 130px" name="PayTimeEnd" id="txtPayTimeEnd" />
+                </div>
+                <div class="form-group col-sm-3" style="margin-top:15px">
+                    <input type="submit" value="查询" class="btn btn-primary" />
+                </div>
             </div>
-        </div>
     </div>
 </form>
 <div class="panel panel-info">
@@ -74,21 +81,17 @@
     </div>
     <div class="panel-body">
         <table class="table table-hover table-bordered">
-            <thead style="background-color:powderblue"><tr><th>序号</th><th>客户名称</th><th>产品名称</th><th>送水桶数</th><th>收回空桶</th><th>收取押金</th><th>退还押金</th><th>月底结算</th><th>出售月卡</th><th>交易日期</th></tr></thead>
+            <thead style="background-color:powderblue"><tr><th>序号</th><th>消费者</th><th>消费类别</th><th>金额</th><th>时间</th><th>其他信息</th></tr></thead>
             @{int index = 0;
                 foreach (var item in Model)
                 {
                     <tr>
                         <td>@index</td>
-                        <td>@item.CustomerName</td>
-                        <td>@item.ProductName</td>
-                        <td>@item.SendBucketAmount</td>
-                        <td>@item.ReceiveEmptyBucketAmount</td>
-                        <td>@item.EarnDeposit</td>
-                        <td>@item.PayDeposit</td>
-                        <td>@item.EarnMonthEndPrice</td>
-                        <td>@item.EarnWaterCardPrice</td>
-                        <td>@item.VisitDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@item.StaffName</td>
+                        <td>@item.PayTypeDesc</td>
+                        <td>@item.PaySum</td>
+                        <td>@item.PayTime</td>
+                        <td>@item.Describe</td>
                     </tr>
                     index++;
                 }

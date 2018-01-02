@@ -31,7 +31,7 @@ namespace Common.BusinessHelper
         /// 获取所有公司纪录信息
         /// </summary>
         /// <returns></returns>
-        public static List<CompanyPayRecord> StaffList()
+        public static List<CompanyPayRecord> CompanyList()
         {
             using (Mongo mongo = new Mongo(_connectionString))
             {

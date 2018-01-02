@@ -13,6 +13,11 @@ namespace Model
         /// 支付类型
         /// </summary>
         public string PayTypeId { get; set; }
+
+        /// <summary>
+        /// 费用关系员工ID
+        /// </summary>
+        public string StaffId { set; get; }
         /// <summary>
         /// 支出金额
         /// </summary>
@@ -25,5 +30,18 @@ namespace Model
         /// 描述
         /// </summary>
         public string Describe { get; set; }
+    }
+
+    public class CompanyPayRecordDesc : CompanyPayRecord
+    {
+        /// <summary>
+        /// 支付类型描述
+        /// </summary>
+        public string PayTypeDesc { get; set; }
+
+        /// <summary>
+        /// 员工名称
+        /// </summary>
+        public string StaffName { get; set; }
     }
 }
