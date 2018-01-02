@@ -44,4 +44,10 @@ namespace Model
         /// </summary>
         public string StaffName { get; set; }
     }
+
+    public class CompanyPayRecordViewModel
+    {
+        public List<CompanyPayRecord> CompanyPayRecord { get; set; }
+        public List<CompanyPayRecordDesc> CompanyPayRecordDesc { get; set; }
+    }
 }

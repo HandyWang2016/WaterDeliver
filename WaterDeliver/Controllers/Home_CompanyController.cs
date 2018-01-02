@@ -69,11 +69,11 @@ namespace WaterDeliver.Controllers
             {
                 companyRecords = companyRecords.Where(item => item.PayTypeId == queryMod.PayTypeId);
             }
-            if (queryMod.PayTimeBegin >= Convert.ToDateTime("2016-01-01"))
+            if (queryMod.PayTimeBegin >= Convert.ToDateTime("2017-01-01"))
             {
                 companyRecords = companyRecords.Where(item => item.PayTime >= queryMod.PayTimeBegin);
             }
-            if (queryMod.PayTimeEnd >= Convert.ToDateTime("2016-01-01"))
+            if (queryMod.PayTimeEnd >= Convert.ToDateTime("2017-01-01"))
             {
                 companyRecords = companyRecords.Where(item => item.PayTime <= queryMod.PayTimeEnd);
             }
@@ -82,12 +82,71 @@ namespace WaterDeliver.Controllers
 
             return RedirectToAction("CompanyRecord");
         }
-        
 
+        /// <summary>
+        /// 公司结算汇总
+        /// </summary>
+        /// <returns></returns>
         public ActionResult CompanyEnd()
         {
+            var companyRecords = TempData["companyRecords"] != null
+                ? TempData["companyRecords"] as List<CompanyPayRecord>
+                : CompanyRecordHelper.CompanyList();
+
+            var payType = CompanyPayTypeHelper.PayTypeList();
+
+            //按年月分组
+            var comRecordsMonth = companyRecords
+                .OrderByDescending(item => item.PayTime)
+                .GroupBy(item => new { item.PayTime.Year, item.PayTime.Month })
+                .Select(g => new CompanyPayRecord
+                {
+                    PayTime = g.First().PayTime,
+                    PaySum = g.Sum(i => i.PaySum)
+                }).ToList();
+
+            //按年月、消费类型分组
+            var comRecordsMonType = companyRecords
+                .OrderByDescending(item => item.PayTime)
+                .GroupBy(item => new { item.PayTime.Year, item.PayTime.Month, item.PayTypeId })
+                .Select(g => new CompanyPayRecord
+                {
+                    PayTime = g.First().PayTime,
+                    PaySum = g.Sum(i => i.PaySum),
+                    PayTypeId = g.First().PayTypeId
+                }).Join(payType, x => x.PayTypeId, y => y.Id, (x, y) => new { x, y })
+                .Select(p => new CompanyPayRecordDesc
+                {
+                    PayTime = p.x.PayTime,
+                    PaySum = p.x.PaySum,
+                    PayTypeDesc = p.y.PayType
+                }).ToList();
+            CompanyPayRecordViewModel viewModel = new CompanyPayRecordViewModel()
+            {
+                CompanyPayRecord = comRecordsMonth,
+                CompanyPayRecordDesc = comRecordsMonType
+            };
             ViewBag.flag = "CompanyEnd";
-            return View();
+            ViewBag.PayType = payType;
+            return View(viewModel);
+        }
+
+        public ActionResult QueryMonthEnd(string payTypeId, string yearMonth)
+        {
+            var companyRecords = CompanyRecordHelper.CompanyList();
+            if (!string.IsNullOrEmpty(yearMonth))
+            {
+                int year = int.Parse(yearMonth.Split('-')[0]);
+                int month = int.Parse(yearMonth.Split('-')[1]);
+                companyRecords = companyRecords.Where(item => item.PayTime.Year == year && item.PayTime.Month == month).ToList();
+            }
+            if (!string.IsNullOrEmpty(payTypeId))
+            {
+                companyRecords = companyRecords.Where(item => item.PayTypeId == payTypeId).ToList();
+            }
+
+            TempData["companyRecords"] = companyRecords;
+            return RedirectToAction("CompanyEnd");
         }
     }
 }

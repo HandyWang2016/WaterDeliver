@@ -1,8 +1,100 @@
-﻿
+﻿@model Model.CompanyPayRecordViewModel
+
 @{
     ViewBag.Title = "CompanyEnd";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>CompanyEnd</h2>
+<link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<script>
+    $(function () {
+        $('#txtDateBegin').datetimepicker({
+            language: 'zh',
+            todayBtn: 0,
+            autoclose: 1,
+            todayHighlight: 1,
+            format: "yyyy-mm",//日期格式
+            startView: 3,
+            minView: 3,
+            clearBtn: true
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+    });
+</script>
+<form class="form-inline" method="post" action="/Home_Company/QueryMonthEnd">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">查询条件</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group col-sm-2">
+                <label class="control-label" for="selPayType">消费类型</label>
+                <select name="PayTypeId" id="selPayType" class="selectpicker show-tick form-control" style="width: 130px" data-live-search="true">
+                    @if (ViewBag.PayType != null)
+                    {
+                        <option value=""></option>
+                        foreach (var item in ViewBag.PayType as List<Model.CompanyPayType>)
+                        {
+                            <option value="@item.Id">@item.PayType</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group col-sm-2">
+                <label class="control-label" for="txtDateBegin">选择时间</label>
+                <input type="text" readonly class="form-control" style="width: 130px" name="yearMonth" id="txtDateBegin" />
+            </div>
+            <div class="form-group col-sm-3">
+                <input type="submit" value="查询" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">查询结果</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover table-bordered">
+            <thead style="background-color:powderblue">
+                <tr>
+                    <th>交易月份</th>
+                    <th>消费类别</th>
+                    <th>金额</th>
+                </tr>
+            </thead>
+            @if (Model != null && Model.CompanyPayRecordDesc.Count > 0)
+            {
+                int sumIndex = 0;
+                int month = 0;
 
+                foreach (var item in Model.CompanyPayRecordDesc)
+                {
+                    if (month != 0 && month != item.PayTime.Month)//汇总月底数据
+                    {
+                        <tr class="warning" style="color:red">
+                            <td colspan="2">@Model.CompanyPayRecord[sumIndex].PayTime.Year-@Model.CompanyPayRecord[sumIndex].PayTime.Month 汇总:</td>
+                            <td>@Model.CompanyPayRecord[sumIndex].PaySum</td>
+                        </tr>
+                        sumIndex++;
+                    }
+                    <tr>
+                        <td>@item.PayTime.Month 月</td>
+                        <td>@item.PayTypeDesc</td>
+                        <td>@item.PaySum</td>
+                    </tr>
+
+                    month = item.PayTime.Month;
+                }
+                <tr class="warning" style="color:red">
+                    <td colspan="2">@Model.CompanyPayRecord[sumIndex].PayTime.Year-@Model.CompanyPayRecord[sumIndex].PayTime.Month 汇总:</td>
+                    <td>@Model.CompanyPayRecord[sumIndex].PaySum</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
