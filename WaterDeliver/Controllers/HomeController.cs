@@ -83,6 +83,10 @@ namespace WaterDeliver.Controllers
 
             List<DailyRecord> records = TempData["DailyRecord"] == null
                 ? DailyRecordHelper.DailyRecordList()
+                .OrderByDescending(item => item.VisitDate)
+                .Skip(0)
+                .Take(10)
+                .ToList()
                 : TempData["DailyRecord"] as List<DailyRecord>;
             List<DailyRecordShow> newRecords = (from r in records
                                                 join c in customers
@@ -106,8 +110,16 @@ namespace WaterDeliver.Controllers
             ViewBag.flag = "DailyRecord";
             ViewBag.customers = customers;
             ViewBag.queryPam = TempData["dailyQuery"];
-            ViewBag.totalPage = TempData["totalPage"] == null ? records.Count % 20 : int.Parse(TempData["totalPage"].ToString());
-            ViewBag.totalSize = TempData["totalSize"] == null ? records.Count : int.Parse(TempData["totalSize"].ToString());
+
+            ViewBag.totalPage = TempData["totalPage"] == null
+                ? (records.Count() % 10 == 0
+                    ? records.Count() / 10
+                    : Math.Ceiling(Convert.ToDouble(records.Count()) / 10))
+                : int.Parse(TempData["totalPage"].ToString());
+
+            ViewBag.totalSize = TempData["totalSize"] == null
+                ? records.Count
+                : int.Parse(TempData["totalSize"].ToString());
             ViewBag.Staffs = StaffHelper.StaffList();
             return View(newRecords);
         }
@@ -150,17 +162,18 @@ namespace WaterDeliver.Controllers
             {
                 temRecords = temRecords.Where(item => item.VisitDate <= dailyQuery.DateEnd);
             }
-            if (pageSize != 1)
-            {
-                temRecords = temRecords
-                    .OrderByDescending(item => item.VisitDate)
-                    .Skip((pageSize - 1) * 20)
-                    .Take(20);
-            }
-            TempData["totalPage"] = temRecords.Count() % 20;
+            var currentRecords = temRecords
+                 .OrderByDescending(item => item.VisitDate)
+                 .Skip((pageSize - 1) * 10)
+                 .Take(10);
+
+
+            TempData["totalPage"] = temRecords.Count() % 10 == 0
+                ? temRecords.Count() / 10
+                : Math.Ceiling(Convert.ToDouble(temRecords.Count()) / 10);
             TempData["totalSize"] = temRecords.Count();
 
-            return temRecords.ToList<DailyRecord>();
+            return currentRecords.ToList<DailyRecord>();
         }
 
         /// <summary>

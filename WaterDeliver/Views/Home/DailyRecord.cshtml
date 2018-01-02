@@ -31,15 +31,16 @@
 
         // 模拟ajax数据用以下方法，方便用户更好的掌握用法
         //参数为当前页
-        ajaxTest(1);
+        //ajaxTest(1);
 
-        function ajaxTest(num) {
+        @*function ajaxTest(num) {
             $.ajax({
                 url: "/Home/QueryDailyRecord",
                 type: "get",
                 data: { "pageSize": num },
                 //dataType: "json",
                 success: function (data) {
+                    debugger;
                     console.log(data);
                     //分页
                     $("#page")
@@ -53,8 +54,24 @@
 		                });
                 }
             });
+        }*@
+
+        function ajaxTest(num) {
+            window.location.href="/Home/QueryDailyRecord?pageSize="+num
+            //分页
+
         }
 
+        $("#page")
+                .paging({
+                    pageNo: 1,
+                    totalPage: @ViewBag.totalPage,
+                    totalSize: @ViewBag.totalSize,
+                    callback: function (num) {
+                        ajaxTest(num);
+                    }
+                });
+        //ajaxTest(1);
     });
 </script>
 <form class="form-inline" method="post" action="/Home/QueryDailyRecord">
@@ -102,16 +119,18 @@
             </div>
         </div>
     </div>
-    <input type="hidden" name="pageSize" value="1"/>
+    <input type="hidden" name="pageSize" value="1" />
 </form>
 <div class="panel panel-info">
     <div class="panel-heading">
         <h4 class="panel-title">查询结果</h4>
     </div>
     <div class="panel-body">
-        <table class="table table-hover table-bordered">
+        <table class="table table-hover table-bordered table-condensed">
             <thead style="background-color:powderblue"><tr><th>序号</th><th>客户名称</th><th>产品名称</th><th>送水桶数</th><th>收回空桶</th><th>收取押金</th><th>退还押金</th><th>月底结算</th><th>出售月卡</th><th>交易日期</th></tr></thead>
-            @{int index = 0;
+            @if (Model != null)
+            {
+                int index = 0;
                 foreach (var item in Model)
                 {
                     <tr>
