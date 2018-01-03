@@ -29,49 +29,21 @@
             $(this).datetimepicker('hide');
         });
 
-        // 模拟ajax数据用以下方法，方便用户更好的掌握用法
-        //参数为当前页
-        //ajaxTest(1);
-
-        @*function ajaxTest(num) {
-            $.ajax({
-                url: "/Home/QueryDailyRecord",
-                type: "get",
-                data: { "pageSize": num },
-                //dataType: "json",
-                success: function (data) {
-                    debugger;
-                    console.log(data);
-                    //分页
-                    $("#page")
-		                .paging({
-		                    pageNo: num,
-		                    totalPage: @ViewBag.totalPage,
-		                    totalSize: @ViewBag.totalSize,
-		                    callback: function (num) {
-		                        ajaxTest(num);
-		                    }
-		                });
-                }
-            });
-        }*@
-
-        function ajaxTest(num) {
-            window.location.href="/Home/QueryDailyRecord?pageSize="+num
-            //分页
-
+     
+        //获取分页数据
+        function changePageSize(num) {
+            window.location.href = "/Home/QueryDailyRecord?pageSize=" + num;
         }
 
-        $("#page")
-                .paging({
-                    pageNo: 1,
-                    totalPage: @ViewBag.totalPage,
-                    totalSize: @ViewBag.totalSize,
-                    callback: function (num) {
-                        ajaxTest(num);
-                    }
-                });
-        //ajaxTest(1);
+        //展示分页div
+        $("#page").paging({
+            pageNo: @ViewBag.currentPage,
+            totalPage: @ViewBag.totalPage,
+            totalSize: @ViewBag.totalSize,
+            callback: function (num) {
+                changePageSize(num);
+            }
+        });
     });
 </script>
 <form class="form-inline" method="post" action="/Home/QueryDailyRecord">

@@ -72,6 +72,8 @@ namespace WaterDeliver.Controllers
             var staffCustomers = StaffCustomerHelper.StaffCustomerList();
             //所有产品
             var products = ProductHelper.ProductList();
+            //所有日常记录
+            var dailyRecords = DailyRecordHelper.DailyRecordList();
 
             //获取当前员工下的客户
             customers = (from c in customers
@@ -81,14 +83,14 @@ namespace WaterDeliver.Controllers
             //添加空选项
             customers.Insert(0, new Customer { CustomerName = "" });
 
-            List<DailyRecord> records = TempData["DailyRecord"] == null
-                ? DailyRecordHelper.DailyRecordList()
+            List<DailyRecord> currentRecords = TempData["DailyRecord"] == null
+                ? dailyRecords
                 .OrderByDescending(item => item.VisitDate)
                 .Skip(0)
                 .Take(10)
                 .ToList()
                 : TempData["DailyRecord"] as List<DailyRecord>;
-            List<DailyRecordShow> newRecords = (from r in records
+            List<DailyRecordShow> newRecords = (from r in currentRecords
                                                 join c in customers
                                                 on r.CustomerId equals c.Id
                                                 join p in products
@@ -112,14 +114,18 @@ namespace WaterDeliver.Controllers
             ViewBag.queryPam = TempData["dailyQuery"];
 
             ViewBag.totalPage = TempData["totalPage"] == null
-                ? (records.Count() % 10 == 0
-                    ? records.Count() / 10
-                    : Math.Ceiling(Convert.ToDouble(records.Count()) / 10))
+                ? (dailyRecords.Count() % 10 == 0
+                    ? dailyRecords.Count() / 10
+                    : Math.Ceiling(Convert.ToDouble(dailyRecords.Count()) / 10))
                 : int.Parse(TempData["totalPage"].ToString());
 
             ViewBag.totalSize = TempData["totalSize"] == null
-                ? records.Count
+                ? dailyRecords.Count
                 : int.Parse(TempData["totalSize"].ToString());
+           ViewBag.currentPage =TempData["currentPage"]==null
+                ?1
+                : int.Parse(TempData["currentPage"].ToString());
+
             ViewBag.Staffs = StaffHelper.StaffList();
             return View(newRecords);
         }
@@ -162,16 +168,17 @@ namespace WaterDeliver.Controllers
             {
                 temRecords = temRecords.Where(item => item.VisitDate <= dailyQuery.DateEnd);
             }
+
             var currentRecords = temRecords
                  .OrderByDescending(item => item.VisitDate)
                  .Skip((pageSize - 1) * 10)
                  .Take(10);
-
-
+            //记录分页相关字段
             TempData["totalPage"] = temRecords.Count() % 10 == 0
                 ? temRecords.Count() / 10
                 : Math.Ceiling(Convert.ToDouble(temRecords.Count()) / 10);
             TempData["totalSize"] = temRecords.Count();
+            TempData["currentPage"] = pageSize;
 
             return currentRecords.ToList<DailyRecord>();
         }
