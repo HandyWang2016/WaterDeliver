@@ -29,10 +29,19 @@
             $(this).datetimepicker('hide');
         });
 
-     
+
         //获取分页数据
         function changePageSize(num) {
-            window.location.href = "/Home/QueryDailyRecord?pageSize=" + num;
+            window.location.href = "/Home/QueryDailyRecord?pageSize=" +
+                num +
+                "&StaffId=" +
+                $("#selStaffs").val() +
+                "&CustomerId=" +
+                $("#selCustomer").val() +
+                "&DateBegin=" +
+                $("#txtDateBegin").val() +
+                "&DateEnd=" +
+                $("#txtDateEnd").val();
         }
 
         //展示分页div
@@ -44,6 +53,23 @@
                 changePageSize(num);
             }
         });
+
+        //刷新页面后，加载历史查询条件
+        var queryJson = JSON.parse('@Html.Raw(ViewBag.queryPam)');
+        if (queryJson.hasOwnProperty("CustomerId")) {
+            if (queryJson.StaffId != null) {
+                $("#selStaffs").val(queryJson.StaffId);
+            }
+            if (queryJson.CustomerId != null) {
+                $("#selCustomer").val(queryJson.CustomerId);
+            }
+            if (queryJson.DateBegin.indexOf("0001") <0) {
+                $("#txtDateBegin").val(queryJson.DateBegin.split('T')[0]);
+            }
+            if (queryJson.DateEnd.indexOf("0001") <0) {
+                $("#txtDateEnd").val(queryJson.DateEnd.split('T')[0]);
+            }
+        }
     });
 </script>
 <form class="form-inline" method="post" action="/Home/QueryDailyRecord">
@@ -128,12 +154,5 @@
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="~/scripts/pager/paging.js"></script>
-<script type="text/javascript">
-    $(function () {
-        var queryPam = '@ViewBag.queryPam';
-        if (queryPam != '') {
-        }
-    });
-</script>
 
 

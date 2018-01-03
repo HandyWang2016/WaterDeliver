@@ -7,6 +7,7 @@ using Common;
 using Common.BusinessHelper;
 using Model;
 using System.Collections;
+using Newtonsoft.Json;
 
 namespace WaterDeliver.Controllers
 {
@@ -111,7 +112,7 @@ namespace WaterDeliver.Controllers
 
             ViewBag.flag = "DailyRecord";
             ViewBag.customers = customers;
-            ViewBag.queryPam = TempData["dailyQuery"];
+            ViewBag.queryPam = TempData["dailyQuery"] == null ? "{}" : JsonConvert.SerializeObject(TempData["dailyQuery"]);
 
             ViewBag.totalPage = TempData["totalPage"] == null
                 ? (dailyRecords.Count() % 10 == 0
@@ -122,9 +123,9 @@ namespace WaterDeliver.Controllers
             ViewBag.totalSize = TempData["totalSize"] == null
                 ? dailyRecords.Count
                 : int.Parse(TempData["totalSize"].ToString());
-           ViewBag.currentPage =TempData["currentPage"]==null
-                ?1
-                : int.Parse(TempData["currentPage"].ToString());
+            ViewBag.currentPage = TempData["currentPage"] == null
+                 ? 1
+                 : int.Parse(TempData["currentPage"].ToString());
 
             ViewBag.Staffs = StaffHelper.StaffList();
             return View(newRecords);
@@ -187,19 +188,19 @@ namespace WaterDeliver.Controllers
         /// 月底结算
         /// </summary>
         /// <returns></returns>
-        public ActionResult MonthEnd()
+        public ActionResult MonthEnd(string yearMonth, string staffId, int pageSize = 1)
         {
             var records = DailyRecordHelper.DailyRecordList();
             var customers = CustomerHelper.CustomerList();
-            if (TempData["yearMonth"] != null && TempData["yearMonth"].ToString() != "")
+            if (!string.IsNullOrEmpty(yearMonth))
             {
-                int year = int.Parse(TempData["yearMonth"].ToString().Split('-')[0]);
-                int month = int.Parse(TempData["yearMonth"].ToString().Split('-')[1]);
+                int year = int.Parse(yearMonth.Split('-')[0]);
+                int month = int.Parse(yearMonth.Split('-')[1]);
                 records = records.Where(item => item.VisitDate.Year == year && item.VisitDate.Month == month).ToList();
             }
-            if (TempData["StaffId"] != null && TempData["StaffId"].ToString() != "")
+            if (!string.IsNullOrEmpty(staffId))
             {
-                records = records.Where(item => item.StaffId == TempData["StaffId"].ToString()).ToList();
+                records = records.Where(item => item.StaffId == staffId.ToString()).ToList();
             }
             //按月份、公司分组
             List<SumDailyRecordByCP> sumRecordsByCP = records.OrderByDescending(i => i.VisitDate)
@@ -248,6 +249,7 @@ namespace WaterDeliver.Controllers
                 SumDailyRecord = sumRecords,
                 SumDailyRecordByCP = sumRecordsByCP
             };
+            ViewBag.queryPam = JsonConvert.SerializeObject(new { YearMonth = yearMonth, StaffId = staffId });
             ViewBag.Staffs = StaffHelper.StaffList();
             ViewBag.flag = "MonthEnd";
             return View(viewModel);
@@ -259,17 +261,9 @@ namespace WaterDeliver.Controllers
         /// <param name="yearMonth"></param>
         /// <param name="StaffId"></param>
         /// <returns></returns>
-        public ActionResult QueryMonthEnd(string yearMonth, string staffId)
+        public ActionResult QueryMonthEnd(string yearMonth, string staffId, int pageSize = 1)
         {
-            if (yearMonth != "")
-            {
-                TempData["yearMonth"] = yearMonth;
-            }
-            if (staffId != "")
-            {
-                TempData["StaffId"] = staffId;
-            }
-            return RedirectToAction("MonthEnd");
+            return RedirectToAction("MonthEnd", new { yearMonth = yearMonth, staffId = staffId, pageSize = pageSize });
         }
     }
 }

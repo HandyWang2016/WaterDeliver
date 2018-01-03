@@ -20,6 +20,15 @@
         }).on('changeDate', function (ev) {
             $(this).datetimepicker('hide');
         });
+
+        //刷新页面后，加载历史查询条件
+        var queryJson = JSON.parse('@Html.Raw(ViewBag.queryPam)');
+        if (queryJson.PayTypeId != null) {
+            $("#selPayType").val(queryJson.PayTypeId);
+        }
+        if (queryJson.YearMonth != null && queryJson.YearMonth.indexOf("0001") < 0) {
+            $("#txtDateBegin").val(queryJson.YearMonth);
+        }
     });
 </script>
 <form class="form-inline" method="post" action="/Home_Company/QueryMonthEnd">

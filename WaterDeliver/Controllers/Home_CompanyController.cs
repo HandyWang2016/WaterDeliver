@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.BusinessHelper;
 using Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +32,9 @@ namespace WaterDeliver.Controllers
 
         public ActionResult CompanyRecord()
         {
+            var companyRecords = CompanyRecordHelper.CompanyList();
             var companyPayRecords = TempData["queryRecords"] == null
-                ? CompanyRecordHelper.CompanyList()
+                ? companyRecords.Skip(0).Take(10)
                 : TempData["queryRecords"] as List<CompanyPayRecord>;
 
             var staffs = StaffHelper.StaffList();
@@ -54,11 +56,26 @@ namespace WaterDeliver.Controllers
             ViewBag.Staffs = staffs;
             ViewBag.Paytypes = paytypes;
 
+            ViewBag.queryPam = TempData["queryMod"] == null ? "{}" : JsonConvert.SerializeObject(TempData["queryMod"]);
+
+            ViewBag.totalPage = TempData["totalPage"] == null
+                ? (companyRecords.Count() % 10 == 0
+                    ? companyRecords.Count() / 10
+                    : Math.Ceiling(Convert.ToDouble(companyRecords.Count()) / 10))
+                : int.Parse(TempData["totalPage"].ToString());
+
+            ViewBag.totalSize = TempData["totalSize"] == null
+                ? companyRecords.Count
+                : int.Parse(TempData["totalSize"].ToString());
+            ViewBag.currentPage = TempData["currentPage"] == null
+                 ? 1
+                 : int.Parse(TempData["currentPage"].ToString());
+
             ViewBag.flag = "CompanyRecord";
             return View(payRecordInfo);
         }
 
-        public ActionResult QueryCompanyRecord(CompanyQueryMod queryMod)
+        public ActionResult QueryCompanyRecord(CompanyQueryMod queryMod, int pageSize = 1)
         {
             var companyRecords = CompanyRecordHelper.CompanyList().Where(item => item.Id != "");
             if (!string.IsNullOrEmpty(queryMod.StaffId))
@@ -78,7 +95,20 @@ namespace WaterDeliver.Controllers
                 companyRecords = companyRecords.Where(item => item.PayTime <= queryMod.PayTimeEnd);
             }
 
-            TempData["queryRecords"] = companyRecords.ToList();
+            var sumRecords = companyRecords.ToList();
+            TempData["queryRecords"] = sumRecords
+                .OrderByDescending(item => item.PayTime)
+                .Skip((pageSize - 1) * 10)
+                .Take(10)
+                .ToList();
+
+            TempData["queryMod"] = queryMod;
+            //记录分页相关字段
+            TempData["totalPage"] = sumRecords.Count() % 10 == 0
+                ? sumRecords.Count() / 10
+                : Math.Ceiling(Convert.ToDouble(sumRecords.Count()) / 10);
+            TempData["totalSize"] = sumRecords.Count();
+            TempData["currentPage"] = pageSize;
 
             return RedirectToAction("CompanyRecord");
         }
@@ -87,7 +117,7 @@ namespace WaterDeliver.Controllers
         /// 公司结算汇总
         /// </summary>
         /// <returns></returns>
-        public ActionResult CompanyEnd()
+        public ActionResult CompanyEnd(string payTypeId, string yearMonth)
         {
             var companyRecords = TempData["companyRecords"] != null
                 ? TempData["companyRecords"] as List<CompanyPayRecord>
@@ -126,6 +156,8 @@ namespace WaterDeliver.Controllers
                 CompanyPayRecord = comRecordsMonth,
                 CompanyPayRecordDesc = comRecordsMonType
             };
+            //记录查询条件
+            ViewBag.queryPam = JsonConvert.SerializeObject(new { YearMonth = yearMonth, PayTypeId = payTypeId });
             ViewBag.flag = "CompanyEnd";
             ViewBag.PayType = payType;
             return View(viewModel);
@@ -146,7 +178,7 @@ namespace WaterDeliver.Controllers
             }
 
             TempData["companyRecords"] = companyRecords;
-            return RedirectToAction("CompanyEnd");
+            return RedirectToAction("CompanyEnd", new { payTypeId = payTypeId, yearMonth = yearMonth });
         }
     }
 }

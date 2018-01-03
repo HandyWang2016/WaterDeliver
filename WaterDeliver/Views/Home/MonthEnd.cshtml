@@ -20,6 +20,15 @@
         }).on('changeDate', function (ev) {
             $(this).datetimepicker('hide');
         });
+
+        //刷新页面后，加载历史查询条件
+        var queryJson = JSON.parse('@Html.Raw(ViewBag.queryPam)');
+        if (queryJson.StaffId != null) {
+            $("#selStaffs").val(queryJson.StaffId);
+        }
+        if (queryJson.YearMonth != null && queryJson.YearMonth.indexOf("0001") < 0) {
+            $("#txtDateBegin").val(queryJson.YearMonth);
+        }
     });
 </script>
 <form class="form-inline" method="post" action="/Home/QueryMonthEnd">
@@ -43,10 +52,10 @@
             </div>
             <div class="form-group col-sm-2">
                 <label class="control-label" for="txtDateBegin">选择时间</label>
-                <input type="text" readonly class="form-control" style="width: 130px" name="yearMonth" id="txtDateBegin"/>
+                <input type="text" readonly class="form-control" style="width: 130px" name="yearMonth" id="txtDateBegin" />
             </div>
             <div class="form-group col-sm-3">
-                <input type="submit" value="查询" class="btn btn-primary"/>
+                <input type="submit" value="查询" class="btn btn-primary" />
             </div>
         </div>
     </div>
@@ -102,10 +111,12 @@
                 </tr>
             }
         </table>
+        @*<div class="page_div" id="page"></div>*@
     </div>
 </div>
 
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
-@*<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.min.js"></script>*@
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="~/scripts/pager/paging.js"></script>
+
 

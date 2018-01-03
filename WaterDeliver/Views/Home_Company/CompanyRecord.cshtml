@@ -5,6 +5,8 @@
 }
 
 <link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<link href="~/scripts/pager/pageStyle.css" rel="stylesheet" />
+
 <script>
     $(function () {
         $('#txtPayTimeBegin').datetimepicker({
@@ -27,6 +29,47 @@
         }).on('changeDate', function (ev) {
             $(this).datetimepicker('hide');
         });
+
+        //获取分页数据
+        function changePageSize(num) {
+            window.location.href = "/Home_Company/QueryCompanyRecord?pageSize=" +
+                num +
+                "&StaffId=" +
+                $("#selStaffs").val() +
+                "&PayTypeId=" +
+                $("#selPayType").val() +
+                "&PayTimeBegin=" +
+                $("#txtPayTimeBegin").val() +
+                "&PayTimeEnd=" +
+                $("#txtPayTimeEnd").val();
+        }
+
+        //展示分页div
+        $("#page").paging({
+            pageNo: @ViewBag.currentPage,
+            totalPage: @ViewBag.totalPage,
+            totalSize: @ViewBag.totalSize,
+            callback: function (num) {
+                changePageSize(num);
+            }
+        });
+
+        //刷新页面后，加载历史查询条件
+        var queryJson = JSON.parse('@Html.Raw(ViewBag.queryPam)');
+        if (queryJson.hasOwnProperty("StaffId")) {
+            if (queryJson.StaffId != null) {
+                $("#selStaffs").val(queryJson.StaffId);
+            }
+            if (queryJson.PayTypeId != null) {
+                $("#selPayType").val(queryJson.PayTypeId);
+            }
+            if (queryJson.PayTimeBegin!=null && queryJson.PayTimeBegin.indexOf("0001") <0) {
+                $("#txtPayTimeBegin").val(queryJson.PayTimeBegin.split('T')[0]);
+            }
+            if (queryJson.PayTimeEnd!=null && queryJson.PayTimeEnd.indexOf("0001") <0) {
+                $("#txtPayTimeEnd").val(queryJson.PayTimeEnd.split('T')[0]);
+            }
+        }
     });
 </script>
 <form class="form-inline" method="post" action="/Home_Company/QueryCompanyRecord">
@@ -74,6 +117,7 @@
             </div>
         </div>
     </div>
+    <input type="hidden" name="pageSize" value="1" />
 </form>
 <div class="panel panel-info">
     <div class="panel-heading">
@@ -97,16 +141,11 @@
                 }
             }
         </table>
+        <div class="page_div" id="page"></div>
     </div>
 </div>
 
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
-<script type="text/javascript">
-    $(function () {
-        var queryPam = '@ViewBag.queryPam';
-        if (queryPam != '') {
-        }
-    });
-</script>
+<script src="~/scripts/pager/paging.js"></script>
 
