@@ -9,7 +9,7 @@ using Model;
 
 namespace WaterDeliver.Controllers.Admin
 {
-    public class ProductController : Controller
+    public class ProductController : Admin_BaseController
     {
         // GET: Product
         public ActionResult Index()

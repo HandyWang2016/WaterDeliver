@@ -21,6 +21,23 @@ else
     function confirmDel() {
         layer.confirm('确定要删除该条记录？',function(index) {return true;});
     }
+
+    $(function() {
+        //获取分页数据
+        function changePageIndex(num) {
+            window.location.href = "/Customer/Index?pageIndex=" + num;
+        }
+
+        //展示分页div
+        $("#page").paging({
+            pageNo: @ViewBag.currentPage,
+            totalPage: @ViewBag.totalPage,
+            totalSize: @ViewBag.totalSize,
+            callback: function (num) {
+                changePageIndex(num);
+            }
+        });
+    });
 </script>
 
 <div class="panel panel-info">
@@ -47,8 +64,8 @@ else
                     i++;
                 }
             }
-
         </table>
+        <div class="page_div" id="page"></div>
     </div>
 </div>
 <form class="form-horizontal" method="post" action="/Customer/Create">

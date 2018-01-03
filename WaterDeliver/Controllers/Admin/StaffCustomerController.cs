@@ -9,21 +9,28 @@ using Model;
 
 namespace WaterDeliver.Controllers.Admin
 {
-    public class StaffCustomerController : Controller
+    public class StaffCustomerController : Admin_BaseController
     {
         // GET: StaffProject
-        public ActionResult Index()
+        public ActionResult Index(int pageIndex = 1)
         {
             var staffs = StaffHelper.StaffList();
             var customers = CustomerHelper.CustomerList();
             var staffCustomer = StaffCustomerHelper.StaffCustomerList();
+            var currentStaffCustomers = staffCustomer.Skip((pageIndex - 1) * PageSize()).Take(PageSize()).ToList();
 
             StaffCustomerViewModel viewModel = new StaffCustomerViewModel()
             {
                 Staffs = staffs,
                 Customers = customers,
-                StaffCustomers = staffCustomer
+                StaffCustomers = currentStaffCustomers
             };
+
+            ViewBag.totalPage = staffCustomer.Count() % PageSize() == 0
+                    ? staffCustomer.Count() / PageSize()
+                    : Math.Ceiling(Convert.ToDouble(staffCustomer.Count()) / PageSize());
+            ViewBag.totalSize = staffCustomer.Count;
+            ViewBag.currentPage = pageIndex;
 
             ViewBag.flag = "stacus";
             return View(viewModel);
@@ -37,7 +44,7 @@ namespace WaterDeliver.Controllers.Admin
 
         public ActionResult Create(StaffCustomer staffCustomer)
         {
-            staffCustomer.Id= ObjectId.NewObjectId().ToString();
+            staffCustomer.Id = ObjectId.NewObjectId().ToString();
             MongoBase.Insert(staffCustomer);
             return RedirectToAction("Index");
         }

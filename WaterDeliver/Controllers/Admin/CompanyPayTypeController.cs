@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace WaterDeliver.Controllers.Admin
 {
-    public class CompanyPayTypeController : Controller
+    public class CompanyPayTypeController : Admin_BaseController
     {
         // GET: CompanyPayType
         public ActionResult Index()

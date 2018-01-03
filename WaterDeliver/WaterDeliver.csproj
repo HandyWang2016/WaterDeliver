@@ -186,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\Admin\Admin_BaseController.cs" />
     <Compile Include="Controllers\Admin\Admin_HomeController.cs" />
     <Compile Include="Controllers\Admin\CompanyPayTypeController.cs" />
     <Compile Include="Controllers\Admin\CustomerController.cs" />
@@ -240,6 +241,7 @@
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="obj\Debug\TempPE\" />
+    <Folder Include="Views\Admin_Base\" />
     <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>

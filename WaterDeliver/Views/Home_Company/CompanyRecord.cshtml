@@ -32,7 +32,7 @@
 
         //获取分页数据
         function changePageSize(num) {
-            window.location.href = "/Home_Company/QueryCompanyRecord?pageSize=" +
+            window.location.href = "/Home_Company/QueryCompanyRecord?pageIndex=" +
                 num +
                 "&StaffId=" +
                 $("#selStaffs").val() +
@@ -117,7 +117,7 @@
             </div>
         </div>
     </div>
-    <input type="hidden" name="pageSize" value="1" />
+    <input type="hidden" name="pageIndex" value="1" />
 </form>
 <div class="panel panel-info">
     <div class="panel-heading">
@@ -134,7 +134,7 @@
                         <td>@item.StaffName</td>
                         <td>@item.PayTypeDesc</td>
                         <td>@item.PaySum</td>
-                        <td>@item.PayTime</td>
+                        <td>@item.PayTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                         <td>@item.Describe</td>
                     </tr>
                     index++;

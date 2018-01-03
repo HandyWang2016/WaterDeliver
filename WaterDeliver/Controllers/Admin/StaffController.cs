@@ -9,7 +9,7 @@ using Model;
 
 namespace WaterDeliver.Controllers.Admin
 {
-    public class StaffController : Controller
+    public class StaffController : Admin_BaseController
     {
         // GET: Staff
         public ActionResult Index()

@@ -20,6 +20,25 @@
     <td>@customer.Phone</td>
 }
 
+<script type="text/javascript">
+    $(function() {
+        //获取分页数据
+        function changePageIndex(num) {
+            window.location.href = "/StaffCustomer/Index?pageIndex=" + num;
+        }
+
+        //展示分页div
+        $("#page").paging({
+            pageNo: @ViewBag.currentPage,
+            totalPage: @ViewBag.totalPage,
+            totalSize: @ViewBag.totalSize,
+            callback: function (num) {
+                changePageIndex(num);
+            }
+        });
+    });
+</script>
+
 <div class="panel panel-info">
     <div class="panel-heading">
         <h4 class="panel-title">员工客户关系管理</h4>
@@ -43,6 +62,7 @@
             }
 
         </table>
+        <div class="page_div" id="page"></div>
     </div>
 </div>
 <form class="form-horizontal" method="post" action="/StaffCustomer/Create">

@@ -32,7 +32,7 @@
 
         //获取分页数据
         function changePageSize(num) {
-            window.location.href = "/Home/QueryDailyRecord?pageSize=" +
+            window.location.href = "/Home/QueryDailyRecord?pageIndex=" +
                 num +
                 "&StaffId=" +
                 $("#selStaffs").val() +
@@ -117,7 +117,7 @@
             </div>
         </div>
     </div>
-    <input type="hidden" name="pageSize" value="1" />
+    <input type="hidden" name="pageIndex" value="1" />
 </form>
 <div class="panel panel-info">
     <div class="panel-heading">

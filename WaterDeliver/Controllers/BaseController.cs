@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -18,12 +19,26 @@ namespace WaterDeliver.Controllers
         }
 
         /// <summary>
-        ///     获取登录用户id
+        /// 获取登录用户id
         /// </summary>
         /// <returns></returns>
         private string GetStaffIds()
         {
             return Session?["staffId"]?.ToString() ?? "";
+        }
+
+        /// <summary>
+        /// 分页显示的条目数
+        /// </summary>
+        private static int _pageSize;
+
+        public int PageSize()
+        {
+            if (_pageSize == 0)
+            {
+                _pageSize = int.Parse(ConfigurationManager.AppSettings["PageSize"]);
+            }
+            return _pageSize;
         }
     }
 }

@@ -75,7 +75,7 @@ namespace WaterDeliver.Controllers
             return View(payRecordInfo);
         }
 
-        public ActionResult QueryCompanyRecord(CompanyQueryMod queryMod, int pageSize = 1)
+        public ActionResult QueryCompanyRecord(CompanyQueryMod queryMod, int pageIndex = 1)
         {
             var companyRecords = CompanyRecordHelper.CompanyList().Where(item => item.Id != "");
             if (!string.IsNullOrEmpty(queryMod.StaffId))
@@ -94,21 +94,22 @@ namespace WaterDeliver.Controllers
             {
                 companyRecords = companyRecords.Where(item => item.PayTime <= queryMod.PayTimeEnd);
             }
-
+            //获取页条数
+            int pageSize = PageSize();
             var sumRecords = companyRecords.ToList();
             TempData["queryRecords"] = sumRecords
                 .OrderByDescending(item => item.PayTime)
-                .Skip((pageSize - 1) * 10)
-                .Take(10)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
 
             TempData["queryMod"] = queryMod;
             //记录分页相关字段
-            TempData["totalPage"] = sumRecords.Count() % 10 == 0
-                ? sumRecords.Count() / 10
-                : Math.Ceiling(Convert.ToDouble(sumRecords.Count()) / 10);
+            TempData["totalPage"] = sumRecords.Count() % pageSize == 0
+                ? sumRecords.Count() / pageSize
+                : Math.Ceiling(Convert.ToDouble(sumRecords.Count()) / pageSize);
             TempData["totalSize"] = sumRecords.Count();
-            TempData["currentPage"] = pageSize;
+            TempData["currentPage"] = pageIndex;
 
             return RedirectToAction("CompanyRecord");
         }

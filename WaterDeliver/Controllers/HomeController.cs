@@ -83,12 +83,14 @@ namespace WaterDeliver.Controllers
                          select c).Distinct().ToList();
             //添加空选项
             customers.Insert(0, new Customer { CustomerName = "" });
+            //获取页条数
+            int pageSize = PageSize();
 
             List<DailyRecord> currentRecords = TempData["DailyRecord"] == null
                 ? dailyRecords
                 .OrderByDescending(item => item.VisitDate)
                 .Skip(0)
-                .Take(10)
+                .Take(pageSize)
                 .ToList()
                 : TempData["DailyRecord"] as List<DailyRecord>;
             List<DailyRecordShow> newRecords = (from r in currentRecords
@@ -115,9 +117,9 @@ namespace WaterDeliver.Controllers
             ViewBag.queryPam = TempData["dailyQuery"] == null ? "{}" : JsonConvert.SerializeObject(TempData["dailyQuery"]);
 
             ViewBag.totalPage = TempData["totalPage"] == null
-                ? (dailyRecords.Count() % 10 == 0
-                    ? dailyRecords.Count() / 10
-                    : Math.Ceiling(Convert.ToDouble(dailyRecords.Count()) / 10))
+                ? (dailyRecords.Count() % pageSize == 0
+                    ? dailyRecords.Count() / pageSize
+                    : Math.Ceiling(Convert.ToDouble(dailyRecords.Count()) / pageSize))
                 : int.Parse(TempData["totalPage"].ToString());
 
             ViewBag.totalSize = TempData["totalSize"] == null
@@ -135,10 +137,11 @@ namespace WaterDeliver.Controllers
         /// 查询日常记录
         /// </summary>
         /// <param name="dailyQuery"></param>
+        /// <param name="pageIndex"></param>
         /// <returns></returns>
-        public ActionResult QueryDailyRecord(DailyQueryMod dailyQuery, int pageSize)
+        public ActionResult QueryDailyRecord(DailyQueryMod dailyQuery, int pageIndex)
         {
-            var records = FilterRecordInfo(dailyQuery, pageSize);
+            var records = FilterRecordInfo(dailyQuery, pageIndex);
             TempData["DailyRecord"] = records;
             TempData["dailyQuery"] = dailyQuery;
             return RedirectToAction("DailyRecord");
@@ -149,7 +152,7 @@ namespace WaterDeliver.Controllers
         /// </summary>
         /// <param name="dailyQuery"></param>
         /// <returns></returns>
-        private List<DailyRecord> FilterRecordInfo(DailyQueryMod dailyQuery, int pageSize)
+        private List<DailyRecord> FilterRecordInfo(DailyQueryMod dailyQuery, int pageIndex)
         {
             List<DailyRecord> records = DailyRecordHelper.DailyRecordList();
             IEnumerable<DailyRecord> temRecords = records.Where(item => item.StaffId != "");
@@ -170,16 +173,18 @@ namespace WaterDeliver.Controllers
                 temRecords = temRecords.Where(item => item.VisitDate <= dailyQuery.DateEnd);
             }
 
+            //获取页条数
+            int pageSize = PageSize();
             var currentRecords = temRecords
                  .OrderByDescending(item => item.VisitDate)
-                 .Skip((pageSize - 1) * 10)
-                 .Take(10);
+                 .Skip((pageIndex - 1) * pageSize)
+                 .Take(pageSize);
             //记录分页相关字段
-            TempData["totalPage"] = temRecords.Count() % 10 == 0
-                ? temRecords.Count() / 10
-                : Math.Ceiling(Convert.ToDouble(temRecords.Count()) / 10);
+            TempData["totalPage"] = temRecords.Count() % pageSize == 0
+                ? temRecords.Count() / pageSize
+                : Math.Ceiling(Convert.ToDouble(temRecords.Count()) / pageSize);
             TempData["totalSize"] = temRecords.Count();
-            TempData["currentPage"] = pageSize;
+            TempData["currentPage"] = pageIndex;
 
             return currentRecords.ToList<DailyRecord>();
         }
