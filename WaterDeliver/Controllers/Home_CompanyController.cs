@@ -32,9 +32,11 @@ namespace WaterDeliver.Controllers
 
         public ActionResult CompanyRecord()
         {
+            //获取页条数
+            int pageSize = PageSize();
             var companyRecords = CompanyRecordHelper.CompanyList();
             var companyPayRecords = TempData["queryRecords"] == null
-                ? companyRecords.Skip(0).Take(10)
+                ? companyRecords.Skip(0).Take(pageSize)
                 : TempData["queryRecords"] as List<CompanyPayRecord>;
 
             var staffs = StaffHelper.StaffList();
@@ -59,9 +61,9 @@ namespace WaterDeliver.Controllers
             ViewBag.queryPam = TempData["queryMod"] == null ? "{}" : JsonConvert.SerializeObject(TempData["queryMod"]);
 
             ViewBag.totalPage = TempData["totalPage"] == null
-                ? (companyRecords.Count() % 10 == 0
-                    ? companyRecords.Count() / 10
-                    : Math.Ceiling(Convert.ToDouble(companyRecords.Count()) / 10))
+                ? (companyRecords.Count() % pageSize == 0
+                    ? companyRecords.Count() / pageSize
+                    : Math.Ceiling(Convert.ToDouble(companyRecords.Count()) / pageSize))
                 : int.Parse(TempData["totalPage"].ToString());
 
             ViewBag.totalSize = TempData["totalSize"] == null
