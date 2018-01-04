@@ -64,7 +64,7 @@ namespace Common.BusinessHelper
         /// 更新实体
         /// </summary>
         /// <param name="user"></param>
-        public static void Update(Products user)
+        public static void Update(Products product)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace Common.BusinessHelper
                     var collection = db.GetCollection<Products>();
 
                     // 更新对象  
-                    collection.Update(user, item => item.Id == user.Id);
+                    collection.Update(product, item => item.Id == product.Id);
                 }
             }
             catch (Exception ex)

@@ -231,6 +231,7 @@
     <Content Include="Views\Home_Company\CompanyEnd.cshtml" />
     <Content Include="Views\CompanyPayType\Index.cshtml" />
     <Content Include="Views\Home_Company\CompanyPay.cshtml" />
+    <Content Include="Views\Product\StockMaintain.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

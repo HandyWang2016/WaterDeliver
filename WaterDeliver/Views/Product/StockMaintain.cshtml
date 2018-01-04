@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Model.Products>
+
+@{
+    ViewBag.Title = "StockMaintain";
+    Layout = "~/Views/Shared/_Layout_admin.cshtml";
+}
+
+<script src="~/scripts/layer/layer.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var thePro = '@ViewBag.TheProduct';
+        if (thePro != '') {
+            var pro = JSON.parse('@Html.Raw(ViewBag.TheProduct)');
+            $("#" + pro.Id).css("background-color", "yellow");
+            layer.msg(pro.ProductName + "当前库存余量为" + pro.StockRemain + "桶,请核实", { icon: 6 });
+        }
+    });
+</script>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">产品库存信息</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover table-condensed">
+            <thead style="background-color: lightblue">
+                <tr>
+                    <th>ID</th>
+                    <th>产品名称</th>
+                    <th>库存余量</th>
+                    <th>空桶库存余量</th>
+                    <th>库存更新时间</th>
+                </tr>
+            </thead>
+            @if (Model != null)
+            {
+                int i = 0;
+                foreach (var item in Model)
+                {
+                    <tr id="@item.Id">
+                        <td>@i</td>
+                        <td>@item.ProductName</td>
+                        <td>@item.StockRemain</td>
+                        <td>@item.BucketStockRemain</td>
+                        <td>@item.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    </tr>
+                    i++;
+                }
+            }
+
+        </table>
+    </div>
+</div>
+<form class="form-horizontal" method="post" action="/Product/AddStockAmount">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">添加库存</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="selProduct">选择产品</label>
+                <select name="productId" id="selProduct" class="selectpicker show-tick form-control col-sm-2" style="width: 250px" required data-live-search="true">
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <option value="@item.Id">@item.ProductName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="txtStockRemain">添加库存</label>
+                <input type="number" required class="form-control col-sm-2" style="width: 100px" value="0" id="txtStockRemain" name="numToAdd" />&nbsp;桶
+            </div>
+            <input type="submit" value="提交" class="btn btn-primary" />
+        </div>
+    </div>
+</form>

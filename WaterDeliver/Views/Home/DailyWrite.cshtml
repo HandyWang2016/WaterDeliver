@@ -47,18 +47,24 @@
             <div class="form-group">
                 <label class="col-md-2 control-label" for="selCustomer">选择客户</label>
                 <select name="CustomerId" id="selCustomer" class="selectpicker show-tick form-control col-sm-2" style="width: 350px" required data-live-search="true">
-                    @foreach (var item in Model.Customers)
+                    @if (Model.Customers != null)
                     {
-                        <option value="@item.Id">@item.CustomerName</option>
+                        foreach (var item in Model.Customers)
+                        {
+                            <option value="@item.Id">@item.CustomerName</option>
+                        }
                     }
                 </select>
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label" for="selProduct">选择产品</label>
                 <select name="SendProductId" id="selProduct" class="selectpicker show-tick form-control col-sm-2" style="width: 350px" required data-live-search="true">
-                    @foreach (var item in Model.Products)
+                    @if (Model.Products != null)
                     {
-                        <option value="@item.Id">@item.ProductName</option>
+                        foreach (var item in Model.Products)
+                        {
+                            <option value="@item.Id">@item.ProductName</option>
+                        }
                     }
                 </select>
             </div>
@@ -93,7 +99,7 @@
             <div class="form-group" style="margin-left:80px">
                 <input type="submit" value="保存" class="btn btn-primary" />
             </div>
-            
+
         </div>
     </div>
 </form>

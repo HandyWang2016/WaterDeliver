@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Common;
 using Common.BusinessHelper;
 using Model;
+using Newtonsoft.Json;
 
 namespace WaterDeliver.Controllers.Admin
 {
@@ -32,6 +33,31 @@ namespace WaterDeliver.Controllers.Admin
         {
             ProductHelper.Delete(id);
             return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// 产品库存维护
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult StockMaintain()
+        {
+            ViewBag.flag = "stockMaintain";
+            var products = ProductHelper.ProductList();
+            if (TempData["TheProduct"] != null)
+            {
+                ViewBag.TheProduct = TempData["TheProduct"];
+            }
+            return View(products);
+        }
+
+        public ActionResult AddStockAmount(string productId, int numToAdd)
+        {
+            var product = ProductHelper.GetById(productId);
+            product.StockRemain = product.StockRemain + numToAdd;
+            product.UpdateTime = DateTime.Now;
+            ProductHelper.Update(product);
+            TempData["TheProduct"] = JsonConvert.SerializeObject(product);
+            return RedirectToAction("StockMaintain");
         }
     }
 }

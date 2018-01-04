@@ -22,6 +22,14 @@ namespace Model
         /// </summary>
         public double CostPrice { get; set; }
         /// <summary>
+        /// 空桶库存
+        /// </summary>
+        public int BucketStockRemain { get; set; }
+        /// <summary>
+        /// 空桶成本
+        /// </summary>
+        public double BucketCostPrice { get; set; }
+        /// <summary>
         /// 销售价格
         /// </summary>
         public double SalePrice { get; set; }
