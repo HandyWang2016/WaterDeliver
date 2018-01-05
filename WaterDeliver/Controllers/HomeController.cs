@@ -30,13 +30,6 @@ namespace WaterDeliver.Controllers
             List<Products> products = ProductHelper.ProductList();
             //所有客户
             List<Customer> customers = CustomerHelper.CustomerList();
-            //所有员工-客户关系信息
-            var staffCustomers = StaffCustomerHelper.StaffCustomerList();
-            //获取当前员工下的客户
-            customers = (from c in customers
-                         join cc in staffCustomers
-                         on c.Id equals cc.CustomerId
-                         select c).Distinct().ToList();
             CustomerProductViewModel cusProduct = new CustomerProductViewModel()
             {
                 Customers = customers,
@@ -69,18 +62,10 @@ namespace WaterDeliver.Controllers
         {
             //所有客户
             List<Customer> customers = CustomerHelper.CustomerList();
-            //所有员工-客户关系信息
-            var staffCustomers = StaffCustomerHelper.StaffCustomerList();
             //所有产品
             var products = ProductHelper.ProductList();
             //所有日常记录
             var dailyRecords = DailyRecordHelper.DailyRecordList();
-
-            //获取当前员工下的客户
-            customers = (from c in customers
-                         join cc in staffCustomers
-                         on c.Id equals cc.CustomerId
-                         select c).Distinct().ToList();
             //添加空选项
             customers.Insert(0, new Customer { CustomerName = "" });
             //获取页条数
