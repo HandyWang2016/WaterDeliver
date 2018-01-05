@@ -10,6 +10,10 @@ namespace Model
     {
         public string Id { get; set; }
         /// <summary>
+        /// 产品所属水厂
+        /// </summary>
+        public string FactoryId { get; set; }
+        /// <summary>
         /// 产品名称
         /// </summary>
         public string ProductName { get; set; }

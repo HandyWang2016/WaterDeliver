@@ -190,6 +190,7 @@
     <Compile Include="Controllers\Admin\Admin_HomeController.cs" />
     <Compile Include="Controllers\Admin\CompanyPayTypeController.cs" />
     <Compile Include="Controllers\Admin\CustomerController.cs" />
+    <Compile Include="Controllers\Admin\FactoryController.cs" />
     <Compile Include="Controllers\Admin\ProductController.cs" />
     <Compile Include="Controllers\Admin\StaffController.cs" />
     <Compile Include="Controllers\Admin\StaffCustomerController.cs" />
@@ -244,6 +245,7 @@
     <Folder Include="obj\Debug\TempPE\" />
     <Folder Include="Views\Admin_Base\" />
     <Folder Include="Views\Base\" />
+    <Folder Include="Views\Factory\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
