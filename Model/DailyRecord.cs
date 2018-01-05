@@ -38,13 +38,9 @@ namespace Model
         /// </summary>
         public double PayDeposit { get; set; }
         /// <summary>
-        /// 收入月底结算金额
+        /// 收入结算金额
         /// </summary>
         public double EarnMonthEndPrice { get; set; }
-        /// <summary>
-        /// 收入月卡金额
-        /// </summary>
-        public double EarnWaterCardPrice { get; set; }
         /// <summary>
         /// 纪录日期
         /// </summary>
