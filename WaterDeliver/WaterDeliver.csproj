@@ -233,6 +233,7 @@
     <Content Include="Views\CompanyPayType\Index.cshtml" />
     <Content Include="Views\Home_Company\CompanyPay.cshtml" />
     <Content Include="Views\Product\StockMaintain.cshtml" />
+    <Content Include="Views\Factory\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -245,7 +246,6 @@
     <Folder Include="obj\Debug\TempPE\" />
     <Folder Include="Views\Admin_Base\" />
     <Folder Include="Views\Base\" />
-    <Folder Include="Views\Factory\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

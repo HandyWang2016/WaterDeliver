@@ -42,4 +42,9 @@ namespace Model
         /// </summary>
         public DateTime UpdateTime { get; set; }
     }
+
+    public class ProductFac : Products
+    {
+        public string FactoryName { get; set; }
+    }
 }

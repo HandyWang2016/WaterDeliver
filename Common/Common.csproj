@@ -52,6 +52,7 @@
     <Compile Include="BusinessHelper\CompanyRecordHelper.cs" />
     <Compile Include="BusinessHelper\CustomerHelper.cs" />
     <Compile Include="BusinessHelper\DailyRecordHelper.cs" />
+    <Compile Include="BusinessHelper\FactoryHelper.cs" />
     <Compile Include="BusinessHelper\StaffCustomerHelper.cs" />
     <Compile Include="MongoBase.cs" />
     <Compile Include="BusinessHelper\ProductHelper.cs" />

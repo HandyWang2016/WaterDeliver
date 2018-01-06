@@ -15,9 +15,24 @@ namespace WaterDeliver.Controllers.Admin
         // GET: Product
         public ActionResult Index()
         {
+            var factories = FactoryHelper.FactoryList();
             var products = ProductHelper.ProductList();
+
+            var newProducts = products.Join(factories, x => x.FactoryId, y => y.Id, (x, y) => new ProductFac
+            {
+                ProductName = x.ProductName,
+                CostPrice = x.CostPrice,
+                StockRemain = x.StockRemain,
+                BucketStockRemain = x.BucketStockRemain,
+                BucketCostPrice = x.BucketCostPrice,
+                SalePrice = x.SalePrice,
+                UpdateTime = x.UpdateTime,
+                FactoryName = y.FactoryName
+            });
+            
+            ViewBag.Factories = factories;
             ViewBag.flag = "product";
-            return View(products);
+            return View(newProducts);
         }
 
         public ActionResult Create(Products product)

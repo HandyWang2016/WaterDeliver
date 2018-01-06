@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Model.Factory>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_admin.cshtml";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">供货商信息</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover table-condensed">
+            <thead style="background-color:lightblue"><tr><th>ID</th><th>供货商姓名</th><th>联系电话</th><th>其他信息</th><th>操作</th></tr></thead>
+            @if (Model != null)
+            {
+                int i = 0;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@i</td>
+                        <td>@item.FactoryName</td>
+                        <td>@item.Phone</td>
+                        <td>@item.Describe</td>
+                        <td>@Html.ActionLink("删除", "Delete", "Factory", new { id = item.Id }, new { @class = "btn btn-xs btn-danger", onclick = "return confirm('确认删除？')" })</td>
+                    </tr>
+                    i++;
+                }
+            }
+
+        </table>
+    </div>
+</div>
+<form class="form-horizontal" method="post" action="/Factory/Create">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">添加供货商</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="txtName">名称</label>
+                <input type="text" required class="form-control col-sm-2" id="txtName" style="width: 200px" name="FactoryName" />
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="txtPhone">联系电话</label>
+                <input type="text" required class="form-control col-sm-2" id="txtPhone" style="width: 200px" name="Phone" />
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="txtDes">其他信息</label>
+                <textarea class="form-control" name="Describe" id="txtDes" rows="3" style="width:400px"></textarea>
+            </div>
+            <input type="submit" value="提交" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+

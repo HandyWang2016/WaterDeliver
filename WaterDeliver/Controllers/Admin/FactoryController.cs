@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Common;
+using Common.BusinessHelper;
+using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,7 +17,22 @@ namespace WaterDeliver.Controllers.Admin
         // GET: Factory
         public ActionResult Index()
         {
-            return View();
+            var factories = FactoryHelper.FactoryList();
+            ViewBag.flag = "factory";
+            return View(factories);
+        }
+
+        public ActionResult Create(Factory factory)
+        {
+            factory.Id = ObjectId.NewObjectId().ToString();
+            MongoBase.Insert<Factory>(factory);
+            return RedirectToAction("index");
+        }
+
+        public ActionResult Delete(string id)
+        {
+            StaffHelper.Delete(id);
+            return RedirectToAction("Index");
         }
     }
 }

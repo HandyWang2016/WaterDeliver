@@ -9,9 +9,15 @@ namespace Model
         /// 厂家名称
         /// </summary>
         public string FactoryName { get; set; }
+
         /// <summary>
-        /// 厂家所有产品
+        /// 联系方式
         /// </summary>
-        public List<Products> Products { get; set; }
+        public string Phone { get; set; }
+
+        /// <summary>
+        /// 其他信息
+        /// </summary>
+        public string Describe { get; set; }
     }
 }

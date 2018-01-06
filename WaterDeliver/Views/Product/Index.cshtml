@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Model.Products>
+﻿@model IEnumerable<Model.ProductFac>
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout_admin.cshtml";
@@ -17,6 +17,7 @@
                 <th>成本价格</th>
                 <th>空桶成本</th>
                 <th>销售价格</th>
+                <th>所属供货商</th>
                 <th>库存更新时间</th>
                 <th>操作</th></tr>
             </thead>
@@ -33,6 +34,7 @@
                         <td>@item.CostPrice</td>
                         <td>@item.BucketCostPrice</td>
                         <td>@item.SalePrice</td>
+                        <td>@item.FactoryName</td>
                         <td>@item.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                         <td>@Html.ActionLink("删除", "Delete", "Product", new { id = item.Id }, new { @class = "btn btn-xs btn-danger", onclick = "return confirm('确认删除？')" })</td>
                     </tr>
@@ -52,6 +54,18 @@
             <div class="form-group">
                 <label class="col-sm-1 control-label" for="txtProductName">产品名称</label>
                 <input type="text" required class="form-control" style="width: 200px" id="txtProductName" name="ProductName"/>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label" for="selFactory">供货商</label>
+                <select name="FactoryId" id="selFactory" class="selectpicker show-tick form-control col-sm-2" style="width: 200px" required data-live-search="true">
+                    @if (ViewBag.Factories != null)
+                    {
+                        foreach (var item in ViewBag.Factories)
+                        {
+                            <option value="@item.Id">@item.FactoryName</option>
+                        }
+                    }
+                </select>
             </div>
             <div class="form-group">
                 <label class="col-sm-1 control-label" for="txtStockRemain">库存余量</label>
