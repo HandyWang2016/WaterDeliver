@@ -52,6 +52,7 @@ namespace WaterDeliver.Controllers
                                  {
                                      StaffName = s.StaffName,
                                      PayTypeDesc = p.PayType,
+                                     IsPayType = r.IsPayType,
                                      TransSum = r.TransSum,
                                      TransTime = r.TransTime,
                                      Describe = r.Describe
@@ -136,7 +137,7 @@ namespace WaterDeliver.Controllers
                 .Select(g => new CompanyPayRecord
                 {
                     TransTime = g.First().TransTime,
-                    TransSum = g.Sum(i => i.TransSum)
+                    TransSum = g.Sum(i => i.IsPayType ? -i.TransSum : i.TransSum)
                 }).ToList();
 
             //按年月、消费类型分组
@@ -146,13 +147,13 @@ namespace WaterDeliver.Controllers
                 .Select(g => new CompanyPayRecord
                 {
                     TransTime = g.First().TransTime,
-                    TransSum = g.Sum(i => i.TransSum),
+                    TransSum = g.Sum(i => i.IsPayType ? -i.TransSum : i.TransSum),
                     PayTypeId = g.First().PayTypeId
                 }).Join(payType, x => x.PayTypeId, y => y.Id, (x, y) => new { x, y })
                 .Select(p => new CompanyPayRecordDesc
                 {
                     TransTime = p.x.TransTime,
-                    TransSum = p.x.TransSum,
+                    TransSum = p.x.IsPayType ? -p.x.TransSum : p.x.TransSum,
                     PayTypeDesc = p.y.PayType
                 }).ToList();
             CompanyPayRecordViewModel viewModel = new CompanyPayRecordViewModel()

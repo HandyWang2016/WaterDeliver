@@ -4,6 +4,18 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@helper ShowColorPrice(bool type, double price)
+{
+    if (type)
+    {
+            <td style="color:red">-@price</td>
+    }
+    else
+    {
+            <td style="color:green">+@price</td>
+    }
+}
+
 <link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
 <link href="~/scripts/pager/pageStyle.css" rel="stylesheet" />
 
@@ -125,7 +137,7 @@
     </div>
     <div class="panel-body">
         <table class="table table-hover table-bordered table-condensed">
-            <thead style="background-color:powderblue"><tr><th>序号</th><th>消费者</th><th>消费类别</th><th>金额</th><th>时间</th><th>其他信息</th></tr></thead>
+            <thead style="background-color:powderblue"><tr><th>序号</th><th>员工</th><th>交易类别</th><th>金额</th><th>时间</th><th>其他信息</th></tr></thead>
             @{int index = 0;
                 foreach (var item in Model)
                 {
@@ -133,7 +145,7 @@
                         <td>@index</td>
                         <td>@item.StaffName</td>
                         <td>@item.PayTypeDesc</td>
-                        <td>@item.TransSum</td>
+                        @ShowColorPrice(item.IsPayType, item.TransSum)
                         <td>@item.TransTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                         <td>@item.Describe</td>
                     </tr>
