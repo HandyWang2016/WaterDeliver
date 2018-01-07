@@ -16,6 +16,7 @@ namespace WaterDeliver.Controllers
         {
             var companyPayType = CompanyPayTypeHelper.PayTypeList();
             var staffInfo = StaffHelper.StaffList();
+            //staffInfo.Insert(0, new Staff { Id = "", StaffName = "" });
             ViewBag.Staffs = staffInfo;
 
             ViewBag.flag = "CompanyPay";
@@ -43,16 +44,16 @@ namespace WaterDeliver.Controllers
             var paytypes = CompanyPayTypeHelper.PayTypeList();
 
             var payRecordInfo = (from r in companyPayRecords
-                                 join s in staffs
-                                 on r.StaffId equals s.Id
                                  join p in paytypes
                                  on r.PayTypeId equals p.Id
+                                 join s in staffs
+                                 on r.StaffId equals s.Id
                                  select new CompanyPayRecordDesc()
                                  {
                                      StaffName = s.StaffName,
                                      PayTypeDesc = p.PayType,
-                                     PaySum = r.PaySum,
-                                     PayTime = r.PayTime,
+                                     TransSum = r.TransSum,
+                                     TransTime = r.TransTime,
                                      Describe = r.Describe
                                  }).ToList();
             ViewBag.Staffs = staffs;
@@ -90,17 +91,17 @@ namespace WaterDeliver.Controllers
             }
             if (queryMod.PayTimeBegin >= Convert.ToDateTime("2017-01-01"))
             {
-                companyRecords = companyRecords.Where(item => item.PayTime >= queryMod.PayTimeBegin);
+                companyRecords = companyRecords.Where(item => item.TransTime >= queryMod.PayTimeBegin);
             }
             if (queryMod.PayTimeEnd >= Convert.ToDateTime("2017-01-01"))
             {
-                companyRecords = companyRecords.Where(item => item.PayTime <= queryMod.PayTimeEnd);
+                companyRecords = companyRecords.Where(item => item.TransTime <= queryMod.PayTimeEnd);
             }
             //获取页条数
             int pageSize = PageSize();
             var sumRecords = companyRecords.ToList();
             TempData["queryRecords"] = sumRecords
-                .OrderByDescending(item => item.PayTime)
+                .OrderByDescending(item => item.TransTime)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
@@ -130,28 +131,28 @@ namespace WaterDeliver.Controllers
 
             //按年月分组
             var comRecordsMonth = companyRecords
-                .OrderByDescending(item => item.PayTime)
-                .GroupBy(item => new { item.PayTime.Year, item.PayTime.Month })
+                .OrderByDescending(item => item.TransTime)
+                .GroupBy(item => new { item.TransTime.Year, item.TransTime.Month })
                 .Select(g => new CompanyPayRecord
                 {
-                    PayTime = g.First().PayTime,
-                    PaySum = g.Sum(i => i.PaySum)
+                    TransTime = g.First().TransTime,
+                    TransSum = g.Sum(i => i.TransSum)
                 }).ToList();
 
             //按年月、消费类型分组
             var comRecordsMonType = companyRecords
-                .OrderByDescending(item => item.PayTime)
-                .GroupBy(item => new { item.PayTime.Year, item.PayTime.Month, item.PayTypeId })
+                .OrderByDescending(item => item.TransTime)
+                .GroupBy(item => new { item.TransTime.Year, item.TransTime.Month, item.PayTypeId })
                 .Select(g => new CompanyPayRecord
                 {
-                    PayTime = g.First().PayTime,
-                    PaySum = g.Sum(i => i.PaySum),
+                    TransTime = g.First().TransTime,
+                    TransSum = g.Sum(i => i.TransSum),
                     PayTypeId = g.First().PayTypeId
                 }).Join(payType, x => x.PayTypeId, y => y.Id, (x, y) => new { x, y })
                 .Select(p => new CompanyPayRecordDesc
                 {
-                    PayTime = p.x.PayTime,
-                    PaySum = p.x.PaySum,
+                    TransTime = p.x.TransTime,
+                    TransSum = p.x.TransSum,
                     PayTypeDesc = p.y.PayType
                 }).ToList();
             CompanyPayRecordViewModel viewModel = new CompanyPayRecordViewModel()
@@ -173,7 +174,7 @@ namespace WaterDeliver.Controllers
             {
                 int year = int.Parse(yearMonth.Split('-')[0]);
                 int month = int.Parse(yearMonth.Split('-')[1]);
-                companyRecords = companyRecords.Where(item => item.PayTime.Year == year && item.PayTime.Month == month).ToList();
+                companyRecords = companyRecords.Where(item => item.TransTime.Year == year && item.TransTime.Month == month).ToList();
             }
             if (!string.IsNullOrEmpty(payTypeId))
             {

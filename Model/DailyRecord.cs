@@ -49,6 +49,7 @@ namespace Model
 
     public class DailyRecordShow : DailyRecord
     {
+        public string StaffName { get; set; }
         public string CustomerName { get; set; }
         public string ProductName { get; set; }
     }

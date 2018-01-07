@@ -19,13 +19,17 @@ namespace Model
         /// </summary>
         public string StaffId { set; get; }
         /// <summary>
-        /// 支出金额
+        /// 交易类型是否是支付 true:支付 false:
         /// </summary>
-        public double PaySum { get; set; }
+        public bool IsPayType { get; set; }
         /// <summary>
-        /// 支付时间
+        /// 交易金额
         /// </summary>
-        public DateTime PayTime { get; set; }
+        public double TransSum { get; set; }
+        /// <summary>
+        /// 交易时间
+        /// </summary>
+        public DateTime TransTime { get; set; }
         /// <summary>
         /// 描述
         /// </summary>

@@ -80,25 +80,25 @@
 
                 foreach (var item in Model.CompanyPayRecordDesc)
                 {
-                    if (month != 0 && month != item.PayTime.Month)//汇总月底数据
+                    if (month != 0 && month != item.TransTime.Month)//汇总月底数据
                     {
                         <tr class="warning" style="color:red">
-                            <td colspan="2">@Model.CompanyPayRecord[sumIndex].PayTime.Year-@Model.CompanyPayRecord[sumIndex].PayTime.Month 汇总:</td>
-                            <td>@Model.CompanyPayRecord[sumIndex].PaySum</td>
+                            <td colspan="2">@Model.CompanyPayRecord[sumIndex].TransTime.Year-@Model.CompanyPayRecord[sumIndex].TransTime.Month 汇总:</td>
+                            <td>@Model.CompanyPayRecord[sumIndex].TransSum</td>
                         </tr>
                         sumIndex++;
                     }
                     <tr>
-                        <td>@item.PayTime.Month 月</td>
+                        <td>@item.TransTime.Month 月</td>
                         <td>@item.PayTypeDesc</td>
-                        <td>@item.PaySum</td>
+                        <td>@item.TransSum</td>
                     </tr>
 
-                    month = item.PayTime.Month;
+                    month = item.TransTime.Month;
                 }
                 <tr class="warning" style="color:red">
-                    <td colspan="2">@Model.CompanyPayRecord[sumIndex].PayTime.Year-@Model.CompanyPayRecord[sumIndex].PayTime.Month 汇总:</td>
-                    <td>@Model.CompanyPayRecord[sumIndex].PaySum</td>
+                    <td colspan="2">@Model.CompanyPayRecord[sumIndex].TransTime.Year-@Model.CompanyPayRecord[sumIndex].TransTime.Month 汇总:</td>
+                    <td>@Model.CompanyPayRecord[sumIndex].TransSum</td>
                 </tr>
             }
         </table>

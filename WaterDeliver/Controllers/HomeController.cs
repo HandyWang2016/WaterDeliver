@@ -70,6 +70,8 @@ namespace WaterDeliver.Controllers
             List<Customer> customers = CustomerHelper.CustomerList();
             //所有产品
             var products = ProductHelper.ProductList();
+            //所有员工
+            var staffs = StaffHelper.StaffList();
             //所有日常记录
             var dailyRecords = DailyRecordHelper.DailyRecordList();
             //添加空选项
@@ -89,8 +91,11 @@ namespace WaterDeliver.Controllers
                                                 on r.CustomerId equals c.Id
                                                 join p in products
                                                 on r.SendProductId equals p.Id
+                                                join s in staffs
+                                                on r.StaffId equals s.Id
                                                 select new DailyRecordShow
                                                 {
+                                                    StaffName = s.StaffName,
                                                     CustomerName = c.CustomerName,
                                                     ProductName = p.ProductName,
                                                     SendBucketAmount = r.SendBucketAmount,
