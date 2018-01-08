@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Common;
 using Model;
 using Newtonsoft.Json;
 
@@ -59,12 +60,28 @@ namespace WaterDeliver.Controllers
 
             ViewBag.queryPam = JsonConvert.SerializeObject(new { YearMonth = yearMonth });
             ViewBag.flag = "EndSummary";
+            ViewBag.staffs = StaffHelper.StaffList();
             return View(monthEnd);
         }
 
-        public ActionResult QueryMonthEnd(string yearMonth)
+        public ActionResult PaySalary(StaffSalary staffSalary)
         {
+            staffSalary.Id = ObjectId.NewObjectId().ToString();
+            MongoBase.Insert(staffSalary);
+            //公司当月支出增多相应金额
+            CompanyPayRecord companyRecord = new CompanyPayRecord()
+            {
+                Id = ObjectId.NewObjectId().ToString(),
+                IsPayType = true,
+                PayTypeId = "0000",
+                StaffId = staffSalary.StaffId,
+                TransSum = staffSalary.Salary,
+                TransTime = Convert.ToDateTime(staffSalary.SalaryMonth + "-28")
+            };
+            MongoBase.Insert(companyRecord);
             return RedirectToAction("Index");
         }
+
+
     }
 }

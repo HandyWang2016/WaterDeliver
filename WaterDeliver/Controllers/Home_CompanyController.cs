@@ -150,11 +150,12 @@ namespace WaterDeliver.Controllers
                     TransSum = g.Sum(i => i.IsPayType ? -i.TransSum : i.TransSum),
                     PayTypeId = g.First().PayTypeId
                 }).Join(payType, x => x.PayTypeId, y => y.Id, (x, y) => new { x, y })
+                .DefaultIfEmpty()
                 .Select(p => new CompanyPayRecordDesc
                 {
                     TransTime = p.x.TransTime,
                     TransSum = p.x.IsPayType ? -p.x.TransSum : p.x.TransSum,
-                    PayTypeDesc = p.y.PayType
+                    PayTypeDesc = p.y.PayType ?? "工资发放"
                 }).ToList();
             CompanyPayRecordViewModel viewModel = new CompanyPayRecordViewModel()
             {
