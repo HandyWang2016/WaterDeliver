@@ -9,11 +9,11 @@
 {
 if (price > 0)
 {
-        <td style="color:green">+@price</td>
+        <td style="color:green;font-weight:bold">+@price</td>
 }
 else
 {
-        <td style="color:red">@price</td>
+        <td style="color:red;font-weight:bold">@price</td>
 }
 }
 
@@ -95,7 +95,7 @@ else
                     if (month != 0 && month != item.TransTime.Month)//汇总月底数据
                     {
                         <tr class="warning" style="color:red">
-                            <td colspan="2">@Model.CompanyPayRecord[sumIndex].TransTime.Year-@Model.CompanyPayRecord[sumIndex].TransTime.Month 汇总:</td>
+                            <td colspan="2" style="font-weight:bold">@Model.CompanyPayRecord[sumIndex].TransTime.Year-@Model.CompanyPayRecord[sumIndex].TransTime.Month 汇总:</td>
                             @CheckPay(Model.CompanyPayRecord[sumIndex].TransSum)
                         </tr>
                         sumIndex++;
@@ -109,7 +109,7 @@ else
                     month = item.TransTime.Month;
                 }
                 <tr class="warning" style="color:red">
-                    <td colspan="2">@Model.CompanyPayRecord[sumIndex].TransTime.Year-@Model.CompanyPayRecord[sumIndex].TransTime.Month 汇总:</td>
+                    <td colspan="2" style="font-weight:bold">@Model.CompanyPayRecord[sumIndex].TransTime.Year-@Model.CompanyPayRecord[sumIndex].TransTime.Month 汇总:</td>
                     @CheckPay(Model.CompanyPayRecord[sumIndex].TransSum)
                 </tr>
             }

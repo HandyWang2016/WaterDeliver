@@ -201,6 +201,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Home_CompanyController.cs" />
     <Compile Include="Controllers\MyHelper.cs" />
+    <Compile Include="Controllers\SummaryController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -234,6 +235,7 @@
     <Content Include="Views\Home_Company\CompanyPay.cshtml" />
     <Content Include="Views\Product\StockMaintain.cshtml" />
     <Content Include="Views\Factory\Index.cshtml" />
+    <Content Include="Views\Summary\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

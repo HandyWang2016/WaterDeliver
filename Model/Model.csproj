@@ -49,6 +49,7 @@
     <Compile Include="DailyQueryMod.cs" />
     <Compile Include="DailyRecord.cs" />
     <Compile Include="Factory.cs" />
+    <Compile Include="MonthEndSummary.cs" />
     <Compile Include="PayTypeEnum.cs" />
     <Compile Include="Products.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -76,13 +76,13 @@
                 {
                     if (month != "" && month != item.VisitMonth)//汇总月底数据
                     {
-                        <tr class="warning" style="color:red">
+                        <tr class="warning" style="font-weight:bold">
                             <td colspan="2">@Model.SumDailyRecord[sumIndex].VisitYear@Model.SumDailyRecord[sumIndex].VisitMonth 汇总:</td>
-                            <td>@Model.SumDailyRecord[sumIndex].SumSendBucketAmount</td>
-                            <td>@Model.SumDailyRecord[sumIndex].SumReceiveEmptyBucketAmount</td>
-                            <td>@Model.SumDailyRecord[sumIndex].SumEarnDeposit</td>
-                            <td>@Model.SumDailyRecord[sumIndex].SumPayDeposit</td>
-                            <td>@Model.SumDailyRecord[sumIndex].SumEarnMonthEndPrice</td>
+                            <td style="color: green;">@Model.SumDailyRecord[sumIndex].SumSendBucketAmount</td>
+                            <td style="color: green;">@Model.SumDailyRecord[sumIndex].SumReceiveEmptyBucketAmount</td>
+                            <td style="color: green;">@Model.SumDailyRecord[sumIndex].SumEarnDeposit</td>
+                            <td style="color:red;">@Model.SumDailyRecord[sumIndex].SumPayDeposit</td>
+                            <td style="color: green;">@Model.SumDailyRecord[sumIndex].SumEarnMonthEndPrice</td>
                         </tr>
                         sumIndex++;
                     }
@@ -98,13 +98,13 @@
 
                     month = item.VisitMonth;
                 }
-                <tr class="warning" style="color:red">
+                <tr class="warning" style="font-weight:bold">
                     <td colspan="2">@Model.SumDailyRecord[sumIndex].VisitYear@Model.SumDailyRecord[sumIndex].VisitMonth 汇总:</td>
-                    <td>@Model.SumDailyRecord[sumIndex].SumSendBucketAmount</td>
-                    <td>@Model.SumDailyRecord[sumIndex].SumReceiveEmptyBucketAmount</td>
-                    <td>@Model.SumDailyRecord[sumIndex].SumEarnDeposit</td>
-                    <td>@Model.SumDailyRecord[sumIndex].SumPayDeposit</td>
-                    <td>@Model.SumDailyRecord[sumIndex].SumEarnMonthEndPrice</td>
+                    <td style="color: green;">@Model.SumDailyRecord[sumIndex].SumSendBucketAmount</td>
+                    <td style="color: green;">@Model.SumDailyRecord[sumIndex].SumReceiveEmptyBucketAmount</td>
+                    <td style="color: green;">@Model.SumDailyRecord[sumIndex].SumEarnDeposit</td>
+                    <td style="color:red;">@Model.SumDailyRecord[sumIndex].SumPayDeposit</td>
+                    <td style="color: green;">@Model.SumDailyRecord[sumIndex].SumEarnMonthEndPrice</td>
                 </tr>
             }
         </table>
