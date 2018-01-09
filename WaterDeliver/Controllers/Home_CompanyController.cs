@@ -129,6 +129,8 @@ namespace WaterDeliver.Controllers
                 : CompanyRecordHelper.CompanyList();
 
             var payType = CompanyPayTypeHelper.PayTypeList();
+            //日常记录信息，用于统计提成
+            var dailyRecords = DailyRecordHelper.DailyRecordList();
 
             //按年月分组
             var comRecordsMonth = companyRecords
@@ -150,13 +152,34 @@ namespace WaterDeliver.Controllers
                     TransSum = g.Sum(i => i.IsPayType ? -i.TransSum : i.TransSum),
                     PayTypeId = g.First().PayTypeId
                 }).Join(payType, x => x.PayTypeId, y => y.Id, (x, y) => new { x, y })
-                .DefaultIfEmpty()
                 .Select(p => new CompanyPayRecordDesc
                 {
                     TransTime = p.x.TransTime,
                     TransSum = p.x.IsPayType ? -p.x.TransSum : p.x.TransSum,
-                    PayTypeDesc = p.y.PayType ?? "工资发放"
+                    PayTypeDesc = p.y.PayType
                 }).ToList();
+
+            //公司月底结算，动态加入员工提成
+            double commission = Commission();
+            foreach (var item in comRecordsMonth)
+            {
+                int sumBucket =
+                    dailyRecords.Where(i => i.VisitDate.Year == item.TransTime.Year && i.VisitDate.Month == item.TransTime.Month)
+                                .Sum(i => i.SendBucketAmount);
+                //当月总支出减去员工提成
+                item.TransSum -= sumBucket * commission;
+
+                //年月消费类型集合中添加该月员工统计提成条目
+                int index =
+                    comRecordsMonType.FindLastIndex(t => t.TransTime.Year == item.TransTime.Year && t.TransTime.Month == item.TransTime.Month);
+                comRecordsMonType.Insert(index + 1, new CompanyPayRecordDesc
+                {
+                    PayTypeDesc = "员工提成(" + commission + "元/桶)",
+                    TransTime = item.TransTime,
+                    TransSum = -sumBucket * commission
+                });
+            }
+
             CompanyPayRecordViewModel viewModel = new CompanyPayRecordViewModel()
             {
                 CompanyPayRecord = comRecordsMonth,

@@ -43,13 +43,17 @@ namespace WaterDeliver.Controllers
 
                 }).FirstOrDefault();
 
-            //公司汇总
+            ////公司汇总
+            //公司支出动态加入员工提成
+            double commission = Commission();
+            double sumBucketCom = dailyRecords.Sum(i => i.SendBucketAmount) * commission;
+
             MonthEndSummary monthEnd2 = companyRecords.GroupBy(item => new { item.TransTime.Year, item.TransTime.Month })
-                .Select(g => new MonthEndSummary()
-                {
-                    CompanyEarn = g.Where(item => item.IsPayType == false).Sum(x => x.TransSum),
-                    CompanyPay = g.Where(item => item.IsPayType == true).Sum(x => x.TransSum)
-                }).FirstOrDefault();
+            .Select(g => new MonthEndSummary()
+            {
+                CompanyEarn = g.Where(item => item.IsPayType == false).Sum(x => x.TransSum),
+                CompanyPay = g.Where(item => item.IsPayType == true).Sum(x => x.TransSum) + sumBucketCom
+            }).FirstOrDefault();
 
             monthEnd.StaffEarn = monthEnd1?.StaffEarn ?? 0;
             monthEnd.StaffPay = monthEnd1?.StaffPay ?? 0;
@@ -64,16 +68,38 @@ namespace WaterDeliver.Controllers
             return View(monthEnd);
         }
 
+        /// <summary>
+        /// 工资发放
+        /// </summary>
+        /// <param name="staffSalary"></param>
+        /// <returns></returns>
         public ActionResult PaySalary(StaffSalary staffSalary)
         {
+            //获取该员工该薪资月的送水记录，统计提成用
+            var dailyRecords = DailyRecordHelper.DailyRecordList()
+                               .Where(item => item.VisitDate.Year.ToString() == staffSalary.SalaryMonth.Split('-')[0]
+                                              && item.VisitDate.Month.ToString() == staffSalary.SalaryMonth.Split('-')[1]
+                                              && item.StaffId == staffSalary.StaffId);
+            //判断是否需要薪资发放类型
+            var salaryType = CompanyPayTypeHelper.GetById("50c8d301097facb82b660000");
+            if (salaryType == null)
+            {
+                MongoBase.Insert(new CompanyPayType
+                {
+                    Id = "50c8d301097facb82b660000",
+                    PayType = "员工薪资发放"
+                });
+            }
+
             staffSalary.Id = ObjectId.NewObjectId().ToString();
+            staffSalary.Commission = dailyRecords.Sum(i => i.SendBucketAmount) * Commission();//提成
             MongoBase.Insert(staffSalary);
             //公司当月支出增多相应金额
             CompanyPayRecord companyRecord = new CompanyPayRecord()
             {
                 Id = ObjectId.NewObjectId().ToString(),
                 IsPayType = true,
-                PayTypeId = "0000",
+                PayTypeId = "50c8d301097facb82b660000",
                 StaffId = staffSalary.StaffId,
                 TransSum = staffSalary.Salary,
                 TransTime = Convert.ToDateTime(staffSalary.SalaryMonth + "-28")
@@ -81,7 +107,5 @@ namespace WaterDeliver.Controllers
             MongoBase.Insert(companyRecord);
             return RedirectToAction("Index");
         }
-
-
     }
 }

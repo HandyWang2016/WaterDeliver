@@ -40,5 +40,19 @@ namespace WaterDeliver.Controllers
             }
             return _pageSize;
         }
+
+        /// <summary>
+        /// 送1桶水的提成
+        /// </summary>
+        private static double _commission;
+
+        public double Commission()
+        {
+            if (_commission == 0)
+            {
+                _commission = double.Parse(ConfigurationManager.AppSettings["Commission"]);
+            }
+            return _commission;
+        }
     }
 }

@@ -15,6 +15,10 @@
         /// </summary>
         public string SalaryMonth { get; set; }
         /// <summary>
+        /// 员工提成：一桶水提2元
+        /// </summary>
+        public double Commission { get; set; }
+        /// <summary>
         /// 薪资金额
         /// </summary>
         public double Salary { get; set; }
