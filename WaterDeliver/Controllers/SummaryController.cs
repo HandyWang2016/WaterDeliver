@@ -31,14 +31,19 @@ namespace WaterDeliver.Controllers
                 month = int.Parse(yearMonth.Split('-')[1]);
             }
 
-            var dailyRecords = DailyRecordHelper.DailyRecordList().Where(item => item.VisitDate.Year == year && item.VisitDate.Month == month);
-            var companyRecords = CompanyRecordHelper.CompanyList().Where(item => item.TransTime.Year == year && item.TransTime.Month == month);
+            var dailyRecords =
+                DailyRecordHelper.DailyRecordList()
+                    .Where(item => item.VisitDate.Year == year && item.VisitDate.Month == month);
+            var companyRecords =
+                CompanyRecordHelper.CompanyList()
+                    .Where(item => item.TransTime.Year == year && item.TransTime.Month == month);
             MonthEndSummary monthEnd = new MonthEndSummary();
             //员工汇总
             MonthEndSummary monthEnd1 = dailyRecords.GroupBy(item => new { item.VisitDate.Year, item.VisitDate.Month })
                 .Select(g => new MonthEndSummary()
                 {
-                    StaffEarn = g.Sum(x => x.EarnMonthEndPrice) + g.Sum(x => x.EarnWaterCardPrice) + g.Sum(x => x.EarnDeposit),
+                    StaffEarn =
+                        g.Sum(x => x.EarnMonthEndPrice) + g.Sum(x => x.EarnWaterCardPrice) + g.Sum(x => x.EarnDeposit),
                     StaffPay = g.Sum(x => x.PayDeposit)
 
                 }).FirstOrDefault();
@@ -49,11 +54,11 @@ namespace WaterDeliver.Controllers
             double sumBucketCom = dailyRecords.Sum(i => i.SendBucketAmount) * commission;
 
             MonthEndSummary monthEnd2 = companyRecords.GroupBy(item => new { item.TransTime.Year, item.TransTime.Month })
-            .Select(g => new MonthEndSummary()
-            {
-                CompanyEarn = g.Where(item => item.IsPayType == false).Sum(x => x.TransSum),
-                CompanyPay = g.Where(item => item.IsPayType == true).Sum(x => x.TransSum) + sumBucketCom
-            }).FirstOrDefault();
+                .Select(g => new MonthEndSummary()
+                {
+                    CompanyEarn = g.Where(item => item.IsPayType == false).Sum(x => x.TransSum),
+                    CompanyPay = g.Where(item => item.IsPayType == true).Sum(x => x.TransSum) + sumBucketCom
+                }).FirstOrDefault();
 
             monthEnd.StaffEarn = monthEnd1?.StaffEarn ?? 0;
             monthEnd.StaffPay = monthEnd1?.StaffPay ?? 0;
@@ -77,9 +82,9 @@ namespace WaterDeliver.Controllers
         {
             //获取该员工该薪资月的送水记录，统计提成用
             var dailyRecords = DailyRecordHelper.DailyRecordList()
-                               .Where(item => item.VisitDate.Year.ToString() == staffSalary.SalaryMonth.Split('-')[0]
-                                              && item.VisitDate.Month.ToString() == staffSalary.SalaryMonth.Split('-')[1]
-                                              && item.StaffId == staffSalary.StaffId);
+                .Where(item => item.VisitDate.Year == staffSalary.SalaryMonth.Year
+                               && item.VisitDate.Month == staffSalary.SalaryMonth.Month
+                               && item.StaffId == staffSalary.StaffId);
             //判断是否需要薪资发放类型
             var salaryType = CompanyPayTypeHelper.GetById("50c8d301097facb82b660000");
             if (salaryType == null)
@@ -92,7 +97,7 @@ namespace WaterDeliver.Controllers
             }
 
             staffSalary.Id = ObjectId.NewObjectId().ToString();
-            staffSalary.Commission = dailyRecords.Sum(i => i.SendBucketAmount) * Commission();//提成
+            staffSalary.Commission = dailyRecords.Sum(i => i.SendBucketAmount) * Commission(); //提成
             MongoBase.Insert(staffSalary);
             //公司当月支出增多相应金额
             CompanyPayRecord companyRecord = new CompanyPayRecord()
@@ -106,6 +111,54 @@ namespace WaterDeliver.Controllers
             };
             MongoBase.Insert(companyRecord);
             return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// 员工工资查看列表
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult SalaryList(string staffId, string yearMonth)
+        {
+            var staffSalary = TempData["salaryRecords"] == null
+                ? SalaryHelper.SalaryList()
+                : TempData["salaryRecords"] as List<StaffSalary>;
+            //读取员工
+            var staff = StaffHelper.StaffList();
+            var staffSalaryDesc =
+                staffSalary.Join(staff, x => x.StaffId, y => y.Id, (x, y) => new { x, y }).Select(p => new StaffSalaryDesc
+                {
+                    StaffName = p.y.StaffName,
+                    Salary = p.x.Salary,
+                    Commission = p.x.Commission,
+                    SalaryMonth = p.x.SalaryMonth,
+                    MonthIncome = p.x.Commission + p.x.Salary
+                });
+
+            staff.Insert(0, new Staff {Id = "", StaffName = ""});
+            ViewBag.staffs = staff;
+            ViewBag.flag = "SalaryList";
+            ViewBag.queryPam = JsonConvert.SerializeObject(new { StaffId = staffId, YearMonth = yearMonth });
+            return View(staffSalaryDesc);
+        }
+
+        public ActionResult QueryStaffSalary(string staffId, string yearMonth)
+        {
+            var staffSalary = SalaryHelper.SalaryList();
+            if (!string.IsNullOrEmpty(yearMonth))
+            {
+                int year = int.Parse(yearMonth.Split('-')[0]);
+                int month = int.Parse(yearMonth.Split('-')[1]);
+                staffSalary =
+                    staffSalary.Where(item => item.SalaryMonth.Year == year && item.SalaryMonth.Month == month).ToList();
+            }
+            if (!string.IsNullOrEmpty(staffId))
+            {
+                staffSalary = staffSalary.Where(item => item.StaffId == staffId).ToList();
+            }
+
+            TempData["salaryRecords"] = staffSalary;
+            return RedirectToAction("SalaryList", new { staffId = staffId, yearMonth = yearMonth });
+
         }
     }
 }

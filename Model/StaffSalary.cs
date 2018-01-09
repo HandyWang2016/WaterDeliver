@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿using System;
+
+namespace Model
 {
     /// <summary>
     /// 员工工资信息
@@ -13,7 +15,7 @@
         /// <summary>
         /// 薪资月：eg:2017-12
         /// </summary>
-        public string SalaryMonth { get; set; }
+        public DateTime SalaryMonth { get; set; }
         /// <summary>
         /// 员工提成：一桶水提2元
         /// </summary>
@@ -22,5 +24,11 @@
         /// 薪资金额
         /// </summary>
         public double Salary { get; set; }
+    }
+
+    public class StaffSalaryDesc : StaffSalary
+    {
+        public string StaffName { get; set; }
+        public double MonthIncome { get; set; }
     }
 }

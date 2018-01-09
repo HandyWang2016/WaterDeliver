@@ -1,0 +1,95 @@
+﻿@model IEnumerable<Model.StaffSalaryDesc>
+
+@{
+    ViewBag.Title = "SalaryList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<script>
+    $(function () {
+        $('#txtDateBegin').datetimepicker({
+            language: 'zh',
+            todayBtn: 0,
+            autoclose: 1,
+            todayHighlight: 1,
+            format: "yyyy-mm",//日期格式
+            startView: 3,
+            minView: 3,
+            clearBtn: true
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+
+        //刷新页面后，加载历史查询条件
+        var queryJson = JSON.parse('@Html.Raw(ViewBag.queryPam)');
+        if (queryJson.YearMonth != null && queryJson.YearMonth.indexOf("0001") < 0) {
+            $("#txtDateBegin").val(queryJson.YearMonth);
+        }
+        if (queryJson.StaffId != null) {
+            $("#selStaff").val(queryJson.StaffId);
+        }
+    });
+</script>
+<form class="form-inline" method="post" action="/Summary/QueryStaffSalary">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">查询条件</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group col-sm-2">
+                <label class="control-label" for="selStaff">员工</label>
+                <select name="StaffId" id="selStaff" class="selectpicker show-tick form-control" style="width: 150px" data-live-search="true">
+                    @if (ViewBag.staffs != null)
+                    {
+                        foreach (var item in ViewBag.staffs)
+                        {
+                            <option value="@item.Id">@item.StaffName</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group col-sm-2">
+                <label class="control-label" for="txtDateBegin">选择时间</label>
+                <input type="text" readonly class="form-control" style="width: 130px" name="yearMonth" id="txtDateBegin"/>
+            </div>
+            <div class="form-group col-sm-3">
+                <input type="submit" value="查询" class="btn btn-primary"/>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">查询结果</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover table-bordered table-condensed">
+            <thead style="background-color:powderblue">
+                <tr>
+                    <th>员工</th>
+                    <th>薪资月</th>
+                    <th>工资</th>
+                    <th>提成</th>
+                    <th>合计</th>
+                </tr>
+            </thead>
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.StaffName</td>
+                        <td>@item.SalaryMonth.Year<i>-</i>@item.SalaryMonth.Month</td>
+                        <td style="color: green; font-weight: bold">@item.Salary</td>
+                        <td style="color: green; font-weight: bold">@item.Commission</td>
+                        <td style="color: red; font-weight: bold">@item.MonthIncome</td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>
+
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>

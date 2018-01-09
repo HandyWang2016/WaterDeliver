@@ -236,6 +236,7 @@
     <Content Include="Views\Product\StockMaintain.cshtml" />
     <Content Include="Views\Factory\Index.cshtml" />
     <Content Include="Views\Summary\Index.cshtml" />
+    <Content Include="Views\Summary\SalaryList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
