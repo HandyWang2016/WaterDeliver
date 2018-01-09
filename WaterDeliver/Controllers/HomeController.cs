@@ -52,7 +52,7 @@ namespace WaterDeliver.Controllers
 
             //更新库存信息
             var product = ProductHelper.GetById(dailyRecord.SendProductId);
-            product.StockRemain -= dailyRecord.SendBucketAmount;//桶装水库存减少
+            product.StockRemain += dailyRecord.SendBucketAmount;//桶装水库存增加
             product.BucketStockRemain += dailyRecord.ReceiveEmptyBucketAmount;//空桶库存增加
             ProductHelper.Update(product);
 
@@ -103,6 +103,7 @@ namespace WaterDeliver.Controllers
                                                     EarnDeposit = r.EarnDeposit,
                                                     PayDeposit = r.PayDeposit,
                                                     EarnMonthEndPrice = r.EarnMonthEndPrice,
+                                                    EarnWaterCardPrice=r.EarnWaterCardPrice,
                                                     VisitDate = r.VisitDate
 
                                                 }).ToList();
@@ -212,6 +213,7 @@ namespace WaterDeliver.Controllers
                     SumEarnDeposit = g.Sum(x => x.EarnDeposit), //收取押金
                     SumPayDeposit = g.Sum(x => x.PayDeposit), //退还押金
                     SumEarnMonthEndPrice = g.Sum(x => x.EarnMonthEndPrice), //收入月底结算
+                    SumEarnWaterCardPrice = g.Sum(x => x.EarnWaterCardPrice), //收入水卡金额
                     VisitMonth = g.First().VisitDate.Month + "月", //交易月份
                     CustomerName = g.First().CustomerId,
                     ProductName = g.First().SendProductId
@@ -238,6 +240,7 @@ namespace WaterDeliver.Controllers
                     SumEarnDeposit = g.Sum(x => x.EarnDeposit),//收取押金
                     SumPayDeposit = g.Sum(x => x.PayDeposit),//退还押金
                     SumEarnMonthEndPrice = g.Sum(x => x.EarnMonthEndPrice),//收入月底结算
+                    SumEarnWaterCardPrice = g.Sum(x => x.EarnWaterCardPrice),//收入水卡金额
                     VisitYear = g.First().VisitDate.Year + "年",
                     VisitMonth = g.First().VisitDate.Month + "月"//交易月份
                 }).ToList();

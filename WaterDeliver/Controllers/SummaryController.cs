@@ -38,7 +38,7 @@ namespace WaterDeliver.Controllers
             MonthEndSummary monthEnd1 = dailyRecords.GroupBy(item => new { item.VisitDate.Year, item.VisitDate.Month })
                 .Select(g => new MonthEndSummary()
                 {
-                    StaffEarn = g.Sum(x => x.EarnMonthEndPrice) + g.Sum(x => x.EarnDeposit),
+                    StaffEarn = g.Sum(x => x.EarnMonthEndPrice) + g.Sum(x => x.EarnWaterCardPrice) + g.Sum(x => x.EarnDeposit),
                     StaffPay = g.Sum(x => x.PayDeposit)
 
                 }).FirstOrDefault();
