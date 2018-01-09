@@ -4,13 +4,29 @@
     Layout = "~/Views/Shared/_Layout_admin.cshtml";
 }
 
+<script src="~/scripts/layer/layer.js"></script>
+<script>
+    @*$(function () {
+        var err = '@ViewBag.checkSalary';
+        if (err != "") {
+            layer.alert(err, {
+                skin: 'layui-layer-molv' //样式类名  自定义样式
+                    , closeBtn: 1    // 是否显示关闭按钮
+                    , anim: 1 //动画类型
+                    , icon: 6
+            });
+        }
+    });*@
+</script>
+
 <div class="panel panel-info">
     <div class="panel-heading">
         <h4 class="panel-title">类别信息</h4>
     </div>
     <div class="panel-body">
+        <div><i style="color: red;">【薪资支出】与【进水支出】为系统加载，请不要删除</i></div>
         <table class="table table-hover table-condensed">
-            <thead style="background-color:lightblue"><tr><th>ID</th><th>类别名称</th><th>描述</th><th>操作</th></tr></thead>
+            <thead style="background-color: lightblue"><tr><th>ID</th><th>类别名称</th><th>描述</th><th>操作</th></tr></thead>
             @if (Model != null)
             {
                 int i = 0;
@@ -20,7 +36,7 @@
                         <td>@i</td>
                         <td>@item.PayType</td>
                         <td>@item.PayTypeDescribe</td>
-                        <td>@Html.ActionLink("删除", "Delete", "CompanyPayType", new { id = item.Id }, new { @class = "btn btn-xs btn-danger", onclick = "return confirm('确认删除？')" })</td>
+                        <td>@Html.ActionLink("删除", "Delete", "CompanyPayType", new {id = item.Id}, new {@class = "btn btn-xs btn-danger", onclick = "return confirm('确认删除？')"})</td>
                     </tr>
                     i++;
                 }

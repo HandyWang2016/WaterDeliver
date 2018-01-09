@@ -1,6 +1,7 @@
 ﻿using log4net;
 using MongoDB;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Net;
@@ -35,6 +36,37 @@ namespace Common
                     var db = mongo.GetDatabase(_dbName);
                     var collection = db.GetCollection<T>();
                     collection.Insert(mod);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw;
+            }
+
+        }
+
+        /// <summary>
+        /// 添加多条数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="mods"></param>
+        public static void Insert<T>(List<T> mods) where T : class
+        {
+            try
+            {
+                using (Mongo mongo = new Mongo(_connectionString))
+                {
+                    //打开连接
+                    mongo.Connect();
+                    //数据操作对象
+                    var db = mongo.GetDatabase(_dbName);
+                    var collection = db.GetCollection<T>();
+                    foreach (var mod in mods)
+                    {
+                        collection.Insert(mod);
+                    }
+                    
                 }
             }
             catch (Exception ex)

@@ -57,7 +57,7 @@ namespace WaterDeliver.Controllers
                 .Select(g => new MonthEndSummary()
                 {
                     CompanyEarn = g.Where(item => item.IsPayType == false).Sum(x => x.TransSum),
-                    CompanyPay = g.Where(item => item.IsPayType == true).Sum(x => x.TransSum) + sumBucketCom
+                    CompanyPay = g.Where(item => item.IsPayType && item.PayTypeId!= "50c8d301097facb82b670000").Sum(x => x.TransSum) + sumBucketCom //进水支出不计入公司盈利运算
                 }).FirstOrDefault();
 
             monthEnd.StaffEarn = monthEnd1?.StaffEarn ?? 0;
@@ -80,6 +80,14 @@ namespace WaterDeliver.Controllers
         /// <returns></returns>
         public ActionResult PaySalary(StaffSalary staffSalary)
         {
+            //检查该月份该员工是否已经发过工资
+            var staffSal = SalaryHelper.CheckIfPaid(staffSalary.StaffId, staffSalary.SalaryMonth);
+            if (staffSal != null)
+            {
+                TempData["CheckErr"] = "该员工" + staffSalary.SalaryMonth.Year + "-" + staffSalary.SalaryMonth.Month + "的薪资已经发放,请核查";
+                return RedirectToAction("SalaryList");
+            }
+
             //获取该员工该薪资月的送水记录，统计提成用
             var dailyRecords = DailyRecordHelper.DailyRecordList()
                 .Where(item => item.VisitDate.Year == staffSalary.SalaryMonth.Year
@@ -98,6 +106,7 @@ namespace WaterDeliver.Controllers
 
             staffSalary.Id = ObjectId.NewObjectId().ToString();
             staffSalary.Commission = dailyRecords.Sum(i => i.SendBucketAmount) * Commission(); //提成
+
             MongoBase.Insert(staffSalary);
             //公司当月支出增多相应金额
             CompanyPayRecord companyRecord = new CompanyPayRecord()
@@ -110,7 +119,7 @@ namespace WaterDeliver.Controllers
                 TransTime = Convert.ToDateTime(staffSalary.SalaryMonth + "-28")
             };
             MongoBase.Insert(companyRecord);
-            return RedirectToAction("Index");
+            return RedirectToAction("SalaryList");
         }
 
         /// <summary>
@@ -134,9 +143,10 @@ namespace WaterDeliver.Controllers
                     MonthIncome = p.x.Commission + p.x.Salary
                 });
 
-            staff.Insert(0, new Staff {Id = "", StaffName = ""});
+            staff.Insert(0, new Staff { Id = "", StaffName = "" });
             ViewBag.staffs = staff;
-            ViewBag.flag = "SalaryList";
+            ViewBag.flag = "SalaryRecord";
+            ViewBag.ErrInfo = TempData["CheckErr"] ?? "";
             ViewBag.queryPam = JsonConvert.SerializeObject(new { StaffId = staffId, YearMonth = yearMonth });
             return View(staffSalaryDesc);
         }

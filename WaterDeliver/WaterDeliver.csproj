@@ -198,6 +198,7 @@
     <Compile Include="Controllers\Common\DataHandle.ashx.cs">
       <DependentUpon>DataHandle.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\Home_FactoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Home_CompanyController.cs" />
     <Compile Include="Controllers\MyHelper.cs" />
@@ -237,6 +238,7 @@
     <Content Include="Views\Factory\Index.cshtml" />
     <Content Include="Views\Summary\Index.cshtml" />
     <Content Include="Views\Summary\SalaryList.cshtml" />
+    <Content Include="Views\Home_Factory\TransRecord.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -107,7 +107,33 @@ namespace Common.BusinessHelper
                 log.Error(ex);
                 throw;
             }
+        }
 
+        /// <summary>
+        /// 检查该月份该员工是否已经发过工资
+        /// </summary>
+        /// <param name="staffId"></param>
+        /// <param name="salaryMonth"></param>
+        /// <returns></returns>
+        public static StaffSalary CheckIfPaid(string staffId, DateTime salaryMonth)
+        {
+            try
+            {
+                using (Mongo mongo = new Mongo(_connectionString))
+                {
+                    mongo.Connect();
+                    var db = mongo.GetDatabase(_dbName);
+                    var collection = db.GetCollection<StaffSalary>();
+
+                    // 查询单个对象  
+                    return collection.FindOne(x => x.StaffId == staffId && x.SalaryMonth == salaryMonth);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw;
+            }
         }
     }
 }
