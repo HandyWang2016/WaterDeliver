@@ -15,7 +15,7 @@ namespace WaterDeliver.Controllers.Admin
         public ActionResult Index()
         {
             var payTypes = CompanyPayTypeHelper.PayTypeList();
-            var salaryPayType = payTypes.FirstOrDefault(i => i.Id == "50c8d301097facb82b660000");
+            var salaryPayType = payTypes.FirstOrDefault(i => i.Id == SalaryPayType);
             if (salaryPayType == null)
             {
                 //初次加载，初始化薪资支出与进水支出类别，且不允许删除
@@ -23,12 +23,12 @@ namespace WaterDeliver.Controllers.Admin
                 {
                     new CompanyPayType
                     {
-                        Id = "50c8d301097facb82b660000",
+                        Id = SalaryPayType,
                         PayType = "员工薪资支出"
                     },
                     new CompanyPayType
                     {
-                        Id = "50c8d301097facb82b670000",
+                        Id = BucketPayType,
                         PayType = "进水支出"
                     }
                 };

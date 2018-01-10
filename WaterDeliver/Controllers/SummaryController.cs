@@ -57,7 +57,7 @@ namespace WaterDeliver.Controllers
                 .Select(g => new MonthEndSummary()
                 {
                     CompanyEarn = g.Where(item => item.IsPayType == false).Sum(x => x.TransSum),
-                    CompanyPay = g.Where(item => item.IsPayType && item.PayTypeId!= "50c8d301097facb82b670000").Sum(x => x.TransSum) + sumBucketCom //进水支出不计入公司盈利运算
+                    CompanyPay = g.Where(item => item.IsPayType && item.PayTypeId!= BucketPayType).Sum(x => x.TransSum) + sumBucketCom //进水支出不计入公司盈利运算
                 }).FirstOrDefault();
 
             monthEnd.StaffEarn = monthEnd1?.StaffEarn ?? 0;
@@ -94,13 +94,13 @@ namespace WaterDeliver.Controllers
                                && item.VisitDate.Month == staffSalary.SalaryMonth.Month
                                && item.StaffId == staffSalary.StaffId);
             //判断是否需要薪资发放类型
-            var salaryType = CompanyPayTypeHelper.GetById("50c8d301097facb82b660000");
+            var salaryType = CompanyPayTypeHelper.GetById(SalaryPayType);
             if (salaryType == null)
             {
                 MongoBase.Insert(new CompanyPayType
                 {
-                    Id = "50c8d301097facb82b660000",
-                    PayType = "员工薪资发放"
+                    Id = SalaryPayType,
+                    PayType = "员工薪资支出"
                 });
             }
 
@@ -113,7 +113,7 @@ namespace WaterDeliver.Controllers
             {
                 Id = ObjectId.NewObjectId().ToString(),
                 IsPayType = true,
-                PayTypeId = "50c8d301097facb82b660000",
+                PayTypeId = SalaryPayType,
                 StaffId = staffSalary.StaffId,
                 TransSum = staffSalary.Salary,
                 TransTime = Convert.ToDateTime(staffSalary.SalaryMonth + "-28")

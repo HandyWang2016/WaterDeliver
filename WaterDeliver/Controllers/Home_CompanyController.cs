@@ -15,7 +15,7 @@ namespace WaterDeliver.Controllers
         public ActionResult CompanyPay()
         {
             var companyPayType = CompanyPayTypeHelper.PayTypeList();
-            var salaryPay = companyPayType.FirstOrDefault(i => i.Id == "50c8d301097facb82b660000");
+            var salaryPay = companyPayType.FirstOrDefault(i => i.Id == SalaryPayType);
             if (salaryPay != null)
             {
                 companyPayType.Remove(salaryPay);//公司交易中隐藏工资发放，工资发放在收支汇总中单独完成

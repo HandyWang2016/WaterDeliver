@@ -10,6 +10,23 @@ namespace WaterDeliver.Controllers
     public class BaseController : Controller
     {
         private static string staffId;
+        /// <summary>
+        /// 分页显示的条目数
+        /// </summary>
+        private static int _pageSize;
+        /// <summary>
+        /// 送1桶水的提成
+        /// </summary>
+        private static double _commission;
+
+        /// <summary>
+        /// 员工薪资支出类型
+        /// </summary>
+        protected const string SalaryPayType = "50c8d301097facb82b660000";
+        /// <summary>
+        /// 进水支出类型
+        /// </summary>
+        protected const string BucketPayType = "50c8d301097facb82b670000";
 
         protected string GetStaffId()
         {
@@ -26,12 +43,7 @@ namespace WaterDeliver.Controllers
         {
             return Session?["staffId"]?.ToString() ?? "";
         }
-
-        /// <summary>
-        /// 分页显示的条目数
-        /// </summary>
-        private static int _pageSize;
-
+        
         public int PageSize()
         {
             if (_pageSize == 0)
@@ -40,11 +52,6 @@ namespace WaterDeliver.Controllers
             }
             return _pageSize;
         }
-
-        /// <summary>
-        /// 送1桶水的提成
-        /// </summary>
-        private static double _commission;
 
         public double Commission()
         {
