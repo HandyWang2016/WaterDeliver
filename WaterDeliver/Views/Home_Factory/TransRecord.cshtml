@@ -1,7 +1,32 @@
-﻿
+﻿@model Model.FactorySumaryViewModel
+
 @{
     ViewBag.Title = "TransRecord";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@helper ShowColorPrice(bool type, double price)
+{
+if (type)
+{
+        <td style="color:red;">-@price</td>
+}
+else
+{
+        <td style="color:green;">+@price</td>
+}
+}
+
+@helper ShowColorPrice1(bool type, double price)
+{
+if (type)
+{
+        <td style="color:red;font-weight:bold">@price</td>
+}
+else
+{
+        <td style="color:green;font-weight:bold">@price</td>
+}
 }
 
 <link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
@@ -25,25 +50,25 @@
         if (queryJson.YearMonth != null && queryJson.YearMonth.indexOf("0001") < 0) {
             $("#txtDateBegin").val(queryJson.YearMonth);
         }
-        if (queryJson.StaffId != null) {
-            $("#selStaff").val(queryJson.StaffId);
+        if (queryJson.FactoryId != null) {
+            $("#selFactory").val(queryJson.FactoryId);
         }
     });
 </script>
-<form class="form-inline" method="post" action="/Summary/QueryStaffSalary">
+<form class="form-inline" method="post" action="/Home_Factory/TransRecord">
     <div class="panel panel-info">
         <div class="panel-heading">
             <h4 class="panel-title">查询条件</h4>
         </div>
         <div class="panel-body">
             <div class="form-group col-sm-2">
-                <label class="control-label" for="selStaff">员工</label>
-                <select name="StaffId" id="selStaff" class="selectpicker show-tick form-control" style="width: 150px" data-live-search="true">
-                    @if (ViewBag.staffs != null)
+                <label class="control-label" for="selFactory">水厂</label>
+                <select name="FactoryId" id="selFactory" class="selectpicker show-tick form-control" style="width: 150px" data-live-search="true">
+                    @if (ViewBag.factories != null)
                     {
-                        foreach (var item in ViewBag.staffs)
+                        foreach (var item in ViewBag.factories)
                         {
-                            <option value="@item.Id">@item.StaffName</option>
+                            <option value="@item.Id">@item.FactoryName</option>
                         }
                     }
                 </select>
@@ -60,30 +85,97 @@
     </div>
 </form>
 <div class="panel panel-info">
-    <div class="panel-heading">
-        <h4 class="panel-title">查询结果</h4>
-    </div>
+    @*<div class="panel-heading">
+            <h4 class="panel-title">查询结果</h4>
+        </div>*@
     <div class="panel-body">
+        <h5 style="color: red;font-weight:bold">@ViewBag.YearMonth 库存汇总</h5>
         <table class="table table-hover table-bordered table-condensed">
-            <thead style="background-color:powderblue">
+            <thead style="background-color: powderblue">
                 <tr>
-                    <th>员工</th>
-                    <th>薪资月</th>
-                    <th>工资</th>
-                    <th>提成</th>
-                    <th>合计</th>
+                    <th>水厂</th>
+                    <th>产品</th>
+                    <th>库存</th>
+                    <th>空桶库存</th>
                 </tr>
             </thead>
             @if (Model != null)
             {
-                foreach (var item in Model)
+                int sum1 = 0;
+                int sum2 = 0;
+                for (int i = 0; i < Model.FactoryStock.Count; i++)
                 {
+                    if (i != 0 && Model.FactoryStock[i].FactoryName != Model.FactoryStock[i - 1].FactoryName)
+                    {
+                        <tr class="warning" style="color: red;font-weight:bold">
+                            <td colspan="2" style="color:royalblue">@Model.FactoryStock[i - 1].FactoryName<label>汇总：</label></td>
+                            <td>@sum1</td>
+                            <td>@sum2</td>
+                        </tr>
+                        sum1 = 0;
+                        sum2 = 0;
+                    }
                     <tr>
-                        <td>@item.StaffName</td>
-                        <td>@item.SalaryMonth.Year<i>-</i>@item.SalaryMonth.Month</td>
-                        <td style="color: green; font-weight: bold">@item.Salary</td>
-                        <td style="color: green; font-weight: bold">@item.Commission</td>
-                        <td style="color: red; font-weight: bold">@item.MonthIncome</td>
+                        <td>@Model.FactoryStock[i].FactoryName</td>
+                        <td>@Model.FactoryStock[i].ProductName</td>
+                        <td>@Model.FactoryStock[i].BucketStock</td>
+                        <td>@Model.FactoryStock[i].EmptyBucketStock</td>
+                    </tr>
+                    sum1 += Model.FactoryStock[i].BucketStock;
+                    sum2 += Model.FactoryStock[i].EmptyBucketStock;
+                }
+                if (Model.FactoryStock.Count > 0)
+                {
+                    <tr class="warning" style="color: red;font-weight:bold">
+                        <td colspan="2" style="color:royalblue">@Model.FactoryStock[Model.FactoryStock.Count - 1].FactoryName<label>汇总：</label></td>
+                        <td>@sum1</td>
+                        <td>@sum2</td>
+                    </tr>
+                }
+            }
+        </table>
+
+        <h5 style="color: red;font-weight:bold">@ViewBag.YearMonth 交易汇总</h5>
+        <table class="table table-hover table-bordered table-condensed">
+            <thead style="background-color: powderblue">
+                <tr>
+                    <th>水厂</th>
+                    <th>交易类别</th>
+                    <th>金额</th>
+                </tr>
+            </thead>
+            @if (Model != null)
+            {
+                double sum = 0;
+                for (int i = 0; i < Model.FactoryTrans.Count; i++)
+                {
+                    if (i != 0 && Model.FactoryTrans[i].FactoryName != Model.FactoryTrans[i - 1].FactoryName)
+                    {
+                        <tr class="warning" style="color:royalblue">
+                            <td colspan="2" style="font-weight:bold">@Model.FactoryTrans[i - 1].FactoryName<label>汇总</label></td>
+                            @ShowColorPrice1(sum < 0, sum)
+                        </tr>
+                        sum = 0;
+                    }
+                    <tr>
+                        <td>@Model.FactoryTrans[i].FactoryName</td>
+                        <td>@Model.FactoryTrans[i].TransType</td>
+                        @ShowColorPrice(Model.FactoryTrans[i].IsPayType, Model.FactoryTrans[i].TransSum)
+                    </tr>
+                    if (Model.FactoryTrans[i].IsPayType)
+                    {
+                        sum -= Model.FactoryTrans[i].TransSum;
+                    }
+                    else
+                    {
+                        sum += Model.FactoryTrans[i].TransSum;
+                    }
+                }
+                if (Model.FactoryTrans.Count > 0)
+                {
+                    <tr class="warning" style="color:royalblue">
+                        <td colspan="2" style="font-weight:bold">@Model.FactoryTrans[Model.FactoryTrans.Count - 1].FactoryName<label>汇总</label></td>
+                        @ShowColorPrice1(sum < 0, sum)
                     </tr>
                 }
             }
