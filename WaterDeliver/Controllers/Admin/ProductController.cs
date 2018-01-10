@@ -29,7 +29,7 @@ namespace WaterDeliver.Controllers.Admin
                 UpdateTime = x.UpdateTime,
                 FactoryName = y.FactoryName
             });
-            
+
             ViewBag.Factories = factories;
             ViewBag.flag = "product";
             return View(newProducts);
@@ -65,10 +65,11 @@ namespace WaterDeliver.Controllers.Admin
             return View(products);
         }
 
-        public ActionResult AddStockAmount(string productId, int numToAdd)
+        public ActionResult AddStockAmount(string productId, int numToAdd, int numToReadd)
         {
             var product = ProductHelper.GetById(productId);
             product.StockRemain = product.StockRemain + numToAdd;
+            product.BucketStockRemain = product.BucketStockRemain - numToReadd;
             product.UpdateTime = DateTime.Now;
             ProductHelper.Update(product);
             TempData["TheProduct"] = JsonConvert.SerializeObject(product);

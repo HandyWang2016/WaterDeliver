@@ -16,12 +16,16 @@ namespace WaterDeliver.Controllers
         {
             var companyPayType = CompanyPayTypeHelper.PayTypeList();
             var salaryPay = companyPayType.FirstOrDefault(i => i.Id == SalaryPayType);
+            //某些支出类型需关联水厂(押金支出与退回、进水..)
+            var factories = FactoryHelper.FactoryList();
+            factories.Insert(0, new Factory { Id = "", FactoryName = "" });
             if (salaryPay != null)
             {
                 companyPayType.Remove(salaryPay);//公司交易中隐藏工资发放，工资发放在收支汇总中单独完成
             }
             var staffInfo = StaffHelper.StaffList();
             ViewBag.Staffs = staffInfo;
+            ViewBag.Factories = factories;
 
             ViewBag.flag = "CompanyPay";
             return View(companyPayType);

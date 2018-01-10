@@ -15,9 +15,13 @@ namespace Model
         public string PayTypeId { get; set; }
 
         /// <summary>
-        /// 费用关系员工ID
+        /// 费用关系员工ID(如交罚款)
         /// </summary>
         public string StaffId { set; get; }
+        /// <summary>
+        /// 费用关联水厂ID(如押金交易，进水支出)
+        /// </summary>
+        public string FactoryId { get; set; }
         /// <summary>
         /// 交易类型是否是支付 true:支付 false:
         /// </summary>
