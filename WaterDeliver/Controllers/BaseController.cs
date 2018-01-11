@@ -4,11 +4,16 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using log4net;
 
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = @"log4net.config", Watch = true)]
 namespace WaterDeliver.Controllers
 {
     public class BaseController : Controller
     {
+        protected static readonly ILog log =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private static string staffId;
         /// <summary>
         /// 分页显示的条目数

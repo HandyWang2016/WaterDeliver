@@ -103,7 +103,7 @@ namespace WaterDeliver.Controllers
                                                     EarnDeposit = r.EarnDeposit,
                                                     PayDeposit = r.PayDeposit,
                                                     EarnMonthEndPrice = r.EarnMonthEndPrice,
-                                                    EarnWaterCardPrice=r.EarnWaterCardPrice,
+                                                    EarnWaterCardPrice = r.EarnWaterCardPrice,
                                                     VisitDate = r.VisitDate
 
                                                 }).ToList();
