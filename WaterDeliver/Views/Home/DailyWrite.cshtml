@@ -24,8 +24,17 @@
     function setStaff(pam) {
         staffId = pam.selectedOptions[0].value;
     }
+
+    function checkInput() {
+        var sendbucket = $("#txtSendBucketAmount").val();
+        var emptybucket = $("#txtReceiveEmptyBucketAmount").val();
+        var emptybucket = $("#txtReceiveEmptyBucketAmount").val();
+        var emptybucket = $("#txtReceiveEmptyBucketAmount").val();
+        var emptybucket = $("#txtReceiveEmptyBucketAmount").val();
+        var emptybucket = $("#txtReceiveEmptyBucketAmount").val();
+    }
 </script>
-<form class="form-horizontal" method="post" action="/Home/CreateDailyWrite">
+<form class="form-horizontal" method="post" action="/Home/CreateDailyWrite" onsubmit="checkInput();">
     <div class="panel panel-info">
         <div class="panel-heading">
             <h4 class="panel-title">添加送水信息</h4>
@@ -36,7 +45,6 @@
                 <select name="StaffId" required onchange="setStaff(this)" id="selStaffs" class="selectpicker show-tick form-control" style="width: 130px" data-live-search="true">
                     @if (ViewBag.Staffs != null)
                     {
-                        <option value=""></option>
                         foreach (var item in ViewBag.Staffs as List<Model.Staff>)
                         {
                             <option value="@item.Id">@item.StaffName</option>

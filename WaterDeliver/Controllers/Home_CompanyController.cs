@@ -45,7 +45,7 @@ namespace WaterDeliver.Controllers
             int pageSize = PageSize();
             var companyRecords = CompanyRecordHelper.CompanyList();
             var companyPayRecords = TempData["queryRecords"] == null
-                ? companyRecords.Skip(0).Take(pageSize)
+                ? companyRecords.OrderByDescending(item => item.TransTime).Skip(0).Take(pageSize)
                 : TempData["queryRecords"] as List<CompanyPayRecord>;
 
             var staffs = StaffHelper.StaffList();
@@ -89,7 +89,7 @@ namespace WaterDeliver.Controllers
 
         public ActionResult QueryCompanyRecord(CompanyQueryMod queryMod, int pageIndex = 1)
         {
-            var companyRecords = CompanyRecordHelper.CompanyList().Where(item => item.Id != "");
+            var companyRecords = CompanyRecordHelper.CompanyList().OrderByDescending(item => item.TransTime).Where(item => item.Id != "");
             if (!string.IsNullOrEmpty(queryMod.StaffId))
             {
                 companyRecords = companyRecords.Where(item => item.StaffId == queryMod.StaffId);

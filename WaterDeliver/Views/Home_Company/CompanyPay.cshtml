@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<script src="~/scripts/layer/layer.js"></script>
 <script>
     $(function () {
         $('#txtPayTime').datetimepicker({
@@ -18,8 +19,27 @@
             $(this).datetimepicker('hide');
         });
     });
+
+    function checkInput() {
+        var staff = $("#selectStaff").find("option:selected").text();
+        var payType = $("#selPayType").find("option:selected").text();
+        var isPay = $("input[name='IsPayType']:checked").val();
+        var price = $("#txtPaySum").val().trim();
+        var time = $("#txtPayTime").val();
+        if (price == "" || isNaN(parseFloat(price))) {
+            layer.alert("请输入正确的金额");
+            return false;
+        } else if (time == "") {
+            layer.alert("请选择时间");
+            return false;
+        } else {
+            var payDesc = isPay ? "支出" : "收益";
+            var confirmMsg = "[" + staff + "," + payType + "," + payDesc + price + "元" + "],确认此次交易吗？";
+            return confirm(confirmMsg);
+        }
+    }
 </script>
-<form class="form-horizontal" method="post" action="/Home_Company/CompanyCreate">
+<form class="form-horizontal" method="post" action="/Home_Company/CompanyCreate" onsubmit="return checkInput();">
     <div class="panel panel-info">
         <div class="panel-heading">
             <h4 class="panel-title">公司消费信息</h4>
@@ -57,7 +77,7 @@
                     <input type="radio" name="IsPayType" value="false">收益
                 </label>
             </div>
-            
+
             <div class="form-group">
                 <label class="col-md-2 control-label" for="selFactory">关联水厂</label>
                 <select id="selFactory" name="FactoryId" class="selectpicker show-tick form-control col-sm-2" style="width: 200px;margin:6px" data-live-search="true">
