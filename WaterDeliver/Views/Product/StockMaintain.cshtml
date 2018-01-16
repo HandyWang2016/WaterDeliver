@@ -27,7 +27,7 @@
                 <tr>
                     <th>ID</th>
                     <th>产品名称</th>
-                    <th>库存余量</th>
+                    @*<th>库存余量</th>*@
                     <th>空桶库存余量</th>
                     <th>库存更新时间</th>
                 </tr>
@@ -40,7 +40,7 @@
                     <tr id="@item.Id">
                         <td>@i</td>
                         <td>@item.ProductName</td>
-                        <td>@item.StockRemain</td>
+                        @*<td>@item.StockRemain</td>*@
                         <td>@item.BucketStockRemain</td>
                         <td>@item.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     </tr>
@@ -54,7 +54,7 @@
 <form class="form-horizontal" method="post" action="/Product/AddStockAmount">
     <div class="panel panel-info">
         <div class="panel-heading">
-            <h4 class="panel-title">添加库存</h4>
+            <h4 class="panel-title">空桶库存维护</h4>
         </div>
         <div class="panel-body">
             <div class="form-group">
@@ -69,12 +69,12 @@
                     }
                 </select>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label class="col-sm-1 control-label" for="txtStockRemain">添加库存</label>
                 <input type="number" required class="form-control col-sm-2" style="width: 100px" value="0" id="txtStockRemain" name="numToAdd" />&nbsp;桶
-            </div>
+            </div>*@
             <div class="form-group">
-                <label class="col-sm-1 control-label" for="txtEmptyBucketStock">空桶库存</label>
+                <label class="col-sm-1 control-label" for="txtEmptyBucketStock">空桶库存减少</label>
                 <input type="number" required class="form-control col-sm-2" style="width: 100px" value="0" id="txtEmptyBucketStock" name="numToReadd" />&nbsp;桶
             </div>
             <input type="submit" value="提交" class="btn btn-primary" />

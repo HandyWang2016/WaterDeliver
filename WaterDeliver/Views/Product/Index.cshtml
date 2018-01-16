@@ -12,7 +12,7 @@
             <thead style="background-color: lightblue">
             <tr><th>ID</th>
                 <th>产品名称</th>
-                <th>库存余量</th>
+                @*<th>库存余量</th>*@
                 <th>空桶库存</th>
                 <th>成本价格</th>
                 <th>空桶成本</th>
@@ -29,7 +29,7 @@
                     <tr>
                         <td>@i</td>
                         <td>@item.ProductName</td>
-                        <td>@item.StockRemain</td>
+                        @*<td>@item.StockRemain</td>*@
                         <td>@item.BucketStockRemain</td>
                         <td>@item.CostPrice</td>
                         <td>@item.BucketCostPrice</td>
@@ -67,25 +67,25 @@
                     }
                 </select>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label class="col-sm-1 control-label" for="txtStockRemain">库存余量</label>
                 <input type="number" required class="form-control col-sm-2" style="width: 100px" id="txtStockRemain" name="StockRemain"/>&nbsp;桶
-            </div>
+            </div>*@
             <div class="form-group">
                 <label class="col-sm-1 control-label" for="txtBucketStockRemain">空桶库存</label>
                 <input type="number" required class="form-control col-sm-2" style="width: 100px" id="txtBucketStockRemain" name="BucketStockRemain" value="0"/>&nbsp;桶
             </div>
             <div class="form-group">
-                <label class="col-sm-1 control-label" for="txtCostPrice">成本价格</label>
-                <input type="text" class="form-control col-sm-2" style="width: 100px" id="txtCostPrice" name="CostPrice"/>&nbsp;元
+                <label class="col-sm-1 control-label" for="txtCostPrice">桶装水成本</label>
+                <input type="number" class="form-control col-sm-2" style="width: 100px" id="txtCostPrice" name="CostPrice"/>&nbsp;元
             </div>
             <div class="form-group">
                 <label class="col-sm-1 control-label" for="txtBucketCostPrice">空桶成本</label>
-                <input type="text" class="form-control col-sm-2" style="width: 100px" id="txtBucketCostPrice" name="BucketCostPrice" />&nbsp;元
+                <input type="number" class="form-control col-sm-2" style="width: 100px" id="txtBucketCostPrice" name="BucketCostPrice" />&nbsp;元
             </div>
             <div class="form-group">
                 <label class="col-sm-1 control-label" for="txtSalePrice">销售价格</label>
-                <input type="text" required class="form-control col-sm-2" style="width: 100px" id="txtSalePrice" name="SalePrice"/>&nbsp;元
+                <input type="number" required class="form-control col-sm-2" style="width: 100px" id="txtSalePrice" name="SalePrice"/>&nbsp;元
             </div>
             <input type="submit" value="提交" class="btn btn-primary"/>
         </div>
