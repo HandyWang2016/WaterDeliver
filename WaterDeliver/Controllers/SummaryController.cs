@@ -67,9 +67,24 @@ namespace WaterDeliver.Controllers
             monthEnd.MonthEndEarn = monthEnd.StaffEarn + monthEnd.CompanyEarn - monthEnd.StaffPay - monthEnd.CompanyPay;
             monthEnd.YearMonth = year + "-" + month;
 
+            //计算员工提成，作为发工资的参考
+            var staffs = StaffHelper.StaffList();
+            List<StaffCommissionViewModel> staffCommission = new List<StaffCommissionViewModel>();
+            foreach (var staff in staffs)
+            {
+                int bucketCount = dailyRecords.Where(item => item.StaffId == staff.Id).Sum(i => i.SendBucketAmount);
+                staffCommission.Add(new StaffCommissionViewModel
+                {
+                    StaffName = staff.StaffName,
+                    BucketCount = bucketCount,
+                    Comission = bucketCount * commission
+                });
+            }
+            ViewBag.staffCommission = staffCommission;
+
             ViewBag.queryPam = JsonConvert.SerializeObject(new { YearMonth = yearMonth });
             ViewBag.flag = "EndSummary";
-            ViewBag.staffs = StaffHelper.StaffList();
+            ViewBag.staffs = staffs;
             return View(monthEnd);
         }
 

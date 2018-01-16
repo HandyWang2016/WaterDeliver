@@ -54,6 +54,7 @@
     <Compile Include="Products.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Staff.cs" />
+    <Compile Include="StaffCommissionViewModel.cs" />
     <Compile Include="StaffCustomer.cs" />
     <Compile Include="StaffCustomerViewModel.cs" />
     <Compile Include="StaffSalary.cs" />

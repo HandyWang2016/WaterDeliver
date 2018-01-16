@@ -1,4 +1,5 @@
-﻿    @model Model.MonthEndSummary
+﻿@using Model
+@model Model.MonthEndSummary
 
 @{
     ViewBag.Title = "Index";
@@ -55,76 +56,90 @@ else
     });
 </script>
 <form class="form-inline" method="post" action="/Summary/Index">
-    <div class="panel panel-info">
+    <div class="panel panel-info col-lg-7">
         <div class="panel-heading">
             <h4 class="panel-title">查询条件</h4>
         </div>
         <div class="panel-body">
-            <div class="form-group col-sm-2">
+            <div>
                 <label class="control-label" for="txtDateBegin">选择时间</label>
                 <input type="text" readonly class="form-control" style="width: 130px" name="yearMonth" id="txtDateBegin" />
-            </div>
-            <div class="form-group col-sm-3">
                 <input type="submit" value="查询" class="btn btn-primary" />
             </div>
+            <br />
+            <h5 style="color:red">@Model.YearMonth 公司盈利</h5>
+            <table class="table table-hover table-bordered table-condensed">
+                <thead style="background-color: powderblue">
+                    <tr>
+                        <th>交易月份</th>
+                        <th>公司收入</th>
+                        <th>公司支出</th>
+                        <th>月底盈利</th>
+                    </tr>
+                </thead>
+                @if (Model != null)
+            {
+                    <tr>
+                        <td>@Model.YearMonth</td>
+                        <td style="color: green; font-weight: bold">@Model.CompanyEarn</td>
+                        <td style="color: red; font-weight: bold">-@Model.CompanyPay</td>
+                        @CheckPay(Model.MonthEndEarn)
+                    </tr>
+                }
+            </table>
+
+            @* 员工提成 *@
+            <h5 style="color:red">@Model.YearMonth 员工提成(已从公司支出中扣除)</h5>
+            <table class="table table-hover table-bordered table-condensed">
+                <thead style="background-color: powderblue">
+                    <tr>
+                        <th>员工</th>
+                        <th>送水桶数</th>
+                        <th>提成</th>
+                    </tr>
+                </thead>
+                @if (ViewBag.staffCommission != null)
+                {
+                    foreach (var item in (List<StaffCommissionViewModel>)ViewBag.staffCommission)
+                    {
+                        <tr>
+                            <td>@item.StaffName</td>
+                            <td>@item.BucketCount</td>
+                            <td>@item.Comission</td>
+                        </tr>
+                    }
+
+                }
+            </table>
         </div>
     </div>
 </form>
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <h4 class="panel-title">查询结果</h4>
-    </div>
-    <div class="panel-body">
-        <table class="table table-hover table-bordered table-condensed">
-            <thead style="background-color:powderblue">
-                <tr>
-                    <th>交易月份</th>
-                    @*<th>员工收入</th>
-                    <th>员工支出</th>*@
-                    <th>公司收入</th>
-                    <th>公司支出</th>
-                    <th>月底盈利统计</th>
-                </tr>
-            </thead>
-            @if (Model != null)
-            {
-                <tr>
-                    <td>@Model.YearMonth</td>
-                    @*<td style="color: green;font-weight:bold">@Model.StaffEarn</td>
-                    <td style="color:red;font-weight:bold">-@Model.StaffPay</td>*@
-                    <td style="color:green;font-weight:bold">@Model.CompanyEarn</td>
-                    <td style="color:red;font-weight:bold">-@Model.CompanyPay</td>
-                    @CheckPay(Model.MonthEndEarn)
-                </tr>
-            }
-        </table>
-    </div>
-</div>
-<div>
+
+<div class="panel panel-info col-md-5">
     <form class="form-horizontal" method="post" action="/Summary/PaySalary">
-        <div class="panel panel-info">
+        <div class="panel panel-danger">
             <div class="panel-heading">
                 <h4 class="panel-title">工资发放</h4>
             </div>
             <div class="panel-body">
                 <div class="form-group">
-                    <label class="col-sm-1 control-label" for="selStaff">选择员工</label>
+                    <label class="col-sm-2 control-label" for="selStaff">选择员工</label>
                     <select name="StaffId" id="selStaff" class="selectpicker show-tick form-control col-sm-2" style="width: 250px" required data-live-search="true">
                         @if (ViewBag.staffs != null)
+                        {
+                            foreach (var item in ViewBag.staffs)
                             {
-                                foreach (var item in ViewBag.staffs)
-                                {
-                                    <option value="@item.Id">@item.StaffName</option>
-                                }
+                                <option value="@item.Id">@item.StaffName</option>
                             }
+                        }
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-1 control-label" for="txtSalary">工资金额</label>
+                    <label class="col-sm-2 control-label" for="txtSalary">工资金额</label>
                     <input type="number" required class="form-control col-sm-2" style="width: 100px" id="txtSalary" name="Salary" />&nbsp;元
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-1 control-label" for="txtSalaryMonth">工资月</label>
+                    <label class="col-sm-2 control-label" for="txtSalaryMonth">工资月</label>
                     <input type="text" readonly required class="form-control col-sm-2" style="width: 130px" name="SalaryMonth" id="txtSalaryMonth" />
                 </div>
                 <input type="submit" value="提交" class="btn btn-primary" />
