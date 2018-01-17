@@ -27,6 +27,47 @@
             layer.alert("请选择时间");
             return false;
         }
+        if ($("#lblBucketInfo").html() == "") {
+            layer.alert('请先填写送水信息');
+            return false;
+        }
+        $("input[name='hidBuckets']").val(buckets);
+    }
+
+    var buckets = new Array();
+    //添加送水信息
+    function addBucketInfo() {
+        var product = $("#selProduct").find("option:selected").text();
+        var proval = $("#selProduct").val();
+        var sendBucket = $("#txtSendBucketAmount").val();
+        var emptyBucket = $("#txtReceiveEmptyBucketAmount").val();
+        if (parseInt(sendBucket) <= 0 && parseInt(emptyBucket) <= 0) {
+            layer.alert("请填写送水信息");
+            return;
+        }
+        for (var i = 0; i < buckets.length; i++) {
+            if (buckets[i].indexOf(proval) != -1) {
+                layer.alert("同一产品只能添加1条送水记录");
+                $("#lblBucketInfo").html("");
+                buckets.splice(0, buckets.length);
+                return;
+            }
+        }
+
+        var bucketTxt = "";
+        if (parseInt(sendBucket) > 0) {
+            bucketTxt += "送出" + sendBucket + "桶 ";
+        } if (parseInt(emptyBucket) > 0) {
+            bucketTxt += "收回" + emptyBucket + "个空桶";
+        }
+        var lblTxt = "【" + product + "," + bucketTxt + "】";
+        $("#lblBucketInfo").append(lblTxt);
+        buckets.push([proval, sendBucket, emptyBucket]);
+    }
+
+    function clearBuckets() {
+        $("#lblBucketInfo").html("");
+        buckets.splice(0, buckets.length);
     }
 </script>
 <form class="form-horizontal" method="post" action="/Home/CreateDailyWrite" onsubmit="return checkInput();">
@@ -37,7 +78,7 @@
         <div class="panel-body">
             <div class="form-group">
                 <label class="col-md-2 control-label" for="selStaffs">选择员工</label>
-                <select name="StaffId" required id="selStaffs" class="selectpicker show-tick form-control" style="width: 130px" data-live-search="true">
+                <select name="StaffId" required id="selStaffs" onchange="clearBuckets();" class="selectpicker show-tick form-control" style="width: 130px" data-live-search="true">
                     @if (ViewBag.Staffs != null)
                     {
                         foreach (var item in ViewBag.Staffs as List<Model.Staff>)
@@ -49,7 +90,7 @@
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label" for="selCustomer">选择客户</label>
-                <select name="CustomerId" id="selCustomer" class="selectpicker show-tick form-control col-sm-2" style="width: 350px" required data-live-search="true">
+                <select name="CustomerId" id="selCustomer" onchange="clearBuckets();" class="selectpicker show-tick form-control col-sm-2" style="width: 350px" required data-live-search="true">
                     @if (Model.Customers != null)
                     {
                         foreach (var item in Model.Customers)
@@ -78,6 +119,12 @@
             <div class="form-group">
                 <label class="col-md-2 control-label" for="txtReceiveEmptyBucketAmount">收回空桶</label>
                 <input type="number" required value="0" class="form-control col-sm-2" style="width: 200px" id="txtReceiveEmptyBucketAmount" name="ReceiveEmptyBucketAmount" />&nbsp;桶
+                <button type="button" class="btn btn-success" onclick="addBucketInfo();">添加</button>
+            </div>
+            @* 送水信息 *@
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="lblBucketInfo">送水信息</label>
+                <label id="lblBucketInfo" class="control-label" style="color:red"></label>
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label" for="txtEarnDeposit"><i class="icon-plus" style="color:green"></i>&nbsp;收入押金</label>
@@ -102,7 +149,7 @@
             <div class="form-group" style="margin-left:80px">
                 <input type="submit" value="保存" class="btn btn-primary" />
             </div>
-
+            <input type="hidden" name="hidBuckets" />
         </div>
     </div>
 </form>

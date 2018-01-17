@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Model.DailyRecordShow>
+﻿@using Model
+@model IEnumerable<Model.DailyRecordShow>
 
 @{
     ViewBag.Title = "DailyRecord";
@@ -125,19 +126,38 @@
     </div>
     <div class="panel-body">
         <table class="table table-hover table-bordered table-condensed">
-            <thead style="background-color:powderblue"><tr><th>序号</th><th>员工</th><th>客户名称</th><th>产品名称</th><th>送水桶数</th><th>收回空桶</th><th>收取押金</th><th>退还押金</th><th>月底结算</th><th>预购水卡</th><th>交易日期</th></tr></thead>
+            <thead style="background-color:powderblue"><tr><th>员工</th><th>客户名称</th><th>产品名称</th><th>送水桶数</th><th>收回空桶</th><th>交易日期</th></tr></thead>
             @if (Model != null)
             {
                 int index = 0;
                 foreach (var item in Model)
                 {
                     <tr>
-                        <td>@index</td>
+                        @*<td>@index</td>*@
                         <td>@item.StaffName</td>
                         <td>@item.CustomerName</td>
                         <td>@item.ProductName</td>
                         <td>@item.SendBucketAmount</td>
                         <td>@item.ReceiveEmptyBucketAmount</td>
+                        <td>@item.VisitDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    </tr>
+                    index++;
+                }
+            }
+        </table>
+        <div class="page_div" id="page"></div>
+        @* 资金交易 *@
+        <label style="color:red">资金交易</label>
+        <table class="table table-hover table-bordered table-condensed">
+            <thead style="background-color:powderblue"><tr><th>员工</th><th>公司</th><th>收取押金</th><th>退还押金</th><th>月底结算</th><th>预购水卡</th><th>交易日期</th></tr></thead>
+            @if (ViewBag.recordsFundTrans != null)
+            {
+                int index = 0;
+                foreach (var item in (List<DailyFundTrans>)ViewBag.recordsFundTrans)
+                {
+                    <tr>
+                        <td>@item.StaffName</td>
+                        <td>@item.CustomerName</td>
                         <td>@item.EarnDeposit</td>
                         <td>@item.PayDeposit</td>
                         <td>@item.EarnMonthEndPrice</td>
@@ -148,7 +168,6 @@
                 }
             }
         </table>
-        <div class="page_div" id="page"></div>
     </div>
 </div>
 

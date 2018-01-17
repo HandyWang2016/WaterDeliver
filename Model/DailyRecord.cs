@@ -58,5 +58,18 @@ namespace Model
         public string ProductName { get; set; }
     }
 
+    public class DailyFundTrans
+    {
+        public string StaffId { get; set; }
+        public string StaffName { get; set; }
+        public string CustomerId { get; set; }
+        public string CustomerName { get; set; }
+        public double EarnDeposit { get; set; }
+        public double PayDeposit { get; set; }
+        public double EarnMonthEndPrice { get; set; }
+        public double EarnWaterCardPrice { get; set; }
+        public DateTime VisitDate { get; set; }
+    }
+
 
 }

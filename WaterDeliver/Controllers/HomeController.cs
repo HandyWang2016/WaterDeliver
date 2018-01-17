@@ -44,19 +44,40 @@ namespace WaterDeliver.Controllers
         /// 添加日常记账
         /// </summary>
         /// <param name="dailyRecord"></param>
+        /// <param name="hidBuckets"></param>
         /// <returns></returns>
-        public ActionResult CreateDailyWrite(DailyRecord dailyRecord)
+        public ActionResult CreateDailyWrite(DailyRecord dailyRecord, string[] hidBuckets)
         {
-            dailyRecord.Id = ObjectId.NewObjectId().ToString();
-            dailyRecord.VisitDate = dailyRecord.VisitDate < Convert.ToDateTime("2017-01-01") ? DateTime.Now : dailyRecord.VisitDate;
+            string[] bucketPams = hidBuckets[0].Split(',');
+            for (int i = 0; i < bucketPams.Length; i++)
+            {
+                var t = i % 3;
+                if (t == 0)
+                {
+                    dailyRecord.SendProductId = bucketPams[i];
+                }
+                else if (t == 1)
+                {
+                    dailyRecord.SendBucketAmount = int.Parse(bucketPams[i]);
+                }
+                else
+                {
+                    dailyRecord.ReceiveEmptyBucketAmount = int.Parse(bucketPams[i]);
+                }
+                if ((i + 1) % 3 == 0)
+                {
+                    ////完成一个产品
+                    //更新库存信息
+                    var product = ProductHelper.GetById(dailyRecord.SendProductId);
+                    product.StockRemain += dailyRecord.SendBucketAmount;//桶装水库存增加
+                    product.BucketStockRemain += dailyRecord.ReceiveEmptyBucketAmount;//空桶库存增加
+                    ProductHelper.Update(product);
+                    //添加一条日常记录
+                    dailyRecord.Id = ObjectId.NewObjectId().ToString();
+                    MongoBase.Insert(dailyRecord);
+                }
+            }
 
-            //更新库存信息
-            var product = ProductHelper.GetById(dailyRecord.SendProductId);
-            product.StockRemain += dailyRecord.SendBucketAmount;//桶装水库存增加
-            product.BucketStockRemain += dailyRecord.ReceiveEmptyBucketAmount;//空桶库存增加
-            ProductHelper.Update(product);
-
-            MongoBase.Insert(dailyRecord);
             return RedirectToAction("DailyRecord");
         }
 
@@ -100,13 +121,41 @@ namespace WaterDeliver.Controllers
                                                     ProductName = p.ProductName,
                                                     SendBucketAmount = r.SendBucketAmount,
                                                     ReceiveEmptyBucketAmount = r.ReceiveEmptyBucketAmount,
-                                                    EarnDeposit = r.EarnDeposit,
-                                                    PayDeposit = r.PayDeposit,
-                                                    EarnMonthEndPrice = r.EarnMonthEndPrice,
-                                                    EarnWaterCardPrice = r.EarnWaterCardPrice,
                                                     VisitDate = r.VisitDate
-
                                                 }).ToList();
+
+            //与公司的资金交易
+            List<DailyFundTrans> fundRecords = (List<DailyFundTrans>)TempData["fundRecords"] ?? dailyRecords.Where(
+                                     item =>
+                                         item.PayDeposit > 0 || item.EarnDeposit > 0 || item.EarnMonthEndPrice > 0 ||
+                                         item.EarnWaterCardPrice > 0)
+                                 .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
+                                 .Select(item => new DailyFundTrans()
+                                 {
+                                     StaffId = item.First().StaffId,
+                                     CustomerId = item.First().CustomerId,
+                                     EarnDeposit = item.First().EarnDeposit,
+                                     PayDeposit = item.First().PayDeposit,
+                                     EarnMonthEndPrice = item.First().EarnMonthEndPrice,
+                                     EarnWaterCardPrice = item.First().EarnWaterCardPrice,
+                                     VisitDate = item.First().VisitDate
+                                 }).ToList();
+
+            var recordsFundTrans = (from r in fundRecords
+                                    join c in customers
+                              on r.CustomerId equals c.Id
+                                    join s in staffs
+                                    on r.StaffId equals s.Id
+                                    select new DailyFundTrans
+                                    {
+                                        StaffName = s.StaffName,
+                                        CustomerName = c.CustomerName,
+                                        EarnDeposit = r.EarnDeposit,
+                                        PayDeposit = r.PayDeposit,
+                                        EarnMonthEndPrice = r.EarnMonthEndPrice,
+                                        EarnWaterCardPrice = r.EarnWaterCardPrice,
+                                        VisitDate = r.VisitDate
+                                    }).ToList();
 
             ViewBag.flag = "DailyRecord";
             ViewBag.customers = customers;
@@ -125,6 +174,7 @@ namespace WaterDeliver.Controllers
                  ? 1
                  : int.Parse(TempData["currentPage"].ToString());
 
+            ViewBag.recordsFundTrans = recordsFundTrans;
             ViewBag.Staffs = StaffHelper.StaffList();
             return View(newRecords);
         }
@@ -169,6 +219,23 @@ namespace WaterDeliver.Controllers
                 temRecords = temRecords.Where(item => item.VisitDate <= dailyQuery.DateEnd);
             }
 
+            //查看资金交易信息(过滤金额全部为0的)
+            var fundRecords = temRecords.Where(
+                    item =>
+                        item.PayDeposit > 0 || item.EarnDeposit > 0 || item.EarnMonthEndPrice > 0 ||
+                        item.EarnWaterCardPrice > 0)
+                .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
+                .Select(item => new DailyFundTrans()
+                {
+                    StaffId = item.First().StaffId,
+                    CustomerId = item.First().CustomerId,
+                    EarnDeposit = item.First().EarnDeposit,
+                    PayDeposit = item.First().PayDeposit,
+                    EarnMonthEndPrice = item.First().EarnMonthEndPrice,
+                    EarnWaterCardPrice = item.First().EarnWaterCardPrice,
+                    VisitDate = item.First().VisitDate
+                });
+
             //获取页条数
             int pageSize = PageSize();
             var currentRecords = temRecords
@@ -182,6 +249,7 @@ namespace WaterDeliver.Controllers
             TempData["totalSize"] = temRecords.Count();
             TempData["currentPage"] = pageIndex;
 
+            TempData["fundRecords"] = fundRecords;
             return currentRecords.ToList<DailyRecord>();
         }
 
