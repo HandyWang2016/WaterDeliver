@@ -69,6 +69,21 @@
         $("#lblBucketInfo").html("");
         buckets.splice(0, buckets.length);
     }
+
+    function showOtherProduct() {
+        var show = $("#divOther").css("display");
+        $("#divOther").css('display', show == 'block' ? 'none' : 'block');
+
+        var btn = $("#btnAddPro").text();
+        $("#btnAddPro").text(btn == '添加附属产品' ? '取消添加' : '添加附属产品');
+        var btnClass = $("#btnAddPro").attr('class');
+        $("#btnAddPro").attr('class', btnClass == 'btn btn-success' ? 'btn btn-danger' : 'btn btn-success');
+        if (btnClass.indexOf('danger') != -1) {
+            $("#txtWaterDispenser").val(0);
+            $("#txtWaterHolder").val(0);
+            $("#txtPushPump").val(0);
+        }
+    }
 </script>
 <form class="form-horizontal" method="post" action="/Home/CreateDailyWrite" onsubmit="return checkInput();">
     <div class="panel panel-info">
@@ -125,6 +140,22 @@
             <div class="form-group">
                 <label class="col-md-2 control-label" for="lblBucketInfo">送水信息</label>
                 <label id="lblBucketInfo" class="control-label" style="color:red"></label>
+            </div>
+            @* 附属产品信息:饮水机、水架子、手压泵 *@
+            <button type="button" id="btnAddPro" class="btn btn-success" style="margin-left: 500px; position: absolute;" onclick="showOtherProduct();">添加附属产品</button>
+            <div class="form-group" id="divOther" style="display:none">
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="txtWaterDispenser">饮水机</label>
+                    <input type="number" required value="0" class="form-control col-sm-2" style="width: 200px" id="txtWaterDispenser" name="WaterDispenser" />&nbsp;台
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="txtWaterHolder">水支架</label>
+                    <input type="number" required value="0" class="form-control col-sm-2" style="width: 200px" id="txtWaterHolder" name="WaterHolder" />&nbsp;个
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="txtPushPump">手压泵</label>
+                    <input type="number" required value="0" class="form-control col-sm-2" style="width: 200px" id="txtPushPump" name="PushPump" />&nbsp;个
+                </div>
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label" for="txtEarnDeposit"><i class="icon-plus" style="color:green"></i>&nbsp;收入押金</label>

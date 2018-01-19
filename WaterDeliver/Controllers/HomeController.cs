@@ -75,13 +75,16 @@ namespace WaterDeliver.Controllers
                     //添加一条日常记录
                     dailyRecord.Id = ObjectId.NewObjectId().ToString();
 
-                    //同一人在同一公司，资金交易只记一笔(避免汇总数据double)
+                    //同一人在同一公司，资金交易只记一笔(避免汇总数据double);附属产品只记一笔
                     if (i > 2)
                     {
                         dailyRecord.EarnDeposit = 0;
                         dailyRecord.PayDeposit = 0;
                         dailyRecord.EarnMonthEndPrice = 0;
                         dailyRecord.EarnWaterCardPrice = 0;
+                        dailyRecord.WaterDispenser = 0;
+                        dailyRecord.WaterHolder = 0;
+                        dailyRecord.PushPump = 0;
                     }
                     MongoBase.Insert(dailyRecord);
                 }
@@ -166,6 +169,36 @@ namespace WaterDeliver.Controllers
                                         VisitDate = r.VisitDate
                                     }).ToList();
 
+            //附属产品交易
+            var accessoryProRecords = (List<AccessoryProducts>)TempData["accessoryProRecords"] ?? dailyRecords.Where(
+                    item =>
+                        item.WaterHolder > 0 || item.WaterDispenser > 0 || item.PushPump > 0)
+                .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
+                .Select(item => new AccessoryProducts()
+                {
+                    StaffId = item.First().StaffId,
+                    CustomerId = item.First().CustomerId,
+                    WaterDispenser = item.First().WaterDispenser,
+                    PushPump = item.First().PushPump,
+                    WaterHolder = item.First().WaterHolder,
+                    VisitDate = item.First().VisitDate
+                });
+
+            var recordsAccessoryPro = (from r in accessoryProRecords
+                                       join c in customers
+                              on r.CustomerId equals c.Id
+                                    join s in staffs
+                                    on r.StaffId equals s.Id
+                                    select new AccessoryProducts
+                                    {
+                                        StaffName = s.StaffName,
+                                        CustomerName = c.CustomerName,
+                                        WaterHolder = r.WaterHolder,
+                                        WaterDispenser = r.WaterDispenser,
+                                        PushPump = r.PushPump,
+                                        VisitDate = r.VisitDate
+                                    }).ToList();
+
             ViewBag.flag = "DailyRecord";
             ViewBag.customers = customers;
             ViewBag.queryPam = TempData["dailyQuery"] == null ? "{}" : JsonConvert.SerializeObject(TempData["dailyQuery"]);
@@ -184,6 +217,7 @@ namespace WaterDeliver.Controllers
                  : int.Parse(TempData["currentPage"].ToString());
 
             ViewBag.recordsFundTrans = recordsFundTrans;
+            ViewBag.recordsAccessoryPro = recordsAccessoryPro;
             ViewBag.Staffs = StaffHelper.StaffList();
             return View(newRecords);
         }
@@ -245,6 +279,21 @@ namespace WaterDeliver.Controllers
                     VisitDate = item.First().VisitDate
                 });
 
+            //查看附属产品信息(过滤附属产品为0的)
+            var accessoryProRecords = temRecords.Where(
+                    item =>
+                        item.WaterHolder > 0 || item.WaterDispenser > 0 || item.PushPump > 0)
+                .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
+                .Select(item => new AccessoryProducts()
+                {
+                    StaffId = item.First().StaffId,
+                    CustomerId = item.First().CustomerId,
+                    WaterDispenser = item.First().WaterDispenser,
+                    PushPump = item.First().PushPump,
+                    WaterHolder = item.First().WaterHolder,
+                    VisitDate = item.First().VisitDate
+                });
+
             //获取页条数
             int pageSize = PageSize();
             var currentRecords = temRecords
@@ -259,6 +308,7 @@ namespace WaterDeliver.Controllers
             TempData["currentPage"] = pageIndex;
 
             TempData["fundRecords"] = fundRecords;
+            TempData["accessoryProRecords"] = accessoryProRecords;
             return currentRecords.ToList<DailyRecord>();
         }
 

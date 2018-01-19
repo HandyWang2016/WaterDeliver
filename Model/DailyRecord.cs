@@ -49,6 +49,13 @@ namespace Model
         /// 纪录日期
         /// </summary>
         public DateTime VisitDate { get; set; }
+
+        /// <summary>
+        /// 附属产品：饮水机，水支架，手压泵
+        /// </summary>
+        public int WaterDispenser { get; set; }
+        public int WaterHolder { get; set; }
+        public int PushPump { get; set; }
     }
 
     public class DailyRecordShow : DailyRecord
@@ -68,6 +75,21 @@ namespace Model
         public double PayDeposit { get; set; }
         public double EarnMonthEndPrice { get; set; }
         public double EarnWaterCardPrice { get; set; }
+        public DateTime VisitDate { get; set; }
+    }
+
+    /// <summary>
+    /// 附属产品列表：饮水机，水支架，手压泵
+    /// </summary>
+    public class AccessoryProducts
+    {
+        public string StaffId { get; set; }
+        public string StaffName { get; set; }
+        public string CustomerId { get; set; }
+        public string CustomerName { get; set; }
+        public int WaterDispenser { get; set; }
+        public int WaterHolder { get; set; }
+        public int PushPump { get; set; }
         public DateTime VisitDate { get; set; }
     }
 
