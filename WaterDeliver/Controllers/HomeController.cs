@@ -74,6 +74,15 @@ namespace WaterDeliver.Controllers
                     ProductHelper.Update(product);
                     //添加一条日常记录
                     dailyRecord.Id = ObjectId.NewObjectId().ToString();
+
+                    //同一人在同一公司，资金交易只记一笔(避免汇总数据double)
+                    if (i > 2)
+                    {
+                        dailyRecord.EarnDeposit = 0;
+                        dailyRecord.PayDeposit = 0;
+                        dailyRecord.EarnMonthEndPrice = 0;
+                        dailyRecord.EarnWaterCardPrice = 0;
+                    }
                     MongoBase.Insert(dailyRecord);
                 }
             }
