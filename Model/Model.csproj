@@ -45,6 +45,7 @@
     <Compile Include="CompanyPayTypeEnum.cs" />
     <Compile Include="CompanyQueryMod.cs" />
     <Compile Include="Customer.cs" />
+    <Compile Include="CustomerAccessory.cs" />
     <Compile Include="CustomerProductViewModel.cs" />
     <Compile Include="DailyQueryMod.cs" />
     <Compile Include="DailyRecord.cs" />
