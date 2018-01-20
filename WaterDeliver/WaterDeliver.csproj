@@ -24,6 +24,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -204,6 +205,7 @@
     <Compile Include="Controllers\Common\DataHandle.ashx.cs">
       <DependentUpon>DataHandle.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\Home_AccessoryController.cs" />
     <Compile Include="Controllers\Home_FactoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Home_CompanyController.cs" />
@@ -245,6 +247,7 @@
     <Content Include="Views\Summary\Index.cshtml" />
     <Content Include="Views\Summary\SalaryList.cshtml" />
     <Content Include="Views\Home_Factory\TransRecord.cshtml" />
+    <Content Include="Views\Home_Accessory\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

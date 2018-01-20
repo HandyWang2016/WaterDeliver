@@ -172,7 +172,7 @@ namespace WaterDeliver.Controllers
             //附属产品交易
             var accessoryProRecords = (List<AccessoryProducts>)TempData["accessoryProRecords"] ?? dailyRecords.Where(
                     item =>
-                        item.WaterHolder > 0 || item.WaterDispenser > 0 || item.PushPump > 0)
+                        item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0)
                 .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
                 .Select(item => new AccessoryProducts()
                 {
@@ -282,7 +282,7 @@ namespace WaterDeliver.Controllers
             //查看附属产品信息(过滤附属产品为0的)
             var accessoryProRecords = temRecords.Where(
                     item =>
-                        item.WaterHolder > 0 || item.WaterDispenser > 0 || item.PushPump > 0)
+                        item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0)
                 .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
                 .Select(item => new AccessoryProducts()
                 {
