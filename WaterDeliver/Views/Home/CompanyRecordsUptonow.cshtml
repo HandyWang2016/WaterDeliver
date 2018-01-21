@@ -23,8 +23,10 @@
                 foreach (var item in Model)
                 {
                     <tr style="font-weight:bold">
-                        <td>@Html.ActionLink(item.CustomerName, "CompanyDailyRecordsDetails", "Home", 
-                           new { customerId = item.CustomerId, customerName = item.CustomerName }) </td>
+                        <td>
+                            @Html.ActionLink(item.CustomerName, "CompanyDailyRecordsDetails",
+                                     new { customerId = item.CustomerId, customerName = item.CustomerName })
+                        </td>
                         <td>@item.SendBuckets</td>
                         <td>@item.ReceiveEmptyBuckets</td>
                         <td>@item.WaterDispenser</td>

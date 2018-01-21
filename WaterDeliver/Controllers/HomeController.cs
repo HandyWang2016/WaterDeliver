@@ -433,8 +433,17 @@ namespace WaterDeliver.Controllers
                 .Where(item => item.CustomerId == customerId)
                 .OrderByDescending(item => item.VisitDate)
                 .ToList();
+            CustomerAccessory sumaryMod = records.GroupBy(item=>item.CustomerId).Select(p=>new CustomerAccessory()
+            {
+                SendBuckets=p.Sum(i=>i.SendBucketAmount),
+                ReceiveEmptyBuckets=p.Sum(i=>i.ReceiveEmptyBucketAmount),
+                WaterDispenser=p.Sum(i=>i.WaterDispenser),
+                WaterHolder=p.Sum(i=>i.WaterHolder),
+                PushPump=p.Sum(i=>i.PushPump)
+            }).First();
 
             ViewBag.customerName = customerName;
+            ViewBag.sumaryInfo = sumaryMod;
             return View(records);
         }
 
