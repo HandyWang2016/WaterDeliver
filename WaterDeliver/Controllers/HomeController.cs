@@ -187,17 +187,17 @@ namespace WaterDeliver.Controllers
             var recordsAccessoryPro = (from r in accessoryProRecords
                                        join c in customers
                               on r.CustomerId equals c.Id
-                                    join s in staffs
-                                    on r.StaffId equals s.Id
-                                    select new AccessoryProducts
-                                    {
-                                        StaffName = s.StaffName,
-                                        CustomerName = c.CustomerName,
-                                        WaterHolder = r.WaterHolder,
-                                        WaterDispenser = r.WaterDispenser,
-                                        PushPump = r.PushPump,
-                                        VisitDate = r.VisitDate
-                                    }).ToList();
+                                       join s in staffs
+                                       on r.StaffId equals s.Id
+                                       select new AccessoryProducts
+                                       {
+                                           StaffName = s.StaffName,
+                                           CustomerName = c.CustomerName,
+                                           WaterHolder = r.WaterHolder,
+                                           WaterDispenser = r.WaterDispenser,
+                                           PushPump = r.PushPump,
+                                           VisitDate = r.VisitDate
+                                       }).ToList();
 
             ViewBag.flag = "DailyRecord";
             ViewBag.customers = customers;
@@ -393,5 +393,51 @@ namespace WaterDeliver.Controllers
         {
             return RedirectToAction("MonthEnd", new { yearMonth = yearMonth, staffId = staffId, pageSize = pageSize });
         }
+
+        #region 以公司为主体，截至到现在的产品交易汇总及明细
+        /// <summary>
+        /// 截至到现在，公司的所有送水记录及汇总记录
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult CompanyRecordsUptonow()
+        {
+            var records = DailyRecordHelper.DailyRecordList();
+            var customers = CustomerHelper.CustomerList();
+            var companyDailyRecords = records.GroupBy(item => item.CustomerId).Select(p => new CustomerAccessory()
+            {
+                CustomerId = p.First().CustomerId,
+                SendBuckets = p.Sum(i => i.SendBucketAmount),
+                ReceiveEmptyBuckets = p.Sum(i => i.ReceiveEmptyBucketAmount),
+                WaterDispenser = p.Sum(i => i.WaterDispenser),
+                WaterHolder = p.Sum(i => i.WaterHolder),
+                PushPump = p.Sum(i => i.PushPump)
+            }).Join(customers, x => x.CustomerId, y => y.Id, (x, y) => new { x, y }).Select(p => new CustomerAccessory
+            {
+                CustomerId = p.x.CustomerId,
+                CustomerName = p.y.CustomerName,
+                SendBuckets = p.x.SendBuckets,
+                ReceiveEmptyBuckets = p.x.ReceiveEmptyBuckets,
+                WaterDispenser = p.x.WaterDispenser,
+                WaterHolder = p.x.WaterHolder,
+                PushPump = p.x.PushPump
+            });
+
+            ViewBag.flag = "CompanyRecordsUptonow";
+            return View(companyDailyRecords);
+        }
+
+        public ActionResult CompanyDailyRecordsDetails(string customerId, string customerName)
+        {
+            //该公司的所有日常交易记录
+            var records = DailyRecordHelper.DailyRecordList()
+                .Where(item => item.CustomerId == customerId)
+                .OrderByDescending(item => item.VisitDate)
+                .ToList();
+
+            ViewBag.customerName = customerName;
+            return View(records);
+        }
+
+        #endregion
     }
 }

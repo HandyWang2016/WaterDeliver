@@ -10,6 +10,8 @@ namespace Model
     {
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
+        public int SendBuckets { get; set; }
+        public int ReceiveEmptyBuckets { get; set; }
         public int WaterDispenser { get; set; }
         public int WaterHolder { get; set; }
         public int PushPump { get; set; }

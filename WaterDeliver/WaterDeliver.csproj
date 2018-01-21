@@ -248,6 +248,8 @@
     <Content Include="Views\Summary\SalaryList.cshtml" />
     <Content Include="Views\Home_Factory\TransRecord.cshtml" />
     <Content Include="Views\Home_Accessory\Index.cshtml" />
+    <Content Include="Views\Home\CompanyRecordsUptonow.cshtml" />
+    <Content Include="Views\Home\CompanyDailyRecordsDetails.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

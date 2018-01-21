@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Model.CustomerAccessory>
+
+@{
+    ViewBag.Title = "CompanyRecordsUptonow";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel panel-info">
+    <div class="panel-body">
+        <table class="table table-hover table-bordered table-condensed">
+            <thead style="background-color:powderblue">
+                <tr>
+                    <th>公司名称</th>
+                    <th>送水桶数</th>
+                    <th>收回空桶数</th>
+                    <th>饮水机</th>
+                    <th>手压泵</th>
+                    <th>水支架</th>
+                </tr>
+            </thead>
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr style="font-weight:bold">
+                        <td>@Html.ActionLink(item.CustomerName, "CompanyDailyRecordsDetails", "Home", 
+                           new { customerId = item.CustomerId, customerName = item.CustomerName }) </td>
+                        <td>@item.SendBuckets</td>
+                        <td>@item.ReceiveEmptyBuckets</td>
+                        <td>@item.WaterDispenser</td>
+                        <td>@item.PushPump</td>
+                        <td>@item.WaterHolder</td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>
+
