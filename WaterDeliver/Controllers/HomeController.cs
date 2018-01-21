@@ -444,6 +444,7 @@ namespace WaterDeliver.Controllers
 
             ViewBag.customerName = customerName;
             ViewBag.sumaryInfo = sumaryMod;
+            ViewBag.flag = "CompanyRecordsUptonow";
             return View(records);
         }
 
