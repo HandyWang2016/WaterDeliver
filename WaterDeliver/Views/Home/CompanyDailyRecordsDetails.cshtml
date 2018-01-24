@@ -1,17 +1,42 @@
 ﻿@using Model
 @model IEnumerable<Model.DailyRecord>
-
 @{
     ViewBag.Title = "CompanyDailyRecordsDetails";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<link href="~/scripts/pager/pageStyle.css" rel="stylesheet" />
+<script type="text/javascript">
+    //获取分页数据
+    $(function() {
+        //展示分页div
+        $("#page").paging({
+            pageNo: @ViewBag.currentPage,
+            totalPage: @ViewBag.totalPage,
+            totalSize: @ViewBag.totalSize,
+            callback: function (num) {
+                changePageSize(num);
+            }
+        });
+
+        function changePageSize(num) {
+            window.location.href = "/Home/CompanyDailyRecordsDetails?pageIndex=" +
+                num +
+                "&customerName=" +
+                '@ViewBag.customerName' +
+                "&CustomerId=" +
+                '@ViewBag.customerId';
+        }
+    });
+
+</script>
 
 <div class="panel panel-info">
     <div class="panel-heading">
         <h4 class="panel-title" style="color:red">@ViewBag.customerName 日常交易明细</h4>
     </div>
     <div class="panel-body">
-        <table class="table table-hover table-bordered table-condensed">
+        <table id="tbCompanyDetail" class="table table-hover table-bordered table-condensed">
             <thead style="background-color:powderblue">
                 <tr>
                     <th>交易日期</th>
@@ -42,11 +67,41 @@
 
             }
 
-
         </table>
+        <div class="page_div" id="page"></div>
         <div>
-            @Html.ActionLink("返回", "CompanyRecordsUptonow", null, new { @class = "btn btn-xs btn-danger" })
-        </div>
+                @Html.ActionLink("返回", "CompanyRecordsUptonow", null, new { @class = "btn btn-xs btn-danger" })
+                <button class="btn btn-xs btn-success" onclick="outExcel('@ViewBag.customerName');">导出记录</button>
+            </div>
     </div>
 </div>
 
+<script type="text/javascript">
+    function tableToExcel(tableId, worksheetName) {
+        var uri = 'data:application/vnd.ms-excel;base64,',
+            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head>' +
+                '<meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/>' +
+                '</x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+            base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))); },
+            format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
+        var table = $("#" + tableId),
+            ctx = { worksheet: worksheetName, table: table.html() },
+            href = uri + base64(format(template, ctx));
+        return href;
+    };
+
+    function outExcel(customerName) {
+        //调用
+        var ts = "【" + customerName + "】交易明细.xls";
+        var exportHref = tableToExcel('tbCompanyDetail', '应聘者');
+        var a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display:none');
+        // 设置文件名，目前只有Chrome和FireFox支持此属性
+        a.setAttribute('href', exportHref);
+        a.setAttribute('download', ts);
+        a.click();
+    }
+
+</script>
+<script src="~/scripts/pager/paging.js"></script>

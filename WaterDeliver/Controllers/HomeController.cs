@@ -426,26 +426,40 @@ namespace WaterDeliver.Controllers
             return View(companyDailyRecords);
         }
 
-        public ActionResult CompanyDailyRecordsDetails(string customerId, string customerName)
+        public ActionResult CompanyDailyRecordsDetails(string customerId, string customerName, int pageIndex)
         {
             //该公司的所有日常交易记录
             var records = DailyRecordHelper.DailyRecordList()
                 .Where(item => item.CustomerId == customerId)
                 .OrderByDescending(item => item.VisitDate)
                 .ToList();
-            CustomerAccessory sumaryMod = records.GroupBy(item=>item.CustomerId).Select(p=>new CustomerAccessory()
+            CustomerAccessory sumaryMod = records.GroupBy(item => item.CustomerId).Select(p => new CustomerAccessory()
             {
-                SendBuckets=p.Sum(i=>i.SendBucketAmount),
-                ReceiveEmptyBuckets=p.Sum(i=>i.ReceiveEmptyBucketAmount),
-                WaterDispenser=p.Sum(i=>i.WaterDispenser),
-                WaterHolder=p.Sum(i=>i.WaterHolder),
-                PushPump=p.Sum(i=>i.PushPump)
+                SendBuckets = p.Sum(i => i.SendBucketAmount),
+                ReceiveEmptyBuckets = p.Sum(i => i.ReceiveEmptyBucketAmount),
+                WaterDispenser = p.Sum(i => i.WaterDispenser),
+                WaterHolder = p.Sum(i => i.WaterHolder),
+                PushPump = p.Sum(i => i.PushPump)
             }).First();
 
+            //获取页条数
+            int pageSize = PageSize();
+            var currentRecords = records
+                 .OrderByDescending(item => item.VisitDate)
+                 .Skip((pageIndex - 1) * pageSize)
+                 .Take(pageSize);
+            //记录分页相关字段
+            ViewBag.totalPage = records.Count() % pageSize == 0
+               ? records.Count() / pageSize
+               : Math.Ceiling(Convert.ToDouble(records.Count()) / pageSize);
+            ViewBag.totalSize = records.Count();
+            ViewBag.currentPage = pageIndex;
+
             ViewBag.customerName = customerName;
+            ViewBag.customerId = customerId;
             ViewBag.sumaryInfo = sumaryMod;
             ViewBag.flag = "CompanyRecordsUptonow";
-            return View(records);
+            return View(currentRecords);
         }
 
         #endregion
