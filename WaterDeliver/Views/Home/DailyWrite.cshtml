@@ -41,10 +41,10 @@
         var proval = $("#selProduct").val();
         var sendBucket = $("#txtSendBucketAmount").val();
         var emptyBucket = $("#txtReceiveEmptyBucketAmount").val();
-        if (parseInt(sendBucket) <= 0 && parseInt(emptyBucket) <= 0) {
-            layer.alert("请填写送水信息");
-            return;
-        }
+        //if (parseInt(sendBucket) <= 0 && parseInt(emptyBucket) <= 0) {
+        //    layer.alert("请填写送水信息");
+        //    return;
+        //}
         for (var i = 0; i < buckets.length; i++) {
             if (buckets[i].indexOf(proval) != -1) {
                 layer.alert("同一产品只能添加1条送水记录");

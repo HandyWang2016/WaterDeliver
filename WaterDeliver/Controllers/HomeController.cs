@@ -277,7 +277,7 @@ namespace WaterDeliver.Controllers
                     EarnMonthEndPrice = item.First().EarnMonthEndPrice,
                     EarnWaterCardPrice = item.First().EarnWaterCardPrice,
                     VisitDate = item.First().VisitDate
-                });
+                }).ToList();
 
             //查看附属产品信息(过滤附属产品为0的)
             var accessoryProRecords = temRecords.Where(
@@ -292,7 +292,7 @@ namespace WaterDeliver.Controllers
                     PushPump = item.First().PushPump,
                     WaterHolder = item.First().WaterHolder,
                     VisitDate = item.First().VisitDate
-                });
+                }).ToList();
 
             //获取页条数
             int pageSize = PageSize();
