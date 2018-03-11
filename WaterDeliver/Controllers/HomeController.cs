@@ -49,44 +49,56 @@ namespace WaterDeliver.Controllers
         public ActionResult CreateDailyWrite(DailyRecord dailyRecord, string[] hidBuckets)
         {
             string[] bucketPams = hidBuckets[0].Split(',');
-            for (int i = 0; i < bucketPams.Length; i++)
+            if (bucketPams.Length == 1)
             {
-                var t = i % 3;
-                if (t == 0)
+                if (dailyRecord.EarnMonthEndPrice >= 0 || dailyRecord.EarnWaterCardPrice >= 0)
                 {
-                    dailyRecord.SendProductId = bucketPams[i];
-                }
-                else if (t == 1)
-                {
-                    dailyRecord.SendBucketAmount = int.Parse(bucketPams[i]);
-                }
-                else
-                {
-                    dailyRecord.ReceiveEmptyBucketAmount = int.Parse(bucketPams[i]);
-                }
-                if ((i + 1) % 3 == 0)
-                {
-                    ////完成一个产品
-                    //更新库存信息
-                    var product = ProductHelper.GetById(dailyRecord.SendProductId);
-                    product.StockRemain += dailyRecord.SendBucketAmount;//桶装水库存增加
-                    product.BucketStockRemain += dailyRecord.ReceiveEmptyBucketAmount;//空桶库存增加
-                    ProductHelper.Update(product);
-                    //添加一条日常记录
+                    //dailyRecord.SendProductId = "";
                     dailyRecord.Id = ObjectId.NewObjectId().ToString();
-
-                    //同一人在同一公司，资金交易只记一笔(避免汇总数据double);附属产品只记一笔
-                    if (i > 2)
-                    {
-                        dailyRecord.EarnDeposit = 0;
-                        dailyRecord.PayDeposit = 0;
-                        dailyRecord.EarnMonthEndPrice = 0;
-                        dailyRecord.EarnWaterCardPrice = 0;
-                        dailyRecord.WaterDispenser = 0;
-                        dailyRecord.WaterHolder = 0;
-                        dailyRecord.PushPump = 0;
-                    }
                     MongoBase.Insert(dailyRecord);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < bucketPams.Length; i++)
+                {
+                    var t = i % 3;
+                    if (t == 0)
+                    {
+                        dailyRecord.SendProductId = bucketPams[i];
+                    }
+                    else if (t == 1)
+                    {
+                        dailyRecord.SendBucketAmount = int.Parse(bucketPams[i]);
+                    }
+                    else
+                    {
+                        dailyRecord.ReceiveEmptyBucketAmount = int.Parse(bucketPams[i]);
+                    }
+                    if ((i + 1) % 3 == 0)
+                    {
+                        ////完成一个产品
+                        //更新库存信息
+                        var product = ProductHelper.GetById(dailyRecord.SendProductId);
+                        product.StockRemain += dailyRecord.SendBucketAmount;//桶装水库存增加
+                        product.BucketStockRemain += dailyRecord.ReceiveEmptyBucketAmount;//空桶库存增加
+                        ProductHelper.Update(product);
+                        //添加一条日常记录
+                        dailyRecord.Id = ObjectId.NewObjectId().ToString();
+
+                        //同一人在同一公司，资金交易只记一笔(避免汇总数据double);附属产品只记一笔
+                        if (i > 2)
+                        {
+                            dailyRecord.EarnDeposit = 0;
+                            dailyRecord.PayDeposit = 0;
+                            dailyRecord.EarnMonthEndPrice = 0;
+                            dailyRecord.EarnWaterCardPrice = 0;
+                            dailyRecord.WaterDispenser = 0;
+                            dailyRecord.WaterHolder = 0;
+                            dailyRecord.PushPump = 0;
+                        }
+                        MongoBase.Insert(dailyRecord);
+                    }
                 }
             }
 
@@ -134,7 +146,8 @@ namespace WaterDeliver.Controllers
                                                     SendBucketAmount = r.SendBucketAmount,
                                                     ReceiveEmptyBucketAmount = r.ReceiveEmptyBucketAmount,
                                                     VisitDate = r.VisitDate
-                                                }).ToList();
+                                                }).Where(item => item.SendBucketAmount > 0 || item.ReceiveEmptyBucketAmount > 0)
+                                                .ToList();
 
             //与公司的资金交易
             List<DailyFundTrans> fundRecords = (List<DailyFundTrans>)TempData["fundRecords"] ?? dailyRecords.Where(

@@ -27,10 +27,7 @@
             layer.alert("请选择时间");
             return false;
         }
-        if ($("#lblBucketInfo").html() == "") {
-            layer.alert('请先填写送水信息');
-            return false;
-        }
+        
         $("input[name='hidBuckets']").val(buckets);
     }
 
