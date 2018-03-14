@@ -6,6 +6,8 @@
 }
 <link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
 <script src="~/scripts/layer/layer.js"></script>
+<link href="~/scripts/selectivity/stylesheets/selectivity-jquery.css" rel="stylesheet" />
+<script src="~/scripts/selectivity/javascripts/selectivity-jquery.js"></script>
 <script>
 
     $(function () {
@@ -19,7 +21,61 @@
         }).on('changeDate', function (ev) {
             $(this).datetimepicker('hide');
         });
+
+        //选择客户
+        $('#selCustomer').selectivity({
+            allowClear: true,
+            items: JSON.parse(customerData()),
+            placeholder: '请选择客户'
+        }).on("change", function (obj) {
+            //修改客户，送水信息清空
+            clearSendInfo();
+            $("input[name='CustomerId']").val(obj.value);
+        });
+
+        //选择产品
+        $('#selProduct').selectivity({
+            allowClear: true,
+            items: JSON.parse(productData()),
+            placeholder: '请选择产品'
+        }).on("change",
+            function (obj) {
+                clearBuckets();
+                $("input[name='SendProductId']").val(obj.value);
+            });
     });
+
+    function customerData() {
+        @if (Model.Customers != null)
+        {
+            var strHtml = "[";
+            foreach (var item in Model.Customers)
+            {
+                strHtml += "{ \"id\": \""+item.Id+"\", \"text\": \""+item.CustomerName+"\" },";
+            }
+            strHtml = strHtml.Substring(0, strHtml.Length - 1) + "]";
+            ViewBag.Selcustomer = strHtml;
+        }
+        return '@Html.Raw(ViewBag.Selcustomer)';
+    }
+
+    function productData() {
+        @if (Model.Products != null)
+        {
+            var strHtml = "[";
+            foreach (var item in Model.Products)
+            {
+                strHtml += "{ \"id\": \""+item.Id+"\", \"text\": \""+ item.ProductName+"("+item.CostPrice + ")\" },";
+            }
+            strHtml = strHtml.Substring(0, strHtml.Length - 1) + "]";
+            ViewBag.Selpro = strHtml;
+        }
+        return '@Html.Raw(ViewBag.Selpro)';
+    }
+
+    function setPro(obj) {
+        alert(obj.value);
+    }
 
     function checkInput() {
         var date = $("#txtVisitDate").val();
@@ -27,15 +83,15 @@
             layer.alert("请选择时间");
             return false;
         }
-        
+
         $("input[name='hidBuckets']").val(buckets);
     }
 
     var buckets = new Array();
     //添加送水信息
     function addBucketInfo() {
-        var product = $("#selProduct").find("option:selected").text();
-        var proval = $("#selProduct").val();
+        var product = $("span.selectivity-single-selected-item")[1].innerText;
+        var proval = $("input[name='SendProductId']").val();
         var sendBucket = $("#txtSendBucketAmount").val();
         var emptyBucket = $("#txtReceiveEmptyBucketAmount").val();
         //if (parseInt(sendBucket) <= 0 && parseInt(emptyBucket) <= 0) {
@@ -62,9 +118,16 @@
         buckets.push([proval, sendBucket, emptyBucket]);
     }
 
-    function clearBuckets() {
+    function clearSendInfo() {
         $("#lblBucketInfo").html("");
         buckets.splice(0, buckets.length);
+        clearBuckets();
+    }
+
+    //选择产品，清空送水桶数与空桶数
+    function clearBuckets() {
+        $("#txtSendBucketAmount").val(0);
+        $("#txtReceiveEmptyBucketAmount").val(0);
     }
 
     function showOtherProduct() {
@@ -81,12 +144,6 @@
             $("#txtPushPump").val(0);
         }
     }
-
-    //选择产品，清空送水桶数与空桶数
-    function clearBuckets() {
-        $("#txtSendBucketAmount").val(0);
-        $("#txtReceiveEmptyBucketAmount").val(0);
-    }
 </script>
 <form class="form-horizontal" method="post" action="/Home/CreateDailyWrite" onsubmit="return checkInput();">
     <div class="panel panel-info">
@@ -96,7 +153,7 @@
         <div class="panel-body">
             <div class="form-group">
                 <label class="col-md-2 control-label" for="selStaffs">选择员工</label>
-                <select name="StaffId" required id="selStaffs" onchange="clearBuckets();" class="selectpicker show-tick form-control" style="width: 130px" data-live-search="true">
+                <select name="StaffId" required id="selStaffs" onchange="clearSendInfo();" class="selectpicker show-tick form-control" style="width: 130px" data-live-search="true">
                     @if (ViewBag.Staffs != null)
                     {
                         foreach (var item in ViewBag.Staffs as List<Model.Staff>)
@@ -108,27 +165,11 @@
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label" for="selCustomer">选择客户</label>
-                <select name="CustomerId" id="selCustomer" onchange="clearBuckets();" class="selectpicker show-tick form-control col-sm-2" style="width: 350px" required data-live-search="true">
-                    @if (Model.Customers != null)
-                    {
-                        foreach (var item in Model.Customers)
-                        {
-                            <option value="@item.Id">@item.CustomerName</option>
-                        }
-                    }
-                </select>
+                <div id="selCustomer" class="selectivity-input example-input" style="width:200px"></div>
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label" for="selProduct">选择产品</label>
-                <select name="SendProductId" id="selProduct" onchange="clearBuckets();" class="selectpicker show-tick form-control col-sm-2" style="width: 350px" required data-live-search="true">
-                    @if (Model.Products != null)
-                    {
-                        foreach (var item in Model.Products)
-                        {
-                            <option value="@item.Id">@item.ProductName<i>(@item.CostPrice)</i></option>
-                        }
-                    }
-                </select>
+                <div id="selProduct" class="selectivity-input example-input" style="width: 200px"></div>
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label" for="txtSendBucketAmount">送水桶数</label>
@@ -183,6 +224,8 @@
             <div class="form-group" style="margin-left:80px">
                 <input type="submit" value="保存" class="btn btn-primary" />
             </div>
+            <input type="hidden" name="CustomerId" />
+            <input type="hidden" name="SendProductId" />
             <input type="hidden" name="hidBuckets" />
         </div>
     </div>

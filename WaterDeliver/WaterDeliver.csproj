@@ -190,6 +190,10 @@
     <Content Include="scripts\modernizr-2.6.2.js" />
     <Content Include="scripts\pager\pageStyle.css" />
     <Content Include="scripts\pager\paging.js" />
+    <Content Include="scripts\selectivity\index.html" />
+    <Content Include="scripts\selectivity\javascripts\selectivity-jquery.js" />
+    <Content Include="scripts\selectivity\stylesheets\selectivity-jquery.css" />
+    <Content Include="scripts\selectivity\stylesheets\stylesheet.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
