@@ -57,7 +57,7 @@ namespace WaterDeliver.Controllers
                 .Select(g => new MonthEndSummary()
                 {
                     CompanyEarn = g.Where(item => item.IsPayType == false).Sum(x => x.TransSum),
-                    CompanyPay = g.Where(item => item.IsPayType && item.PayTypeId != BucketPayType).Sum(x => x.TransSum) + sumBucketCom //进水支出不计入公司盈利运算
+                    CompanyPay = g.Where(item => item.IsPayType).Sum(x => x.TransSum) + sumBucketCom //进水支出不计入公司盈利运算   2018.03.14:进水支出计入公司盈利运算
                 }).FirstOrDefault();
 
             //monthEnd.StaffEarn = monthEnd1?.StaffEarn ?? 0;
