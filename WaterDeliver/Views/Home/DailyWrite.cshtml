@@ -187,19 +187,22 @@
             </div>
             @* 附属产品信息:饮水机、水架子、手压泵 *@
             <button type="button" id="btnAddPro" class="btn btn-success" style="margin-left: 500px; position: absolute;" onclick="showOtherProduct();">添加附属产品</button>
-            <div class="form-group" id="divOther" style="display:none">
-                <div class="form-group">
-                    <label class="col-md-2 control-label" for="txtWaterDispenser">饮水机</label>
-                    <input type="number" required value="0" class="form-control col-sm-2" style="width: 200px" id="txtWaterDispenser" name="WaterDispenser" />&nbsp;台
-                </div>
-                <div class="form-group">
-                    <label class="col-md-2 control-label" for="txtWaterHolder">水支架</label>
-                    <input type="number" required value="0" class="form-control col-sm-2" style="width: 200px" id="txtWaterHolder" name="WaterHolder" />&nbsp;个
-                </div>
-                <div class="form-group">
-                    <label class="col-md-2 control-label" for="txtPushPump">手压泵</label>
-                    <input type="number" required value="0" class="form-control col-sm-2" style="width: 200px" id="txtPushPump" name="PushPump" />&nbsp;个
-                </div>
+            <div class="container" id="divOther" style="display:none">
+                <table class="table table-condensed table-bordered table-hover" style="width:300px;">
+                    <thead style="color:red"><tr><th>交易类别</th><th>饮水机(台)</th><th>水支架(个)</th><th>手压泵(个)</th></tr></thead>
+                    <tr>
+                        <td><label>送出</label></td>
+                        <td><input type="number" required value="0" class="form-control col-sm-2" style="width: 60px" id="txtWaterDispenser" name="WaterDispenser" /></td>
+                        <td><input type="number" required value="0" class="form-control col-sm-2" style="width: 60px" id="txtWaterHolder" name="WaterHolder" /></td>
+                        <td><input type="number" required value="0" class="form-control col-sm-2" style="width: 60px" id="txtPushPump" name="PushPump" /></td>
+                    </tr>
+                    <tr>
+                        <td><label>回收</label></td>
+                        <td><input type="number" required value="0" class="form-control col-sm-2" style="width: 60px" id="txtWaterDispenserBack" name="WaterDispenserBack" /></td>
+                        <td><input type="number" required value="0" class="form-control col-sm-2" style="width: 60px" id="txtWaterHolderBack" name="WaterHolderBack" /></td>
+                        <td><input type="number" required value="0" class="form-control col-sm-2" style="width: 60px" id="txtPushPumpBack" name="PushPumpBack" /></td>
+                    </tr>
+                </table>
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label" for="txtEarnDeposit"><i class="icon-plus" style="color:green"></i>&nbsp;收入押金</label>

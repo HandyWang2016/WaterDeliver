@@ -185,15 +185,16 @@ namespace WaterDeliver.Controllers
             //附属产品交易
             var accessoryProRecords = (List<AccessoryProducts>)TempData["accessoryProRecords"] ?? dailyRecords.Where(
                     item =>
-                        item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0)
+                        item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0
+                        || item.WaterHolderBack != 0 || item.WaterDispenserBack != 0 || item.PushPumpBack != 0)
                 .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
                 .Select(item => new AccessoryProducts()
                 {
                     StaffId = item.First().StaffId,
                     CustomerId = item.First().CustomerId,
-                    WaterDispenser = item.First().WaterDispenser,
-                    PushPump = item.First().PushPump,
-                    WaterHolder = item.First().WaterHolder,
+                    WaterDispenser = MakeAccessoryInfo(item.First().WaterDispenser, item.First().WaterDispenserBack),
+                    PushPump = MakeAccessoryInfo(item.First().PushPump, item.First().PushPumpBack),
+                    WaterHolder = MakeAccessoryInfo(item.First().WaterHolder, item.First().WaterHolderBack),
                     VisitDate = item.First().VisitDate
                 });
 
@@ -233,6 +234,18 @@ namespace WaterDeliver.Controllers
             ViewBag.recordsAccessoryPro = recordsAccessoryPro;
             ViewBag.Staffs = StaffHelper.StaffList();
             return View(newRecords);
+        }
+
+        /// <summary>
+        /// 拼接附属产品送出、回购数量的字符串 
+        /// 格式eg：0  0/1  1/1  1/0
+        /// </summary>
+        /// <param name="sendNum"></param>
+        /// <param name="receiveNum"></param>
+        /// <returns></returns>
+        private string MakeAccessoryInfo(int sendNum, int receiveNum)
+        {
+            return sendNum + receiveNum == 0 ? "0" : (sendNum + "/" + receiveNum);
         }
 
         /// <summary>
@@ -295,15 +308,16 @@ namespace WaterDeliver.Controllers
             //查看附属产品信息(过滤附属产品为0的)
             var accessoryProRecords = temRecords.Where(
                     item =>
-                        item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0)
+                        item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0
+                        || item.WaterHolderBack != 0 || item.WaterDispenserBack != 0 || item.PushPumpBack != 0)
                 .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
                 .Select(item => new AccessoryProducts()
                 {
                     StaffId = item.First().StaffId,
                     CustomerId = item.First().CustomerId,
-                    WaterDispenser = item.First().WaterDispenser,
-                    PushPump = item.First().PushPump,
-                    WaterHolder = item.First().WaterHolder,
+                    WaterDispenser = MakeAccessoryInfo(item.First().WaterDispenser, item.First().WaterDispenserBack),
+                    PushPump = MakeAccessoryInfo(item.First().PushPump, item.First().PushPumpBack),
+                    WaterHolder = MakeAccessoryInfo(item.First().WaterHolder, item.First().WaterHolderBack),
                     VisitDate = item.First().VisitDate
                 }).ToList();
 

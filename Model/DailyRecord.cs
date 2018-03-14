@@ -56,6 +56,9 @@ namespace Model
         public int WaterDispenser { get; set; }
         public int WaterHolder { get; set; }
         public int PushPump { get; set; }
+        public int WaterDispenserBack { get; set; }
+        public int WaterHolderBack { get; set; }
+        public int PushPumpBack { get; set; }
     }
 
     public class DailyRecordShow : DailyRecord
@@ -87,9 +90,9 @@ namespace Model
         public string StaffName { get; set; }
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
-        public int WaterDispenser { get; set; }
-        public int WaterHolder { get; set; }
-        public int PushPump { get; set; }
+        public string WaterDispenser { get; set; }
+        public string WaterHolder { get; set; }
+        public string PushPump { get; set; }
         public DateTime VisitDate { get; set; }
     }
 
