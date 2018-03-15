@@ -66,6 +66,8 @@ namespace Model
         public string StaffName { get; set; }
         public string CustomerName { get; set; }
         public string ProductName { get; set; }
+        //每天送水成本
+        public double DailyCost { get; set; }
     }
 
     public class DailyFundTrans

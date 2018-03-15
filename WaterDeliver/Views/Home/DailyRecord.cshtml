@@ -126,7 +126,7 @@
     </div>
     <div class="panel-body">
         <table class="table table-hover table-bordered table-condensed">
-            <thead style="background-color:powderblue"><tr><th>员工</th><th>客户名称</th><th>产品名称</th><th>送水桶数</th><th>收回空桶</th><th>交易日期</th></tr></thead>
+            <thead style="background-color:powderblue"><tr><th>员工</th><th>客户名称</th><th>产品名称</th><th>送水桶数</th><th>收回空桶</th><th>送水成本</th><th>交易日期</th></tr></thead>
             @if (Model != null)
             {
                 int index = 0;
@@ -139,6 +139,7 @@
                         <td>@item.ProductName</td>
                         <td>@item.SendBucketAmount</td>
                         <td>@item.ReceiveEmptyBucketAmount</td>
+                        <td>@item.DailyCost</td>
                         <td>@item.VisitDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     </tr>
                     index++;

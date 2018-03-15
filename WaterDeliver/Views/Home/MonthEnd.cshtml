@@ -66,7 +66,16 @@
     </div>
     <div class="panel-body">
         <table class="table table-hover table-bordered table-condensed">
-            <thead style="background-color:powderblue"><tr><th>交易月份</th><th>公司名称</th><th>送水桶数</th><th>收回空桶</th><th>收取押金(￥)</th><th>退还押金(￥)</th><th>月底结算(￥)</th><th>购买水卡(￥)</th></tr></thead>
+            <thead style="background-color:powderblue"><tr>
+                <th>交易月份</th>
+                <th>公司名称</th>
+                <th>送水桶数</th>
+                <th>收回空桶</th>
+                <th>收取押金(￥)</th>
+                <th>退还押金(￥)</th>
+                <th>月底结算(￥)</th>
+                <th>购买水卡(￥)</th>
+            </tr></thead>
             @if (Model != null && Model.SumDailyRecordByCP.Count > 0)
             {
                 int sumIndex = 0;

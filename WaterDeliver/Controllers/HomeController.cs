@@ -145,7 +145,8 @@ namespace WaterDeliver.Controllers
                                                     ProductName = p.ProductName,
                                                     SendBucketAmount = r.SendBucketAmount,
                                                     ReceiveEmptyBucketAmount = r.ReceiveEmptyBucketAmount,
-                                                    VisitDate = r.VisitDate
+                                                    VisitDate = r.VisitDate,
+                                                    DailyCost = r.SendBucketAmount * p.CostPrice
                                                 }).Where(item => item.SendBucketAmount > 0 || item.ReceiveEmptyBucketAmount > 0)
                                                 .ToList();
 
