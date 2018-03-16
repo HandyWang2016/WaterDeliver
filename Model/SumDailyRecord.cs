@@ -53,9 +53,34 @@ namespace Model
         public string ProductName { get; set; }
     }
 
+    /// <summary>
+    /// 月底员工送水成本
+    /// </summary>
+    public class MonthEndStaffwaterCost
+    {
+        public string StaffId { get; set; }
+        /// <summary>
+        /// 员工姓名
+        /// </summary>
+        public string StaffName { get; set; }
+        /// <summary>
+        /// 送水成本
+        /// </summary>
+        public double WaterCost { get; set; }
+        /// <summary>
+        /// 交易年份
+        /// </summary>
+        public string VisitYear { get; set; }
+        /// <summary>
+        /// 交易月份
+        /// </summary>
+        public string VisitMonth { get; set; }
+    }
+
     public class SumDailyRecordViewModel
     {
         public List<SumDailyRecord> SumDailyRecord { get; set; }
         public List<SumDailyRecordByCP> SumDailyRecordByCP { get; set; }
+        public List<MonthEndStaffwaterCost> SumSendWatercost { get; set; }
     }
 }

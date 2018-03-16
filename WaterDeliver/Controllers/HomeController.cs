@@ -348,6 +348,8 @@ namespace WaterDeliver.Controllers
         {
             var records = DailyRecordHelper.DailyRecordList();
             var customers = CustomerHelper.CustomerList();
+            var products = ProductHelper.ProductList();
+            var staffs = StaffHelper.StaffList();
             if (!string.IsNullOrEmpty(yearMonth))
             {
                 int year = int.Parse(yearMonth.Split('-')[0]);
@@ -358,6 +360,42 @@ namespace WaterDeliver.Controllers
             {
                 records = records.Where(item => item.StaffId == staffId.ToString()).ToList();
             }
+
+            //按月份、人员分组，计算员工的月送水成本
+            List<MonthEndStaffwaterCost> staffCost = records
+                .Join(products, x => x.SendProductId, y => y.Id, (x, y) => new { x, y })
+                .GroupBy(item => new
+                {
+                    item.x.VisitDate.Year,
+                    item.x.VisitDate.Month,
+                    item.x.StaffId,
+                    item.x.SendProductId,
+                    item.x.SendBucketAmount,
+                    item.y.CostPrice,
+                    item.x.CustomerId
+                })
+                .Select(p => new MonthEndStaffwaterCost()
+                {
+                    VisitYear = p.First().x.VisitDate.Year.ToString(),
+                    VisitMonth = p.First().x.VisitDate.Month.ToString(),
+                    StaffId = p.First().x.StaffId,
+                    WaterCost = p.First().x.SendBucketAmount * p.First().y.CostPrice
+                }).GroupBy(item => new { item.VisitYear, item.VisitMonth, item.StaffId }).Select(p =>
+                      new MonthEndStaffwaterCost()
+                      {
+                          VisitYear = p.First().VisitYear,
+                          VisitMonth = p.First().VisitMonth,
+                          StaffId = p.First().StaffId,
+                          WaterCost = p.Sum(item => item.WaterCost)
+                      }).Join(staffs, x => x.StaffId, y => y.Id, (x, y) => new { x, y }).Select(p =>
+                      new MonthEndStaffwaterCost
+                      {
+                          VisitYear = p.x.VisitYear,
+                          VisitMonth = p.x.VisitMonth,
+                          StaffName = p.y.StaffName,
+                          WaterCost = p.x.WaterCost
+                      }).ToList();
+
             //按月份、公司分组
             List<SumDailyRecordByCP> sumRecordsByCP = records.OrderByDescending(i => i.VisitDate)
                 .GroupBy(item => new { item.VisitDate.Year, item.VisitDate.Month, item.CustomerId })
@@ -403,7 +441,8 @@ namespace WaterDeliver.Controllers
             SumDailyRecordViewModel viewModel = new SumDailyRecordViewModel
             {
                 SumDailyRecord = sumRecords,
-                SumDailyRecordByCP = sumRecordsByCP
+                SumDailyRecordByCP = sumRecordsByCP,
+                SumSendWatercost = staffCost
             };
             ViewBag.queryPam = JsonConvert.SerializeObject(new { YearMonth = yearMonth, StaffId = staffId });
             ViewBag.Staffs = StaffHelper.StaffList();
