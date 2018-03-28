@@ -77,6 +77,14 @@ namespace Model
         public string VisitMonth { get; set; }
     }
 
+    /// <summary>
+    /// 员工总送水成本
+    /// </summary>
+    public class SumSendbucketCost
+    {
+        public double SumCost { get; set; }
+    }
+
     public class SumDailyRecordViewModel
     {
         public List<SumDailyRecord> SumDailyRecord { get; set; }

@@ -74,6 +74,7 @@ else
                         <th>交易月份</th>
                         <th>公司收入</th>
                         <th>公司支出</th>
+                        <th>员工送水成本</th>
                         <th>月底盈利</th>
                     </tr>
                 </thead>
@@ -83,6 +84,7 @@ else
                         <td>@Model.YearMonth</td>
                         <td style="color: green; font-weight: bold">@Model.CompanyEarn</td>
                         <td style="color: red; font-weight: bold">-@Model.CompanyPay</td>
+                        <td style="color: red; font-weight: bold">-@ViewBag.sumCost</td>
                         @CheckPay(Model.MonthEndEarn)
                     </tr>
                 }

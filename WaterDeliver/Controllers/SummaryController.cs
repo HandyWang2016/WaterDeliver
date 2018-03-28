@@ -31,6 +31,9 @@ namespace WaterDeliver.Controllers
                 month = int.Parse(yearMonth.Split('-')[1]);
             }
 
+            var records = DailyRecordHelper.DailyRecordList().Where(item => item.VisitDate.Year == year && item.VisitDate.Month == month);
+            var products = ProductHelper.ProductList();
+
             var dailyRecords =
                 DailyRecordHelper.DailyRecordList()
                     .Where(item => item.VisitDate.Year == year && item.VisitDate.Month == month);
@@ -60,11 +63,17 @@ namespace WaterDeliver.Controllers
                     CompanyPay = g.Where(item => item.IsPayType).Sum(x => x.TransSum) + sumBucketCom //进水支出不计入公司盈利运算   2018.03.14:进水支出计入公司盈利运算
                 }).FirstOrDefault();
 
-            //monthEnd.StaffEarn = monthEnd1?.StaffEarn ?? 0;
-            //monthEnd.StaffPay = monthEnd1?.StaffPay ?? 0;
+            //计算员工月送水成本
+            double sumCost = records.Join(products, x => x.SendProductId, y => y.Id, (x, y) => new { x, y })
+                .Select(item => new SumSendbucketCost
+                {
+                    SumCost = item.x.SendBucketAmount * item.y.CostPrice
+                }).Sum(item => item.SumCost);
+
+
             monthEnd.CompanyEarn = (monthEnd2?.CompanyEarn ?? 0) + (monthEnd1?.StaffEarn ?? 0);//仅保留公司收入/公司支出
             monthEnd.CompanyPay = (monthEnd2?.CompanyPay ?? 0) + (monthEnd1?.StaffPay ?? 0);
-            monthEnd.MonthEndEarn = monthEnd.StaffEarn + monthEnd.CompanyEarn - monthEnd.StaffPay - monthEnd.CompanyPay;
+            monthEnd.MonthEndEarn = monthEnd.StaffEarn + monthEnd.CompanyEarn - monthEnd.StaffPay - monthEnd.CompanyPay - sumCost;//2018.03.28改动：月底盈利减去员工送水成本
             monthEnd.YearMonth = year + "-" + month;
 
             //计算员工提成，作为发工资的参考
@@ -85,6 +94,7 @@ namespace WaterDeliver.Controllers
             ViewBag.queryPam = JsonConvert.SerializeObject(new { YearMonth = yearMonth });
             ViewBag.flag = "EndSummary";
             ViewBag.staffs = staffs;
+            ViewBag.sumCost = sumCost;
             return View(monthEnd);
         }
 
