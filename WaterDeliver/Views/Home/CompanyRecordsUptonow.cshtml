@@ -5,7 +5,7 @@
 }
 <div class="panel panel-info">
     <div class="panel-body">
-        <table class="table table-hover table-bordered table-condensed">
+        <table id="tbCompanyAll" class="table table-hover table-bordered table-condensed">
             <thead style="background-color:powderblue">
                 <tr>
                     <th>公司名称</th>
@@ -23,7 +23,7 @@
                     <tr style="font-weight:bold">
                         <td>
                             @Html.ActionLink(item.CustomerName, "CompanyDailyRecordsDetails",
-                                     new { customerId = item.CustomerId, customerName = item.CustomerName, pageIndex = 1 })
+                                new { customerId = item.CustomerId, customerName = item.CustomerName, pageIndex = 1 })
                         </td>
                         <td>@item.SendBuckets</td>
                         <td>@item.ReceiveEmptyBuckets</td>
@@ -36,3 +36,37 @@
         </table>
     </div>
 </div>
+<div>
+    <button class="btn btn-xs btn-success" onclick="outExcel();">导出记录</button>
+</div>
+
+<script type="text/javascript">
+    function tableToExcel(tableId, worksheetName) {
+        var uri = 'data:application/vnd.ms-excel;base64,',
+            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head>' +
+                '<meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/>' +
+                '</x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+            base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))); },
+            format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
+        var table = $("#" + tableId),
+            ctx = { worksheet: worksheetName, table: table.html() },
+            href = uri + base64(format(template, ctx));
+        return href;
+    };
+
+    function outExcel() {
+        //调用
+        var date = new Date();
+        var currdate = '_' + date.getFullYear() + (date.getMonth() + 1) + date.getDate();
+        var ts = "公司销售汇总" + currdate + ".xls";
+        var exportHref = tableToExcel('tbCompanyAll', '公司销售汇总');
+        var a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display:none');
+        // 设置文件名，目前只有Chrome和FireFox支持此属性
+        a.setAttribute('href', exportHref);
+        a.setAttribute('download', ts);
+        a.click();
+    }
+
+</script>
