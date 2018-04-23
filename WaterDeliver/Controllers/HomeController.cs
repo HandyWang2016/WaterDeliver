@@ -150,6 +150,28 @@ namespace WaterDeliver.Controllers
                                                 }).Where(item => item.SendBucketAmount > 0 || item.ReceiveEmptyBucketAmount > 0)
                                                 .ToList();
 
+            List<DailyRecordShow> recordsAll = (from r in TempData["DailyRecord"] == null
+                        ? dailyRecords
+                        : TempData["DailyRecord"] as List<DailyRecord>
+                                                join c in customers
+                                                on r.CustomerId equals c.Id
+                                                join p in products
+                                                    on r.SendProductId equals p.Id
+                                                join s in staffs
+                                                    on r.StaffId equals s.Id
+                                                select new DailyRecordShow
+                                                {
+                                                    StaffName = s.StaffName,
+                                                    CustomerName = c.CustomerName,
+                                                    ProductName = p.ProductName,
+                                                    SendBucketAmount = r.SendBucketAmount,
+                                                    ReceiveEmptyBucketAmount = r.ReceiveEmptyBucketAmount,
+                                                    VisitDate = r.VisitDate,
+                                                    DailyCost = r.SendBucketAmount * p.CostPrice
+                                                }).Where(item => item.SendBucketAmount > 0 || item.ReceiveEmptyBucketAmount > 0)
+                                                .OrderByDescending(item => item.VisitDate)
+                                                .ToList();
+
             //与公司的资金交易
             List<DailyFundTrans> fundRecords = (List<DailyFundTrans>)TempData["fundRecords"] ?? dailyRecords.Where(
                                      item =>
@@ -218,15 +240,11 @@ namespace WaterDeliver.Controllers
             ViewBag.customers = customers;
             ViewBag.queryPam = TempData["dailyQuery"] == null ? "{}" : JsonConvert.SerializeObject(TempData["dailyQuery"]);
 
-            ViewBag.totalPage = TempData["totalPage"] == null
-                ? (dailyRecords.Count() % pageSize == 0
-                    ? dailyRecords.Count() / pageSize
-                    : Math.Ceiling(Convert.ToDouble(dailyRecords.Count()) / pageSize))
-                : int.Parse(TempData["totalPage"].ToString());
+            ViewBag.totalPage = (recordsAll.Count() % pageSize == 0
+                    ? recordsAll.Count() / pageSize
+                    : Math.Ceiling(Convert.ToDouble(recordsAll.Count()) / pageSize));
 
-            ViewBag.totalSize = TempData["totalSize"] == null
-                ? dailyRecords.Count
-                : int.Parse(TempData["totalSize"].ToString());
+            ViewBag.totalSize =recordsAll.Count;
             ViewBag.currentPage = TempData["currentPage"] == null
                  ? 1
                  : int.Parse(TempData["currentPage"].ToString());
@@ -234,6 +252,7 @@ namespace WaterDeliver.Controllers
             ViewBag.recordsFundTrans = recordsFundTrans;
             ViewBag.recordsAccessoryPro = recordsAccessoryPro;
             ViewBag.Staffs = StaffHelper.StaffList();
+            ViewBag.recordsAll = recordsAll;
             return View(newRecords);
         }
 

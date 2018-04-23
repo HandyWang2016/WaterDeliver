@@ -125,8 +125,9 @@
         <h4 class="panel-title">查询结果</h4>
     </div>
     <div class="panel-body">
+        <label style="color:red">日常记录<button class="btn btn-xs btn-success" onclick="outExcel_dailyRecord();">导出</button></label>
         <table class="table table-hover table-bordered table-condensed">
-            <thead style="background-color:powderblue"><tr><th>员工</th><th>客户名称</th><th>产品名称</th><th>送水桶数</th><th>收回空桶</th><th>送水成本</th><th>交易日期</th></tr></thead>
+            <thead style="background-color: powderblue"><tr><th>员工</th><th>客户名称</th><th>产品名称</th><th>送水桶数</th><th>收回空桶</th><th>送水成本</th><th>交易日期</th></tr></thead>
             @if (Model != null)
             {
                 int index = 0;
@@ -147,11 +148,35 @@
             }
         </table>
         <div class="page_div" id="page"></div>
-        
+        @* 要导出的全部数据 *@
+        <table style="display:none" id="tbDailyRecord" class="table table-hover table-bordered table-condensed">
+            <thead style="background-color: powderblue"><tr><th>员工</th><th>客户名称</th><th>产品名称</th><th>送水桶数</th><th>收回空桶</th><th>送水成本</th><th>交易日期</th></tr></thead>
+            @if (Model != null)
+            {
+                int index = 0;
+                foreach (var item in (List<DailyRecordShow>)ViewBag.recordsAll)
+                {
+                    <tr>
+                        @*<td>@index</td>*@
+                        <td>@item.StaffName</td>
+                        <td>@item.CustomerName</td>
+                        <td>@item.ProductName</td>
+                        <td>@item.SendBucketAmount</td>
+                        <td>@item.ReceiveEmptyBucketAmount</td>
+                        <td>@item.DailyCost</td>
+                        <td>@item.VisitDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    </tr>
+                    index++;
+                }
+            }
+        </table>
+
+
+
         @* 附属产品交易 *@
-        <label style="color:red">附属产品交易</label>
-        <table class="table table-hover table-bordered table-condensed">
-            <thead style="background-color:powderblue"><tr><th>员工</th><th>公司</th><th>饮水机(送/回)</th><th>手压泵(送/回)</th><th>水支架(送/回)</th><th>交易日期</th></tr></thead>
+        <label style="color: red">附属产品交易<button class="btn btn-xs btn-success" onclick="outExcel_accessory();">导出</button></label>
+        <table id="tbAccessory" class="table table-hover table-bordered table-condensed">
+            <thead style="background-color: powderblue"><tr><th>员工</th><th>公司</th><th>饮水机(送/回)</th><th>手压泵(送/回)</th><th>水支架(送/回)</th><th>交易日期</th></tr></thead>
             @if (ViewBag.recordsAccessoryPro != null)
             {
                 int index = 0;
@@ -171,9 +196,9 @@
         </table>
 
         @* 资金交易 *@
-        <label style="color:red">资金交易</label>
-        <table class="table table-hover table-bordered table-condensed">
-            <thead style="background-color:powderblue"><tr><th>员工</th><th>公司</th><th>收取押金</th><th>退还押金</th><th>月底结算</th><th>预购水卡</th><th>交易日期</th></tr></thead>
+        <label style="color: red;">资金交易<button class="btn btn-xs btn-success" onclick="outExcel_funding();">导出</button></label>
+        <table id="tbFunding" class="table table-hover table-bordered table-condensed">
+            <thead style="background-color: powderblue"><tr><th>员工</th><th>公司</th><th>收取押金</th><th>退还押金</th><th>月底结算</th><th>预购水卡</th><th>交易日期</th></tr></thead>
             @if (ViewBag.recordsFundTrans != null)
             {
                 int index = 0;
@@ -198,5 +223,66 @@
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="~/scripts/pager/paging.js"></script>
+
+<script type="text/javascript">
+    function tableToExcel(tableId, worksheetName) {
+        var uri = 'data:application/vnd.ms-excel;base64,',
+            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head>' +
+                '<meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/>' +
+                '</x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+            base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))); },
+            format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
+        var table = $("#" + tableId),
+            ctx = { worksheet: worksheetName, table: table.html() },
+            href = uri + base64(format(template, ctx));
+        return href;
+    };
+
+    function outExcel_dailyRecord() {
+        //调用
+        var date = new Date();
+        var currdate = '_' + date.getFullYear() + (date.getMonth() + 1) + date.getDate();
+        var ts = "日常记录" + currdate + ".xls";
+        var exportHref = tableToExcel('tbDailyRecord', '日常记录');
+        var a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display:none');
+        // 设置文件名，目前只有Chrome和FireFox支持此属性
+        a.setAttribute('href', exportHref);
+        a.setAttribute('download', ts);
+        a.click();
+    }
+
+    function outExcel_accessory() {
+        //调用
+        var date = new Date();
+        var currdate = '_' + date.getFullYear() + (date.getMonth() + 1) + date.getDate();
+        var ts = "附属产品交易" + currdate + ".xls";
+        var exportHref = tableToExcel('tbAccessory', '附属产品交易');
+        var a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display:none');
+        // 设置文件名，目前只有Chrome和FireFox支持此属性
+        a.setAttribute('href', exportHref);
+        a.setAttribute('download', ts);
+        a.click();
+    }
+
+    function outExcel_funding() {
+        //调用
+        var date = new Date();
+        var currdate = '_' + date.getFullYear() + (date.getMonth() + 1) + date.getDate();
+        var ts = "公司资金交易" + currdate + ".xls";
+        var exportHref = tableToExcel('tbFunding', '公司资金交易');
+        var a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display:none');
+        // 设置文件名，目前只有Chrome和FireFox支持此属性
+        a.setAttribute('href', exportHref);
+        a.setAttribute('download', ts);
+        a.click();
+    }
+
+</script>
 
 
