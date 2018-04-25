@@ -7,6 +7,8 @@
 }
 <link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
 <link href="~/scripts/pager/pageStyle.css" rel="stylesheet" />
+<link href="~/scripts/selectivity/stylesheets/selectivity-jquery.css" rel="stylesheet" />
+<script src="~/scripts/selectivity/javascripts/selectivity-jquery.js"></script>
 <script>
     $(function () {
         $('#txtDateBegin').datetimepicker({
@@ -71,7 +73,30 @@
                 $("#txtDateEnd").val(queryJson.DateEnd.split('T')[0]);
             }
         }
+
+        //选择客户
+        $('#selCustomer').selectivity({
+            allowClear: true,
+            items: JSON.parse(customerData()),
+            placeholder: '选择客户'
+        }).on("change", function (obj) {
+            $("input[name='CustomerId']").val(obj.value);
+        });
     });
+
+    function customerData() {
+        @if (ViewBag.customers != null)
+        {
+            var strHtml = "[";
+            foreach (var item in ViewBag.customers)
+            {
+                strHtml += "{ \"id\": \""+item.Id+"\", \"text\": \""+item.CustomerName+"\" },";
+            }
+            strHtml = strHtml.Substring(0, strHtml.Length - 1) + "]";
+            ViewBag.Selcustomer = strHtml;
+        }
+        return '@Html.Raw(ViewBag.Selcustomer)';
+    }
 </script>
 <form class="form-inline" method="post" action="/Home/QueryDailyRecord">
     <div class="panel panel-info">
@@ -94,16 +119,9 @@
             </div>
 
             <div class="form-group col-sm-3">
-                <label class="control-label" for="txtCustomerName">客户</label>
-                <select name="CustomerId" id="selCustomer" class="selectpicker show-tick form-control" data-live-search="true">
-                    @if (ViewBag.customers != null)
-                    {
-                        foreach (var item in ViewBag.customers as List<Model.Customer>)
-                        {
-                            <option value="@item.Id">@item.CustomerName</option>
-                        }
-                    }
-                </select>
+                <label class="control-label" for="selCustomer">客户</label>
+                
+                <div id="selCustomer" class="selectivity-input example-input" style="width:200px"></div>
             </div>
             <div class="form-group col-sm-3">
                 <label class="control-label" for="txtDateBegin">开始时间</label>
@@ -119,6 +137,7 @@
         </div>
     </div>
     <input type="hidden" name="pageIndex" value="1" />
+    <input type="hidden" name="CustomerId" />
 </form>
 <div class="panel panel-info">
     <div class="panel-heading">
@@ -217,6 +236,7 @@
                 }
             }
         </table>
+        
     </div>
 </div>
 
