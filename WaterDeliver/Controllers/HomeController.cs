@@ -118,19 +118,19 @@ namespace WaterDeliver.Controllers
             //所有员工
             var staffs = StaffHelper.StaffList();
             //所有日常记录
-            var dailyRecords = DailyRecordHelper.DailyRecordList();
+            var dailyRecords = TempData["DailyRecord"] == null ? DailyRecordHelper.DailyRecordList() : (List<DailyRecord>)TempData["DailyRecord"];
             //添加空选项
             customers.Insert(0, new Customer { CustomerName = "" });
             //获取页条数
             int pageSize = PageSize();
 
-            List<DailyRecord> currentRecords = TempData["DailyRecord"] == null
+            List<DailyRecord> currentRecords = TempData["currentRecords"] == null
                 ? dailyRecords
                 .OrderByDescending(item => item.VisitDate)
                 .Skip(0)
                 .Take(pageSize)
                 .ToList()
-                : TempData["DailyRecord"] as List<DailyRecord>;
+                : TempData["currentRecords"] as List<DailyRecord>;
             List<DailyRecordShow> newRecords = (from r in currentRecords
                                                 join c in customers
                                                 on r.CustomerId equals c.Id
@@ -150,9 +150,7 @@ namespace WaterDeliver.Controllers
                                                 }).Where(item => item.SendBucketAmount > 0 || item.ReceiveEmptyBucketAmount > 0)
                                                 .ToList();
 
-            List<DailyRecordShow> recordsAll = (from r in TempData["DailyRecord"] == null
-                        ? dailyRecords
-                        : TempData["DailyRecord"] as List<DailyRecord>
+            List<DailyRecordShow> recordsAll = (from r in dailyRecords
                                                 join c in customers
                                                 on r.CustomerId equals c.Id
                                                 join p in products
@@ -173,7 +171,7 @@ namespace WaterDeliver.Controllers
                                                 .ToList();
 
             //与公司的资金交易
-            List<DailyFundTrans> fundRecords = (List<DailyFundTrans>)TempData["fundRecords"] ?? dailyRecords.Where(
+            List<DailyFundTrans> fundRecords = dailyRecords.Where(
                                      item =>
                                          item.PayDeposit > 0 || item.EarnDeposit > 0 || item.EarnMonthEndPrice > 0 ||
                                          item.EarnWaterCardPrice > 0)
@@ -206,7 +204,7 @@ namespace WaterDeliver.Controllers
                                     }).ToList();
 
             //附属产品交易
-            var accessoryProRecords = (List<AccessoryProducts>)TempData["accessoryProRecords"] ?? dailyRecords.Where(
+            var accessoryProRecords = dailyRecords.Where(
                     item =>
                         item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0
                         || item.WaterHolderBack != 0 || item.WaterDispenserBack != 0 || item.PushPumpBack != 0)
@@ -240,11 +238,11 @@ namespace WaterDeliver.Controllers
             ViewBag.customers = customers;
             ViewBag.queryPam = TempData["dailyQuery"] == null ? "{}" : JsonConvert.SerializeObject(TempData["dailyQuery"]);
 
-            ViewBag.totalPage = (recordsAll.Count() % pageSize == 0
-                    ? recordsAll.Count() / pageSize
-                    : Math.Ceiling(Convert.ToDouble(recordsAll.Count()) / pageSize));
+            ViewBag.totalPage = recordsAll.Count() % pageSize == 0
+                ? recordsAll.Count() / pageSize
+                : Math.Ceiling(Convert.ToDouble(recordsAll.Count()) / pageSize);
 
-            ViewBag.totalSize =recordsAll.Count;
+            ViewBag.totalSize = recordsAll.Count;
             ViewBag.currentPage = TempData["currentPage"] == null
                  ? 1
                  : int.Parse(TempData["currentPage"].ToString());
@@ -277,7 +275,7 @@ namespace WaterDeliver.Controllers
         public ActionResult QueryDailyRecord(DailyQueryMod dailyQuery, int pageIndex)
         {
             var records = FilterRecordInfo(dailyQuery, pageIndex);
-            TempData["DailyRecord"] = records;
+            TempData["currentRecords"] = records;
             TempData["dailyQuery"] = dailyQuery;
             return RedirectToAction("DailyRecord");
         }
@@ -307,55 +305,15 @@ namespace WaterDeliver.Controllers
             {
                 temRecords = temRecords.Where(item => item.VisitDate <= dailyQuery.DateEnd);
             }
-
-            //查看资金交易信息(过滤金额全部为0的)
-            var fundRecords = temRecords.Where(
-                    item =>
-                        item.PayDeposit > 0 || item.EarnDeposit > 0 || item.EarnMonthEndPrice > 0 ||
-                        item.EarnWaterCardPrice > 0)
-                .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
-                .Select(item => new DailyFundTrans()
-                {
-                    StaffId = item.First().StaffId,
-                    CustomerId = item.First().CustomerId,
-                    EarnDeposit = item.First().EarnDeposit,
-                    PayDeposit = item.First().PayDeposit,
-                    EarnMonthEndPrice = item.First().EarnMonthEndPrice,
-                    EarnWaterCardPrice = item.First().EarnWaterCardPrice,
-                    VisitDate = item.First().VisitDate
-                }).ToList();
-
-            //查看附属产品信息(过滤附属产品为0的)
-            var accessoryProRecords = temRecords.Where(
-                    item =>
-                        item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0
-                        || item.WaterHolderBack != 0 || item.WaterDispenserBack != 0 || item.PushPumpBack != 0)
-                .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
-                .Select(item => new AccessoryProducts()
-                {
-                    StaffId = item.First().StaffId,
-                    CustomerId = item.First().CustomerId,
-                    WaterDispenser = MakeAccessoryInfo(item.First().WaterDispenser, item.First().WaterDispenserBack),
-                    PushPump = MakeAccessoryInfo(item.First().PushPump, item.First().PushPumpBack),
-                    WaterHolder = MakeAccessoryInfo(item.First().WaterHolder, item.First().WaterHolderBack),
-                    VisitDate = item.First().VisitDate
-                }).ToList();
-
             //获取页条数
             int pageSize = PageSize();
             var currentRecords = temRecords
                  .OrderByDescending(item => item.VisitDate)
                  .Skip((pageIndex - 1) * pageSize)
                  .Take(pageSize);
-            //记录分页相关字段
-            TempData["totalPage"] = temRecords.Count() % pageSize == 0
-                ? temRecords.Count() / pageSize
-                : Math.Ceiling(Convert.ToDouble(temRecords.Count()) / pageSize);
-            TempData["totalSize"] = temRecords.Count();
             TempData["currentPage"] = pageIndex;
-
-            TempData["fundRecords"] = fundRecords;
-            TempData["accessoryProRecords"] = accessoryProRecords;
+            TempData["DailyRecord"] = temRecords.ToList();
+            
             return currentRecords.ToList<DailyRecord>();
         }
 
