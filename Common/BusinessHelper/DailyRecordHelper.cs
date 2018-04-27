@@ -76,5 +76,23 @@ namespace Common.BusinessHelper
                 return collection.FindOne(x => x.Id == id);
             }
         }
+
+        /// <summary>
+        /// 删除日常纪录信息——根据产品ID删除多条
+        /// </summary>
+        /// <param name="proid"></param>
+        public static void DeleteMany(string proid)
+        {
+            using (Mongo mongo = new Mongo(_connectionString))
+            {
+                mongo.Connect();
+                var db = mongo.GetDatabase(_dbName);
+                var collection = db.GetCollection<DailyRecord>();
+
+                // 从集合中删除指定的对象  
+                collection.Remove(x => x.SendProductId == proid);
+            }
+
+        }
     }
 }

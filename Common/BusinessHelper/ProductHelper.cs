@@ -112,5 +112,32 @@ namespace Common.BusinessHelper
             }
 
         }
+
+        /// <summary>
+        /// 获取单个实体
+        /// </summary>
+        /// <param name="proName"></param>
+        /// <returns></returns>
+        public static Products GetByName(string proName)
+        {
+            try
+            {
+                using (Mongo mongo = new Mongo(_connectionString))
+                {
+                    mongo.Connect();
+                    var db = mongo.GetDatabase(_dbName);
+                    var collection = db.GetCollection<Products>();
+
+                    // 查询单个对象  
+                    return collection.FindOne(x => x.ProductName == proName);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw;
+            }
+
+        }
     }
 }

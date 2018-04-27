@@ -15,11 +15,17 @@ namespace WaterDeliver.Controllers.Admin
         // GET: Product
         public ActionResult Index()
         {
+            if (TempData["isRepeat"] != null)
+            {
+                ViewBag.Err = "该产品已存在，请修改名称再试";
+                TempData.Remove("isRepeat");
+            }
             var factories = FactoryHelper.FactoryList();
             var products = ProductHelper.ProductList();
 
-            var newProducts = products.Join(factories, x => x.FactoryId, y => y.Id, (x, y) => new ProductFac
+            var newProducts = products.OrderByDescending(i => i.UpdateTime).Join(factories, x => x.FactoryId, y => y.Id, (x, y) => new ProductFac
             {
+                Id = x.Id,
                 ProductName = x.ProductName,
                 CostPrice = x.CostPrice,
                 StockRemain = x.StockRemain,
@@ -37,16 +43,26 @@ namespace WaterDeliver.Controllers.Admin
 
         public ActionResult Create(Products product)
         {
-            product.Id = ObjectId.NewObjectId().ToString();
-            product.UpdateTime = DateTime.Now;
-
-            MongoBase.Insert<Products>(product);
+            //重名判断
+            var pro = ProductHelper.GetByName(product.ProductName);
+            if (pro != null)
+            {
+                TempData["isRepeat"] = true;
+            }
+            else
+            {
+                product.Id = ObjectId.NewObjectId().ToString();
+                product.UpdateTime = DateTime.Now;
+                MongoBase.Insert(product);
+            }
+            
             return RedirectToAction("index");
         }
 
         public ActionResult Delete(string id)
         {
             ProductHelper.Delete(id);
+            DailyRecordHelper.DeleteMany(id);//日常记录中与该产品相关的记录都会删除
             return RedirectToAction("Index");
         }
 
