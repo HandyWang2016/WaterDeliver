@@ -214,6 +214,7 @@
     <Compile Include="Controllers\Home_FactoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Home_CompanyController.cs" />
+    <Compile Include="Controllers\Home_ProCostController.cs" />
     <Compile Include="Controllers\MyHelper.cs" />
     <Compile Include="Controllers\SummaryController.cs" />
     <Compile Include="Global.asax.cs">
@@ -255,6 +256,7 @@
     <Content Include="Views\Home_Accessory\Index.cshtml" />
     <Content Include="Views\Home\CompanyRecordsUptonow.cshtml" />
     <Content Include="Views\Home\CompanyDailyRecordsDetails.cshtml" />
+    <Content Include="Views\Home_ProCost\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

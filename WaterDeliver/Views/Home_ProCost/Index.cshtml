@@ -1,0 +1,122 @@
+﻿@model IEnumerable<WaterDeliver.Controllers.ProductCostModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+
+<script>
+    $(function () {
+        $('#txtDateBegin').datetimepicker({
+            language: 'zh',
+            todayBtn: 0,
+            autoclose: 1,
+            todayHighlight: 1,
+            format: "yyyy-mm",//日期格式
+            startView: 3,
+            minView: 3,
+            clearBtn: true
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+
+        //刷新页面后，加载历史查询条件
+        var proId = '@ViewBag.productId';
+        var yearMonth = '@ViewBag.yearMonth';
+
+
+        if (proId != '') {
+            $("#selproductId").val(proId);
+        }
+        $("#txtDateBegin").val(yearMonth);
+    });
+</script>
+<form class="form-inline" method="post" action="/Home_ProCost/QueryPro">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">查询条件</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group col-sm-2">
+                <label class="control-label" for="selproductId">选择产品</label>
+                <select name="productId" id="selproductId" class="selectpicker show-tick form-control" style="width: 130px" data-live-search="true">
+                    @if (ViewBag.Products != null)
+                    {
+                        <option value=""></option>
+                        foreach (var item in ViewBag.Products as List<Model.Products>)
+                        {
+                            <option value="@item.Id">@item.ProductName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group col-sm-2">
+                <label class="control-label" for="txtDateBegin">选择时间</label>
+                <input type="text" readonly class="form-control" style="width: 130px" name="yearMonth" id="txtDateBegin" />
+            </div>
+            <div class="form-group col-sm-3">
+                <input type="submit" value="查询" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">查询结果</h4>
+    </div>
+    <h5 style="color:red"><label style="color: red;font-weight:bold">【@ViewBag.yearMonth】</label>送水成本统计&nbsp;<button class="btn btn-xs btn-success" onclick="outExcel_proCost();">导出</button></h5>
+    <table id="tbProCost" class="table table-hover table-bordered table-condensed">
+        <thead>
+            <tr>
+                <th>产品名称</th>
+                <th>送水成本</th>
+            </tr>
+        </thead>
+        @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                <tr style="font-weight: bold">
+                    <td>@item.ProductName</td>
+                    <td>@item.SumCost</td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+
+<script type="text/javascript">
+    function tableToExcel(tableId, worksheetName) {
+        var uri = 'data:application/vnd.ms-excel;base64,',
+            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head>' +
+                '<meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/>' +
+                '</x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+            base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))); },
+            format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
+        var table = $("#" + tableId),
+            ctx = { worksheet: worksheetName, table: table.html() },
+            href = uri + base64(format(template, ctx));
+        return href;
+    };
+
+    function outExcel_proCost() {
+        //调用
+        var yearMonth = "@ViewBag.yearMonth";
+        yearMonth = yearMonth.replace('-', '年') + '月';
+        var ts = yearMonth + "各产品送水成本汇总.xls";
+        var exportHref = tableToExcel('tbProCost', '各产品送水成本汇总');
+        var a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display:none');
+        // 设置文件名，目前只有Chrome和FireFox支持此属性
+        a.setAttribute('href', exportHref);
+        a.setAttribute('download', ts);
+        a.click();
+    }
+</script>
