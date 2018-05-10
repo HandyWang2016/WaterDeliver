@@ -33,6 +33,8 @@ namespace WaterDeliver.Controllers
 
         public ActionResult CompanyCreate(CompanyPayRecord companyPayRecord)
         {
+            //MongoDB采取的是UTC时间，而通常系统用的是Local时间（中国）
+            companyPayRecord.TransTime = DateTime.SpecifyKind(companyPayRecord.TransTime, DateTimeKind.Utc);
             companyPayRecord.Id = ObjectId.NewObjectId().ToString();
 
             MongoBase.Insert<CompanyPayRecord>(companyPayRecord);
@@ -104,7 +106,7 @@ namespace WaterDeliver.Controllers
             }
             if (queryMod.PayTimeEnd >= Convert.ToDateTime("2017-01-01"))
             {
-                companyRecords = companyRecords.Where(item => item.TransTime <= queryMod.PayTimeEnd);
+                companyRecords = companyRecords.Where(item => item.TransTime <= queryMod.PayTimeEnd.AddHours(8));
             }
             //获取页条数
             int pageSize = PageSize();

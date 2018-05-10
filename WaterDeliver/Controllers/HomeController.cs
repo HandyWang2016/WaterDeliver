@@ -48,6 +48,8 @@ namespace WaterDeliver.Controllers
         /// <returns></returns>
         public ActionResult CreateDailyWrite(DailyRecord dailyRecord, string[] hidBuckets)
         {
+            //MongoDB采取的是UTC时间，而通常系统用的是Local时间（中国）
+            dailyRecord.VisitDate= DateTime.SpecifyKind(dailyRecord.VisitDate, DateTimeKind.Utc);
             string[] bucketPams = hidBuckets[0].Split(',');
             if (bucketPams.Length == 1)
             {
@@ -175,16 +177,16 @@ namespace WaterDeliver.Controllers
                                      item =>
                                          item.PayDeposit > 0 || item.EarnDeposit > 0 || item.EarnMonthEndPrice > 0 ||
                                          item.EarnWaterCardPrice > 0)
-                                 .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
+                                 //.GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
                                  .Select(item => new DailyFundTrans()
                                  {
-                                     StaffId = item.First().StaffId,
-                                     CustomerId = item.First().CustomerId,
-                                     EarnDeposit = item.First().EarnDeposit,
-                                     PayDeposit = item.First().PayDeposit,
-                                     EarnMonthEndPrice = item.First().EarnMonthEndPrice,
-                                     EarnWaterCardPrice = item.First().EarnWaterCardPrice,
-                                     VisitDate = item.First().VisitDate
+                                     StaffId = item.StaffId,
+                                     CustomerId = item.CustomerId,
+                                     EarnDeposit = item.EarnDeposit,
+                                     PayDeposit = item.PayDeposit,
+                                     EarnMonthEndPrice = item.EarnMonthEndPrice,
+                                     EarnWaterCardPrice = item.EarnWaterCardPrice,
+                                     VisitDate = item.VisitDate
                                  }).ToList();
 
             var recordsFundTrans = (from r in fundRecords
@@ -303,7 +305,7 @@ namespace WaterDeliver.Controllers
             }
             if (dailyQuery.DateBegin > Convert.ToDateTime("2017-01-01"))
             {
-                temRecords = temRecords.Where(item => item.VisitDate <= dailyQuery.DateEnd);
+                temRecords = temRecords.Where(item => item.VisitDate <= dailyQuery.DateEnd.AddHours(8));
             }
             //获取页条数
             int pageSize = PageSize();

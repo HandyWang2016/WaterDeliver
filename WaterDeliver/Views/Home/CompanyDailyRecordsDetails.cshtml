@@ -52,7 +52,7 @@
                 foreach (var item in Model)
                 {
                     <tr style="font-weight:bold">
-                        <td>@item.VisitDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@item.VisitDate.ToString("yyyy-MM-dd")</td>
                         <td>@item.SendBucketAmount</td>
                         <td>@item.ReceiveEmptyBucketAmount</td>
                         <td>@item.WaterDispenser</td>
@@ -90,7 +90,7 @@
                 foreach (var item in (List<DailyRecord>)ViewBag.recordsAll)
                 {
                     <tr style="font-weight:bold">
-                        <td>@item.VisitDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@item.VisitDate.ToString("yyyy-MM-dd")</td>
                         <td>@item.SendBucketAmount</td>
                         <td>@item.ReceiveEmptyBucketAmount</td>
                         <td>@item.WaterDispenser</td>

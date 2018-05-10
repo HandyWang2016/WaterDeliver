@@ -47,7 +47,7 @@
                         <td>@item.BucketCostPrice</td>
                         <td>@item.SalePrice</td>
                         <td>@item.FactoryName</td>
-                        <td>@item.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@item.UpdateTime.ToString("yyyy-MM-dd")</td>
                         <td>@Html.ActionLink("删除", "Delete", "Product", new { id = item.Id }, new { @class = "btn btn-xs btn-danger", onclick = "return confirm('与该产品相关的日常记录也会被删除，确认要删除？')" })</td>
                     </tr>
                     i++;
