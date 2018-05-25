@@ -49,7 +49,7 @@ namespace WaterDeliver.Controllers
         public ActionResult CreateDailyWrite(DailyRecord dailyRecord, string[] hidBuckets)
         {
             //MongoDB采取的是UTC时间，而通常系统用的是Local时间（中国）
-            dailyRecord.VisitDate= DateTime.SpecifyKind(dailyRecord.VisitDate, DateTimeKind.Utc);
+            dailyRecord.VisitDate = DateTime.SpecifyKind(dailyRecord.VisitDate, DateTimeKind.Utc);
             string[] bucketPams = hidBuckets[0].Split(',');
             if (bucketPams.Length == 1)
             {
@@ -186,6 +186,7 @@ namespace WaterDeliver.Controllers
                                      PayDeposit = item.PayDeposit,
                                      EarnMonthEndPrice = item.EarnMonthEndPrice,
                                      EarnWaterCardPrice = item.EarnWaterCardPrice,
+                                     Description = item.Description,
                                      VisitDate = item.VisitDate
                                  }).ToList();
 
@@ -202,6 +203,7 @@ namespace WaterDeliver.Controllers
                                         PayDeposit = r.PayDeposit,
                                         EarnMonthEndPrice = r.EarnMonthEndPrice,
                                         EarnWaterCardPrice = r.EarnWaterCardPrice,
+                                        Description=r.Description,
                                         VisitDate = r.VisitDate
                                     }).ToList();
 
@@ -315,7 +317,7 @@ namespace WaterDeliver.Controllers
                  .Take(pageSize);
             TempData["currentPage"] = pageIndex;
             TempData["DailyRecord"] = temRecords.ToList();
-            
+
             return currentRecords.ToList<DailyRecord>();
         }
 

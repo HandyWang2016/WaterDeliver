@@ -45,6 +45,11 @@ namespace Model
         /// 收入水卡金额
         /// </summary>
         public double EarnWaterCardPrice { get; set; }
+
+        /// <summary>
+        /// 描述(押金或月底结算可能入了个人账号，等等情况，在此说明)
+        /// </summary>
+        public string Description { get; set; }
         /// <summary>
         /// 纪录日期
         /// </summary>
@@ -80,6 +85,7 @@ namespace Model
         public double PayDeposit { get; set; }
         public double EarnMonthEndPrice { get; set; }
         public double EarnWaterCardPrice { get; set; }
+        public string Description { get; set; }
         public DateTime VisitDate { get; set; }
     }
 

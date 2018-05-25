@@ -5,11 +5,25 @@
     ViewBag.Title = "DailyRecord";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+@helper showDesButton(string des)
+{
+if (!string.IsNullOrEmpty(des))
+{
+    ViewBag.des = des;
+        <button class="btn btn-xs btn-success" onclick="showMsg('@ViewBag.des');">查看</button>
+}
+}
+
 <link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
 <link href="~/scripts/pager/pageStyle.css" rel="stylesheet" />
 <link href="~/scripts/selectivity/stylesheets/selectivity-jquery.css" rel="stylesheet" />
 <script src="~/scripts/selectivity/javascripts/selectivity-jquery.js"></script>
 <script>
+    function showMsg(des) {
+        alert(des);
+    }
+
     $(function () {
         $('#txtDateBegin').datetimepicker({
             language: 'zh',
@@ -120,7 +134,7 @@
 
             <div class="form-group col-sm-3">
                 <label class="control-label" for="selCustomer">客户</label>
-                
+
                 <div id="selCustomer" class="selectivity-input example-input" style="width:200px"></div>
             </div>
             <div class="form-group col-sm-3">
@@ -217,7 +231,18 @@
         @* 资金交易 *@
         <label style="color: red;">资金交易<button class="btn btn-xs btn-success" onclick="outExcel_funding();">导出</button></label>
         <table id="tbFunding" class="table table-hover table-bordered table-condensed">
-            <thead style="background-color: powderblue"><tr><th>员工</th><th>公司</th><th>收取押金</th><th>退还押金</th><th>月底结算</th><th>预购水卡</th><th>交易日期</th></tr></thead>
+            <thead style="background-color: powderblue">
+                <tr>
+                    <th>员工</th>
+                    <th>公司</th>
+                    <th>收取押金</th>
+                    <th>退还押金</th>
+                    <th>月底结算</th>
+                    <th>预购水卡</th>
+                    <th>说明</th>
+                    <th>交易日期</th>
+                </tr>
+            </thead>
             @if (ViewBag.recordsFundTrans != null)
             {
                 int index = 0;
@@ -230,13 +255,14 @@
                         <td>@item.PayDeposit</td>
                         <td>@item.EarnMonthEndPrice</td>
                         <td>@item.EarnWaterCardPrice</td>
+                        <td>@showDesButton(item.Description)</td>
                         <td>@item.VisitDate.ToString("yyyy-MM-dd")</td>
                     </tr>
                     index++;
                 }
             }
         </table>
-        
+
     </div>
 </div>
 

@@ -22,10 +22,11 @@ namespace Model
         /// 费用关联水厂ID(如押金交易，进水支出)
         /// </summary>
         public string FactoryId { get; set; }
+
         /// <summary>
         /// 交易类型是否是支付 true:支付 false:
         /// </summary>
-        public bool IsPayType { get; set; }
+        public bool IsPayType = true;
         /// <summary>
         /// 交易金额
         /// </summary>
