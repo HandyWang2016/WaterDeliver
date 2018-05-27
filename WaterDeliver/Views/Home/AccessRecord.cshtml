@@ -1,0 +1,234 @@
+﻿@using Model
+@model IEnumerable<Model.AccessoryProducts>
+
+@{
+    ViewBag.Title = "AccessRecord";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<link href="~/scripts/pager/pageStyle.css" rel="stylesheet" />
+<link href="~/scripts/selectivity/stylesheets/selectivity-jquery.css" rel="stylesheet" />
+<script src="~/scripts/selectivity/javascripts/selectivity-jquery.js"></script>
+<script>
+    $(function () {
+        $('#txtDateBegin').datetimepicker({
+            language: 'zh',
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            minView: "month",//设置只显示到月份
+            format: "yyyy-mm-dd"//日期格式
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+        $('#txtDateEnd').datetimepicker({
+            language: 'zh',
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            minView: "month",//设置只显示到月份
+            format: "yyyy-mm-dd"//日期格式
+        }).on('changeDate', function (ev) {
+            $(this).datetimepicker('hide');
+        });
+
+
+        //获取分页数据
+        function changePageSize(num) {
+            window.location.href = "/Home/QueryDailyRecord?flag=1&pageIndex=" +
+                num +
+                "&StaffId=" +
+                $("#selStaffs").val() +
+                "&CustomerId=" +
+                $("#selCustomer").val() +
+                "&DateBegin=" +
+                $("#txtDateBegin").val() +
+                "&DateEnd=" +
+                $("#txtDateEnd").val();
+        }
+
+        //展示分页div
+        $("#page").paging({
+            pageNo: @ViewBag.currentPage,
+            totalPage: @ViewBag.totalPage,
+            totalSize: @ViewBag.totalSize,
+            callback: function (num) {
+                changePageSize(num);
+            }
+        });
+
+        //刷新页面后，加载历史查询条件
+        var queryJson = JSON.parse('@Html.Raw(ViewBag.queryPam)');
+        if (queryJson.hasOwnProperty("CustomerId")) {
+            if (queryJson.StaffId != null) {
+                $("#selStaffs").val(queryJson.StaffId);
+            }
+            if (queryJson.CustomerId != null) {
+                $("#selCustomer").val(queryJson.CustomerId);
+            }
+            if (queryJson.DateBegin.indexOf("0001") <0) {
+                $("#txtDateBegin").val(queryJson.DateBegin.split('T')[0]);
+            }
+            if (queryJson.DateEnd.indexOf("0001") <0) {
+                $("#txtDateEnd").val(queryJson.DateEnd.split('T')[0]);
+            }
+        }
+
+        //选择客户
+        $('#selCustomer').selectivity({
+            allowClear: true,
+            items: JSON.parse(customerData()),
+            placeholder: '选择客户'
+        }).on("change", function (obj) {
+            $("input[name='CustomerId']").val(obj.value);
+        });
+    });
+
+    function customerData() {
+        @if (ViewBag.customers != null)
+        {
+            var strHtml = "[";
+            foreach (var item in ViewBag.customers)
+            {
+                strHtml += "{ \"id\": \""+item.Id+"\", \"text\": \""+item.CustomerName+"\" },";
+            }
+            strHtml = strHtml.Substring(0, strHtml.Length - 1) + "]";
+            ViewBag.Selcustomer = strHtml;
+        }
+        return '@Html.Raw(ViewBag.Selcustomer)';
+    }
+</script>
+<div>
+    @Html.ActionLink("日常记录", "DailyRecord")
+    @Html.ActionLink("附属产品交易", "AccessRecord")
+    @Html.ActionLink("公司资金交易", "DailyRecord")
+</div>
+<form class="form-inline" method="post" action="/Home/QueryDailyRecord">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">查询条件</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group col-sm-3">
+                <label class="control-label" for="selStaffs">选择员工</label>
+                <select name="StaffId" id="selStaffs" class="selectpicker show-tick form-control" style="width: 100px" data-live-search="true">
+                    @if (ViewBag.Staffs != null)
+                    {
+                        <option value=""></option>
+                        foreach (var item in ViewBag.Staffs as List<Model.Staff>)
+                        {
+                            <option value="@item.Id">@item.StaffName</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group col-sm-3">
+                <label class="control-label" for="selCustomer">客户</label>
+
+                <div id="selCustomer" class="selectivity-input example-input" style="width:200px"></div>
+            </div>
+            <div class="form-group col-sm-3">
+                <label class="control-label" for="txtDateBegin">开始时间</label>
+                <input type="text" readonly class="form-control" style="width: 130px" name="DateBegin" id="txtDateBegin" />
+            </div>
+            <div class="form-group col-sm-3">
+                <label class="control-label" for="txtDateEnd">结束时间</label>
+                <input type="text" readonly class="form-control" style="width: 130px" name="DateEnd" id="txtDateEnd" />
+            </div>
+            <div class="form-group col-sm-3" style="margin-top: 15px">
+                <input type="submit" value="查询" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="pageIndex" value="1" />
+    <input type="hidden" name="CustomerId" />
+</form>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">查询结果</h4>
+    </div>
+    <div class="panel-body">
+        @* 附属产品交易 *@
+        <label style="color: red">附属产品交易<button class="btn btn-xs btn-success" onclick="outExcel_accessory();">导出</button></label>
+        <table id="tbAccessory" class="table table-hover table-bordered table-condensed">
+            <thead style="background-color: powderblue"><tr><th>员工</th><th>公司</th><th>饮水机(送/回)</th><th>手压泵(送/回)</th><th>水支架(送/回)</th><th>交易日期</th></tr></thead>
+            @if (ViewBag.recordsAccessoryPro != null)
+            {
+                int index = 0;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.StaffName</td>
+                        <td>@item.CustomerName</td>
+                        <td>@item.WaterDispenser</td>
+                        <td>@item.PushPump</td>
+                        <td>@item.WaterHolder</td>
+                        <td>@item.VisitDate.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                    index++;
+                }
+            }
+        </table>
+        <div class="page_div" id="page"></div>
+
+        @* 要导出的全部数据 *@
+        <table style="display:none" id="tbAccessory_all" class="table table-hover table-bordered table-condensed">
+            <thead style="background-color: powderblue"><tr><th>员工</th><th>公司</th><th>饮水机(送/回)</th><th>手压泵(送/回)</th><th>水支架(送/回)</th><th>交易日期</th></tr></thead>
+            @if (ViewBag.recordsAll != null)
+            {
+                int index = 0;
+                foreach (var item in (List<AccessoryProducts>)ViewBag.recordsAll)
+                {
+                    <tr>
+                        <td>@item.StaffName</td>
+                        <td>@item.CustomerName</td>
+                        <td>@item.WaterDispenser</td>
+                        <td>@item.PushPump</td>
+                        <td>@item.WaterHolder</td>
+                        <td>@item.VisitDate.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                    index++;
+                }
+            }
+        </table>
+    </div>
+</div>
+
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
+<script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="~/scripts/pager/paging.js"></script>
+
+<script type="text/javascript">
+    function tableToExcel(tableId, worksheetName) {
+        var uri = 'data:application/vnd.ms-excel;base64,',
+            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head>' +
+                '<meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/>' +
+                '</x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+            base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))); },
+            format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
+        var table = $("#" + tableId),
+            ctx = { worksheet: worksheetName, table: table.html() },
+            href = uri + base64(format(template, ctx));
+        return href;
+    };
+
+    function outExcel_accessory() {
+        //调用
+        var date = new Date();
+        var currdate = '_' + date.getFullYear() + (date.getMonth() + 1) + date.getDate();
+        var ts = "附属产品交易" + currdate + ".xls";
+        var exportHref = tableToExcel('tbAccessory_all', '附属产品交易');
+        var a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display:none');
+        // 设置文件名，目前只有Chrome和FireFox支持此属性
+        a.setAttribute('href', exportHref);
+        a.setAttribute('download', ts);
+        a.click();
+    }
+
+</script>
+
+

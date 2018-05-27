@@ -257,6 +257,8 @@
     <Content Include="Views\Home\CompanyRecordsUptonow.cshtml" />
     <Content Include="Views\Home\CompanyDailyRecordsDetails.cshtml" />
     <Content Include="Views\Home_ProCost\Index.cshtml" />
+    <Content Include="Views\Home\AccessRecord.cshtml" />
+    <Content Include="Views\Home\FundRecord.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

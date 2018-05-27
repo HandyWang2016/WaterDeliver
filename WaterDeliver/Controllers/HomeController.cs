@@ -203,7 +203,264 @@ namespace WaterDeliver.Controllers
                                         PayDeposit = r.PayDeposit,
                                         EarnMonthEndPrice = r.EarnMonthEndPrice,
                                         EarnWaterCardPrice = r.EarnWaterCardPrice,
-                                        Description=r.Description,
+                                        Description = r.Description,
+                                        VisitDate = r.VisitDate
+                                    }).ToList();
+
+            //附属产品交易
+            var accessoryProRecords = dailyRecords.Where(
+                    item =>
+                        item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0
+                        || item.WaterHolderBack != 0 || item.WaterDispenserBack != 0 || item.PushPumpBack != 0)
+                .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
+                .Select(item => new AccessoryProducts()
+                {
+                    StaffId = item.First().StaffId,
+                    CustomerId = item.First().CustomerId,
+                    WaterDispenser = MakeAccessoryInfo(item.First().WaterDispenser, item.First().WaterDispenserBack),
+                    PushPump = MakeAccessoryInfo(item.First().PushPump, item.First().PushPumpBack),
+                    WaterHolder = MakeAccessoryInfo(item.First().WaterHolder, item.First().WaterHolderBack),
+                    VisitDate = item.First().VisitDate
+                });
+
+            var recordsAccessoryPro = (from r in accessoryProRecords
+                                       join c in customers
+                              on r.CustomerId equals c.Id
+                                       join s in staffs
+                                       on r.StaffId equals s.Id
+                                       select new AccessoryProducts
+                                       {
+                                           StaffName = s.StaffName,
+                                           CustomerName = c.CustomerName,
+                                           WaterHolder = r.WaterHolder,
+                                           WaterDispenser = r.WaterDispenser,
+                                           PushPump = r.PushPump,
+                                           VisitDate = r.VisitDate
+                                       }).ToList();
+
+            ViewBag.flag = "DailyRecord";
+            ViewBag.customers = customers;
+            ViewBag.queryPam = TempData["dailyQuery"] == null ? "{}" : JsonConvert.SerializeObject(TempData["dailyQuery"]);
+
+            ViewBag.totalPage = recordsAll.Count() % pageSize == 0
+                ? recordsAll.Count() / pageSize
+                : Math.Ceiling(Convert.ToDouble(recordsAll.Count()) / pageSize);
+
+            ViewBag.totalSize = recordsAll.Count;
+            ViewBag.currentPage = TempData["currentPage"] == null
+                 ? 1
+                 : int.Parse(TempData["currentPage"].ToString());
+
+            ViewBag.recordsFundTrans = recordsFundTrans;
+            ViewBag.recordsAccessoryPro = recordsAccessoryPro;
+            ViewBag.Staffs = StaffHelper.StaffList();
+            ViewBag.recordsAll = recordsAll;
+            return View(newRecords);
+        }
+
+        /// <summary>
+        /// 日常记录--附属产品交易记录
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult AccessRecord()
+        {
+            //所有客户
+            List<Customer> customers = CustomerHelper.CustomerList();
+            //所有产品
+            var products = ProductHelper.ProductList();
+            //所有员工
+            var staffs = StaffHelper.StaffList();
+            //所有日常记录
+            var dailyRecords = (TempData["DailyRecord"] == null ? DailyRecordHelper.DailyRecordList() : (List<DailyRecord>)TempData["DailyRecord"]).Where(
+                    item =>
+                        item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0
+                        || item.WaterHolderBack != 0 || item.WaterDispenserBack != 0 || item.PushPumpBack != 0);
+
+            //添加空选项
+            customers.Insert(0, new Customer { CustomerName = "" });
+            //获取页条数
+            int pageSize = PageSize();
+
+            List<DailyRecord> currentRecords = TempData["currentRecords"] == null
+                ? dailyRecords
+                .OrderByDescending(item => item.VisitDate)
+                .Skip(0)
+                .Take(pageSize)
+                .ToList()
+                : TempData["currentRecords"] as List<DailyRecord>;
+
+            //附属产品交易--所有
+            var accessoryProRecords = dailyRecords
+                .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
+                .Select(item => new AccessoryProducts()
+                {
+                    StaffId = item.First().StaffId,
+                    CustomerId = item.First().CustomerId,
+                    WaterDispenser = MakeAccessoryInfo(item.First().WaterDispenser, item.First().WaterDispenserBack),
+                    PushPump = MakeAccessoryInfo(item.First().PushPump, item.First().PushPumpBack),
+                    WaterHolder = MakeAccessoryInfo(item.First().WaterHolder, item.First().WaterHolderBack),
+                    VisitDate = item.First().VisitDate
+                });
+
+            var recordsAccessoryPro = (from r in accessoryProRecords
+                                       join c in customers
+                              on r.CustomerId equals c.Id
+                                       join s in staffs
+                                       on r.StaffId equals s.Id
+                                       select new AccessoryProducts
+                                       {
+                                           StaffName = s.StaffName,
+                                           CustomerName = c.CustomerName,
+                                           WaterHolder = r.WaterHolder,
+                                           WaterDispenser = r.WaterDispenser,
+                                           PushPump = r.PushPump,
+                                           VisitDate = r.VisitDate
+                                       }).ToList();
+
+            //附属产品交易--当前页
+            var acceCur = currentRecords
+                .GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
+                .Select(item => new AccessoryProducts()
+                {
+                    StaffId = item.First().StaffId,
+                    CustomerId = item.First().CustomerId,
+                    WaterDispenser = MakeAccessoryInfo(item.First().WaterDispenser, item.First().WaterDispenserBack),
+                    PushPump = MakeAccessoryInfo(item.First().PushPump, item.First().PushPumpBack),
+                    WaterHolder = MakeAccessoryInfo(item.First().WaterHolder, item.First().WaterHolderBack),
+                    VisitDate = item.First().VisitDate
+                });
+
+            var acceCurrent = (from r in acceCur
+                                       join c in customers
+                              on r.CustomerId equals c.Id
+                                       join s in staffs
+                                       on r.StaffId equals s.Id
+                                       select new AccessoryProducts
+                                       {
+                                           StaffName = s.StaffName,
+                                           CustomerName = c.CustomerName,
+                                           WaterHolder = r.WaterHolder,
+                                           WaterDispenser = r.WaterDispenser,
+                                           PushPump = r.PushPump,
+                                           VisitDate = r.VisitDate
+                                       }).ToList();
+
+            ViewBag.flag = "DailyRecord";
+            ViewBag.customers = customers;
+            ViewBag.queryPam = TempData["dailyQuery"] == null ? "{}" : JsonConvert.SerializeObject(TempData["dailyQuery"]);
+
+            ViewBag.totalPage = dailyRecords.Count() % pageSize == 0
+                ? dailyRecords.Count() / pageSize
+                : Math.Ceiling(Convert.ToDouble(dailyRecords.Count()) / pageSize);
+
+            ViewBag.totalSize = dailyRecords.Count();
+            ViewBag.currentPage = TempData["currentPage"] == null
+                 ? 1
+                 : int.Parse(TempData["currentPage"].ToString());
+
+            ViewBag.recordsAccessoryPro = recordsAccessoryPro;
+            ViewBag.Staffs = StaffHelper.StaffList();
+            ViewBag.recordsAll = recordsAccessoryPro;
+            return View(acceCurrent);
+        }
+
+        /// <summary>
+        /// 日常记录--公司资金交易
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult FundRecord()
+        {
+            //所有客户
+            List<Customer> customers = CustomerHelper.CustomerList();
+            //所有产品
+            var products = ProductHelper.ProductList();
+            //所有员工
+            var staffs = StaffHelper.StaffList();
+            //所有日常记录
+            var dailyRecords = TempData["DailyRecord"] == null ? DailyRecordHelper.DailyRecordList() : (List<DailyRecord>)TempData["DailyRecord"];
+            //添加空选项
+            customers.Insert(0, new Customer { CustomerName = "" });
+            //获取页条数
+            int pageSize = PageSize();
+
+            List<DailyRecord> currentRecords = TempData["currentRecords"] == null
+                ? dailyRecords
+                .OrderByDescending(item => item.VisitDate)
+                .Skip(0)
+                .Take(pageSize)
+                .ToList()
+                : TempData["currentRecords"] as List<DailyRecord>;
+            List<DailyRecordShow> newRecords = (from r in currentRecords
+                                                join c in customers
+                                                on r.CustomerId equals c.Id
+                                                join p in products
+                                                on r.SendProductId equals p.Id
+                                                join s in staffs
+                                                on r.StaffId equals s.Id
+                                                select new DailyRecordShow
+                                                {
+                                                    StaffName = s.StaffName,
+                                                    CustomerName = c.CustomerName,
+                                                    ProductName = p.ProductName,
+                                                    SendBucketAmount = r.SendBucketAmount,
+                                                    ReceiveEmptyBucketAmount = r.ReceiveEmptyBucketAmount,
+                                                    VisitDate = r.VisitDate,
+                                                    DailyCost = r.SendBucketAmount * p.CostPrice
+                                                }).Where(item => item.SendBucketAmount > 0 || item.ReceiveEmptyBucketAmount > 0)
+                                                .ToList();
+
+            List<DailyRecordShow> recordsAll = (from r in dailyRecords
+                                                join c in customers
+                                                on r.CustomerId equals c.Id
+                                                join p in products
+                                                    on r.SendProductId equals p.Id
+                                                join s in staffs
+                                                    on r.StaffId equals s.Id
+                                                select new DailyRecordShow
+                                                {
+                                                    StaffName = s.StaffName,
+                                                    CustomerName = c.CustomerName,
+                                                    ProductName = p.ProductName,
+                                                    SendBucketAmount = r.SendBucketAmount,
+                                                    ReceiveEmptyBucketAmount = r.ReceiveEmptyBucketAmount,
+                                                    VisitDate = r.VisitDate,
+                                                    DailyCost = r.SendBucketAmount * p.CostPrice
+                                                }).Where(item => item.SendBucketAmount > 0 || item.ReceiveEmptyBucketAmount > 0)
+                                                .OrderByDescending(item => item.VisitDate)
+                                                .ToList();
+
+            //与公司的资金交易
+            List<DailyFundTrans> fundRecords = dailyRecords.Where(
+                                     item =>
+                                         item.PayDeposit > 0 || item.EarnDeposit > 0 || item.EarnMonthEndPrice > 0 ||
+                                         item.EarnWaterCardPrice > 0)
+                                 //.GroupBy(item => new { item.VisitDate, item.CustomerId, item.StaffId })
+                                 .Select(item => new DailyFundTrans()
+                                 {
+                                     StaffId = item.StaffId,
+                                     CustomerId = item.CustomerId,
+                                     EarnDeposit = item.EarnDeposit,
+                                     PayDeposit = item.PayDeposit,
+                                     EarnMonthEndPrice = item.EarnMonthEndPrice,
+                                     EarnWaterCardPrice = item.EarnWaterCardPrice,
+                                     Description = item.Description,
+                                     VisitDate = item.VisitDate
+                                 }).ToList();
+
+            var recordsFundTrans = (from r in fundRecords
+                                    join c in customers
+                              on r.CustomerId equals c.Id
+                                    join s in staffs
+                                    on r.StaffId equals s.Id
+                                    select new DailyFundTrans
+                                    {
+                                        StaffName = s.StaffName,
+                                        CustomerName = c.CustomerName,
+                                        EarnDeposit = r.EarnDeposit,
+                                        PayDeposit = r.PayDeposit,
+                                        EarnMonthEndPrice = r.EarnMonthEndPrice,
+                                        EarnWaterCardPrice = r.EarnWaterCardPrice,
+                                        Description = r.Description,
                                         VisitDate = r.VisitDate
                                     }).ToList();
 
@@ -276,12 +533,32 @@ namespace WaterDeliver.Controllers
         /// <param name="dailyQuery"></param>
         /// <param name="pageIndex"></param>
         /// <returns></returns>
-        public ActionResult QueryDailyRecord(DailyQueryMod dailyQuery, int pageIndex)
+        public ActionResult QueryDailyRecord(DailyQueryMod dailyQuery, int pageIndex, int flag)
         {
+            int pageSize = PageSize();
             var records = FilterRecordInfo(dailyQuery, pageIndex);
             TempData["currentRecords"] = records;
             TempData["dailyQuery"] = dailyQuery;
-            return RedirectToAction("DailyRecord");
+            switch (flag)
+            {
+                case 0:
+                    return RedirectToAction("DailyRecord");
+                case 1:
+                    TempData["currentRecords"] = (TempData["DailyRecord"] as List<DailyRecord>).Where(
+                    item =>
+                        item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0
+                        || item.WaterHolderBack != 0 || item.WaterDispenserBack != 0 || item.PushPumpBack != 0)
+                        .OrderByDescending(item => item.VisitDate)
+                 .Skip((pageIndex - 1) * pageSize)
+                 .Take(pageSize);
+
+                    return RedirectToAction("AccessRecord");
+                case 2:
+                    return RedirectToAction("FundRecord");
+                default:
+                    return RedirectToAction("DailyRecord");
+            }
+
         }
 
         /// <summary>

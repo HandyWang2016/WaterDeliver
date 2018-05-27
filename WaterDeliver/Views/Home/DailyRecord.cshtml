@@ -49,7 +49,7 @@ if (!string.IsNullOrEmpty(des))
 
         //获取分页数据
         function changePageSize(num) {
-            window.location.href = "/Home/QueryDailyRecord?pageIndex=" +
+            window.location.href = "/Home/QueryDailyRecord?flag=0&pageIndex=" +
                 num +
                 "&StaffId=" +
                 $("#selStaffs").val() +
@@ -112,6 +112,11 @@ if (!string.IsNullOrEmpty(des))
         return '@Html.Raw(ViewBag.Selcustomer)';
     }
 </script>
+<div>
+    @Html.ActionLink("日常记录", "DailyRecord")
+    @Html.ActionLink("附属产品交易", "AccessRecord")
+    @Html.ActionLink("公司资金交易", "FundRecord")
+</div>
 <form class="form-inline" method="post" action="/Home/QueryDailyRecord">
     <div class="panel panel-info">
         <div class="panel-heading">
@@ -197,65 +202,6 @@ if (!string.IsNullOrEmpty(des))
                         <td>@item.SendBucketAmount</td>
                         <td>@item.ReceiveEmptyBucketAmount</td>
                         <td>@item.DailyCost</td>
-                        <td>@item.VisitDate.ToString("yyyy-MM-dd")</td>
-                    </tr>
-                    index++;
-                }
-            }
-        </table>
-
-
-
-        @* 附属产品交易 *@
-        <label style="color: red">附属产品交易<button class="btn btn-xs btn-success" onclick="outExcel_accessory();">导出</button></label>
-        <table id="tbAccessory" class="table table-hover table-bordered table-condensed">
-            <thead style="background-color: powderblue"><tr><th>员工</th><th>公司</th><th>饮水机(送/回)</th><th>手压泵(送/回)</th><th>水支架(送/回)</th><th>交易日期</th></tr></thead>
-            @if (ViewBag.recordsAccessoryPro != null)
-            {
-                int index = 0;
-                foreach (var item in (List<AccessoryProducts>)ViewBag.recordsAccessoryPro)
-                {
-                    <tr>
-                        <td>@item.StaffName</td>
-                        <td>@item.CustomerName</td>
-                        <td>@item.WaterDispenser</td>
-                        <td>@item.PushPump</td>
-                        <td>@item.WaterHolder</td>
-                        <td>@item.VisitDate.ToString("yyyy-MM-dd")</td>
-                    </tr>
-                    index++;
-                }
-            }
-        </table>
-
-        @* 资金交易 *@
-        <label style="color: red;">资金交易<button class="btn btn-xs btn-success" onclick="outExcel_funding();">导出</button></label>
-        <table id="tbFunding" class="table table-hover table-bordered table-condensed">
-            <thead style="background-color: powderblue">
-                <tr>
-                    <th>员工</th>
-                    <th>公司</th>
-                    <th>收取押金</th>
-                    <th>退还押金</th>
-                    <th>月底结算</th>
-                    <th>预购水卡</th>
-                    <th>说明</th>
-                    <th>交易日期</th>
-                </tr>
-            </thead>
-            @if (ViewBag.recordsFundTrans != null)
-            {
-                int index = 0;
-                foreach (var item in (List<DailyFundTrans>)ViewBag.recordsFundTrans)
-                {
-                    <tr>
-                        <td>@item.StaffName</td>
-                        <td>@item.CustomerName</td>
-                        <td>@item.EarnDeposit</td>
-                        <td>@item.PayDeposit</td>
-                        <td>@item.EarnMonthEndPrice</td>
-                        <td>@item.EarnWaterCardPrice</td>
-                        <td>@showDesButton(item.Description)</td>
                         <td>@item.VisitDate.ToString("yyyy-MM-dd")</td>
                     </tr>
                     index++;
