@@ -1,5 +1,5 @@
 ﻿@using Model
-@model IEnumerable<Model.DailyRecordShow>
+@model IEnumerable<Model.DailyFundTrans>
 
 @{
     ViewBag.Title = "DailyRecord";
@@ -7,12 +7,12 @@
 }
 
 @helper showDesButton(string des)
-    {
-        if (!string.IsNullOrEmpty(des))
-        {
-            ViewBag.des = des;
-            <button class="btn btn-xs btn-success" onclick="showMsg('@ViewBag.des');">查看</button>
-        }
+{
+if (!string.IsNullOrEmpty(des))
+{
+    ViewBag.des = des;
+        <button class="btn btn-xs btn-success" onclick="showMsg('@ViewBag.des');">查看</button>
+}
 }
 
 <link href="~/scripts/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
@@ -112,10 +112,10 @@
         return '@Html.Raw(ViewBag.Selcustomer)';
     }
 </script>
-<div>
-    @Html.ActionLink("日常记录", "DailyRecord")
-    @Html.ActionLink("附属产品交易", "AccessRecord")
-    @Html.ActionLink("公司资金交易", "FundRecord")
+<div style="padding:10px">
+    @Html.ActionLink("日常记录", "DailyRecord", null, null, new { @class = "btn btn-sm btn-success" })
+    @Html.ActionLink("附属产品交易", "AccessRecord", null, null, new { @class = "btn btn-sm btn-success" })
+    @Html.ActionLink("公司资金交易", "FundRecord", null, null, new { @class = "btn btn-sm btn-success" })
 </div>
 <form class="form-inline" method="post" action="/Home/QueryDailyRecord">
     <div class="panel panel-info">
@@ -156,6 +156,7 @@
         </div>
     </div>
     <input type="hidden" name="pageIndex" value="1" />
+    <input type="hidden" name="flag" value="2" />
     <input type="hidden" name="CustomerId" />
 </form>
 <div class="panel panel-info">
@@ -165,6 +166,41 @@
     <div class="panel-body">
         <label style="color: red;">资金交易<button class="btn btn-xs btn-success" onclick="outExcel_funding();">导出</button></label>
         <table id="tbFunding" class="table table-hover table-bordered table-condensed">
+            <thead style="background-color: powderblue">
+                <tr>
+                    <th>员工</th>
+                    <th>公司</th>
+                    <th>收取押金</th>
+                    <th>退还押金</th>
+                    <th>月底结算</th>
+                    <th>预购水卡</th>
+                    <th>说明</th>
+                    <th>交易日期</th>
+                </tr>
+            </thead>
+            @if (Model != null)
+            {
+                int index = 0;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.StaffName</td>
+                        <td>@item.CustomerName</td>
+                        <td>@item.EarnDeposit</td>
+                        <td>@item.PayDeposit</td>
+                        <td>@item.EarnMonthEndPrice</td>
+                        <td>@item.EarnWaterCardPrice</td>
+                        <td>@showDesButton(item.Description)</td>
+                        <td>@item.VisitDate.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                    index++;
+                }
+            }
+        </table>
+        <div class="page_div" id="page"></div>
+
+        @* 要导出的全部数据 *@
+        <table style="display:none" id="tbFunding_all" class="table">
             <thead style="background-color: powderblue">
                 <tr>
                     <th>员工</th>
@@ -196,7 +232,6 @@
                 }
             }
         </table>
-
     </div>
 </div>
 
@@ -218,42 +253,12 @@
         return href;
     };
 
-    function outExcel_dailyRecord() {
-        //调用
-        var date = new Date();
-        var currdate = '_' + date.getFullYear() + (date.getMonth() + 1) + date.getDate();
-        var ts = "日常记录" + currdate + ".xls";
-        var exportHref = tableToExcel('tbDailyRecord', '日常记录');
-        var a = document.createElement('a');
-        document.body.appendChild(a);
-        a.setAttribute('style', 'display:none');
-        // 设置文件名，目前只有Chrome和FireFox支持此属性
-        a.setAttribute('href', exportHref);
-        a.setAttribute('download', ts);
-        a.click();
-    }
-
-    function outExcel_accessory() {
-        //调用
-        var date = new Date();
-        var currdate = '_' + date.getFullYear() + (date.getMonth() + 1) + date.getDate();
-        var ts = "附属产品交易" + currdate + ".xls";
-        var exportHref = tableToExcel('tbAccessory', '附属产品交易');
-        var a = document.createElement('a');
-        document.body.appendChild(a);
-        a.setAttribute('style', 'display:none');
-        // 设置文件名，目前只有Chrome和FireFox支持此属性
-        a.setAttribute('href', exportHref);
-        a.setAttribute('download', ts);
-        a.click();
-    }
-
     function outExcel_funding() {
         //调用
         var date = new Date();
         var currdate = '_' + date.getFullYear() + (date.getMonth() + 1) + date.getDate();
         var ts = "公司资金交易" + currdate + ".xls";
-        var exportHref = tableToExcel('tbFunding', '公司资金交易');
+        var exportHref = tableToExcel('tbFunding_all', '公司资金交易');
         var a = document.createElement('a');
         document.body.appendChild(a);
         a.setAttribute('style', 'display:none');

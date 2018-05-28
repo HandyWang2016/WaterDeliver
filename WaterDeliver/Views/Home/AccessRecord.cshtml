@@ -99,10 +99,10 @@
         return '@Html.Raw(ViewBag.Selcustomer)';
     }
 </script>
-<div>
-    @Html.ActionLink("日常记录", "DailyRecord")
-    @Html.ActionLink("附属产品交易", "AccessRecord")
-    @Html.ActionLink("公司资金交易", "DailyRecord")
+<div style="padding:10px">
+    @Html.ActionLink("日常记录", "DailyRecord", null, null, new { @class = "btn btn-sm btn-success" })
+    @Html.ActionLink("附属产品交易", "AccessRecord", null, null, new { @class = "btn btn-sm btn-success" })
+    @Html.ActionLink("公司资金交易", "FundRecord", null, null, new { @class = "btn btn-sm btn-success" })
 </div>
 <form class="form-inline" method="post" action="/Home/QueryDailyRecord">
     <div class="panel panel-info">
@@ -143,6 +143,7 @@
         </div>
     </div>
     <input type="hidden" name="pageIndex" value="1" />
+    <input type="hidden" name="flag" value="1" />
     <input type="hidden" name="CustomerId" />
 </form>
 <div class="panel panel-info">
@@ -154,7 +155,7 @@
         <label style="color: red">附属产品交易<button class="btn btn-xs btn-success" onclick="outExcel_accessory();">导出</button></label>
         <table id="tbAccessory" class="table table-hover table-bordered table-condensed">
             <thead style="background-color: powderblue"><tr><th>员工</th><th>公司</th><th>饮水机(送/回)</th><th>手压泵(送/回)</th><th>水支架(送/回)</th><th>交易日期</th></tr></thead>
-            @if (ViewBag.recordsAccessoryPro != null)
+            @if (Model != null)
             {
                 int index = 0;
                 foreach (var item in Model)
@@ -174,7 +175,7 @@
         <div class="page_div" id="page"></div>
 
         @* 要导出的全部数据 *@
-        <table style="display:none" id="tbAccessory_all" class="table table-hover table-bordered table-condensed">
+        <table style="display:none" id="tbAccessory_all" class="table">
             <thead style="background-color: powderblue"><tr><th>员工</th><th>公司</th><th>饮水机(送/回)</th><th>手压泵(送/回)</th><th>水支架(送/回)</th><th>交易日期</th></tr></thead>
             @if (ViewBag.recordsAll != null)
             {

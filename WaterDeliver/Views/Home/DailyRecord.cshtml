@@ -112,10 +112,10 @@ if (!string.IsNullOrEmpty(des))
         return '@Html.Raw(ViewBag.Selcustomer)';
     }
 </script>
-<div>
-    @Html.ActionLink("日常记录", "DailyRecord")
-    @Html.ActionLink("附属产品交易", "AccessRecord")
-    @Html.ActionLink("公司资金交易", "FundRecord")
+<div style="padding:10px">
+    @Html.ActionLink("日常记录", "DailyRecord", null, null, new { @class = "btn btn-sm btn-success" })
+    @Html.ActionLink("附属产品交易", "AccessRecord", null, null, new { @class = "btn btn-sm btn-success" })
+    @Html.ActionLink("公司资金交易", "FundRecord", null, null, new { @class = "btn btn-sm btn-success" })
 </div>
 <form class="form-inline" method="post" action="/Home/QueryDailyRecord">
     <div class="panel panel-info">
@@ -156,6 +156,7 @@ if (!string.IsNullOrEmpty(des))
         </div>
     </div>
     <input type="hidden" name="pageIndex" value="1" />
+    <input type="hidden" name="flag" value="0" />
     <input type="hidden" name="CustomerId" />
 </form>
 <div class="panel panel-info">
