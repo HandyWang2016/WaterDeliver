@@ -50,6 +50,11 @@ namespace WaterDeliver.Controllers
                 ? companyRecords.OrderByDescending(item => item.TransTime).Skip(0).Take(pageSize)
                 : TempData["queryRecords"] as List<CompanyPayRecord>;
 
+            //用于导出的所有纪录
+            var allRecords = TempData["allRecords"] == null
+                ? companyRecords.OrderByDescending(item => item.TransTime).ToList()
+                : TempData["allRecords"] as List<CompanyPayRecord>;
+
             var staffs = StaffHelper.StaffList();
             var paytypes = CompanyPayTypeHelper.PayTypeList();
 
@@ -67,6 +72,23 @@ namespace WaterDeliver.Controllers
                                      TransTime = r.TransTime,
                                      Describe = r.Describe
                                  }).ToList();
+
+            var allRecordsToExport= (from r in allRecords
+                                     join p in paytypes
+                                     on r.PayTypeId equals p.Id
+                                     join s in staffs
+                                     on r.StaffId equals s.Id
+                                     select new CompanyPayRecordDesc()
+                                     {
+                                         StaffName = s.StaffName,
+                                         PayTypeDesc = p.PayType,
+                                         IsPayType = r.IsPayType,
+                                         TransSum = r.TransSum,
+                                         TransTime = r.TransTime,
+                                         Describe = r.Describe
+                                     }).ToList();
+
+            ViewBag.AllRecords = allRecordsToExport;
             ViewBag.Staffs = staffs;
             ViewBag.Paytypes = paytypes;
 
@@ -116,6 +138,8 @@ namespace WaterDeliver.Controllers
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
+
+            TempData["allRecords"] = sumRecords;
 
             TempData["queryMod"] = queryMod;
             //记录分页相关字段

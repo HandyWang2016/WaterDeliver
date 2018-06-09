@@ -136,6 +136,7 @@
         <h4 class="panel-title">查询结果</h4>
     </div>
     <div class="panel-body">
+        <label style="color:red">公司支出记录<button class="btn btn-xs btn-success" onclick="outExcel_CompanyPay();">导出</button></label>
         <table class="table table-hover table-bordered table-condensed">
             <thead style="background-color:powderblue"><tr><th>序号</th><th>员工</th><th>交易类别</th><th>金额</th><th>时间</th><th>其他信息</th></tr></thead>
             @{int index = 0;
@@ -154,10 +155,60 @@
             }
         </table>
         <div class="page_div" id="page"></div>
+
+        <table id="tbExport" style="display:none">
+            <thead style="background-color:powderblue"><tr><th>序号</th><th>员工</th><th>交易类别</th><th>金额</th><th>时间</th><th>其他信息</th></tr></thead>
+            @{int index1 = 0;
+                if (ViewBag.AllRecords != null) { 
+                foreach (var item in ViewBag.AllRecords as List<Model.CompanyPayRecordDesc>)
+                {
+                    <tr>
+                        <td>@index1</td>
+                        <td>@item.StaffName</td>
+                        <td>@item.PayTypeDesc</td>
+                        @ShowColorPrice(item.IsPayType, item.TransSum)
+                        <td>@item.TransTime.ToString("yyyy-MM-dd")</td>
+                        <td>@item.Describe</td>
+                    </tr>
+                        index1++;
+                    }
+                }
+            }
+        </table>
     </div>
 </div>
 
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.js"></script>
 <script src="~/scripts/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="~/scripts/pager/paging.js"></script>
+
+<script>
+    function tableToExcel(tableId, worksheetName) {
+        var uri = 'data:application/vnd.ms-excel;base64,',
+            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head>' +
+                '<meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/>' +
+                '</x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+            base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))); },
+            format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
+        var table = $("#" + tableId),
+            ctx = { worksheet: worksheetName, table: table.html() },
+            href = uri + base64(format(template, ctx));
+        return href;
+    };
+
+    function outExcel_CompanyPay() {
+        //调用
+        var date = new Date();
+        var currdate = '_' + date.getFullYear() + (date.getMonth() + 1) + date.getDate();
+        var ts = "公司支出记录" + currdate + ".xls";
+        var exportHref = tableToExcel('tbExport', '公司支出记录');
+        var a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display:none');
+        // 设置文件名，目前只有Chrome和FireFox支持此属性
+        a.setAttribute('href', exportHref);
+        a.setAttribute('download', ts);
+        a.click();
+    }
+</script>
 
