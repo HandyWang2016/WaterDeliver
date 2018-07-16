@@ -189,7 +189,7 @@ namespace WaterDeliver.Controllers
                 .Select(p => new CompanyPayRecordDesc
                 {
                     TransTime = p.x.TransTime,
-                    TransSum = p.x.IsPayType ? -p.x.TransSum : p.x.TransSum,
+                    TransSum = p.x.TransSum,
                     PayTypeDesc = p.y.PayType
                 }).ToList();
 
