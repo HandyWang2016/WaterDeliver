@@ -151,7 +151,8 @@ namespace WaterDeliver.Controllers
                                                     SendBucketAmount = r.SendBucketAmount,
                                                     ReceiveEmptyBucketAmount = r.ReceiveEmptyBucketAmount,
                                                     VisitDate = r.VisitDate,
-                                                    DailyCost = r.SendBucketAmount * p.CostPrice
+                                                    DailyCost = r.SendBucketAmount * p.CostPrice,
+                                                    Description = r.Description
                                                 }).Where(item => item.SendBucketAmount > 0 || item.ReceiveEmptyBucketAmount > 0)
                                                 .ToList();
 
@@ -170,7 +171,8 @@ namespace WaterDeliver.Controllers
                                                     SendBucketAmount = r.SendBucketAmount,
                                                     ReceiveEmptyBucketAmount = r.ReceiveEmptyBucketAmount,
                                                     VisitDate = r.VisitDate,
-                                                    DailyCost = r.SendBucketAmount * p.CostPrice
+                                                    DailyCost = r.SendBucketAmount * p.CostPrice,
+                                                    Description = r.Description
                                                 }).Where(item => item.SendBucketAmount > 0 || item.ReceiveEmptyBucketAmount > 0)
                                                 .OrderByDescending(item => item.VisitDate)
                                                 .ToList();
