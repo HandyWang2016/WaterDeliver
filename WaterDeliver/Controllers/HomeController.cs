@@ -55,9 +55,18 @@ namespace WaterDeliver.Controllers
             {
                 if (dailyRecord.EarnMonthEndPrice >= 0 || dailyRecord.EarnWaterCardPrice >= 0)
                 {
-                    //dailyRecord.SendProductId = "";
+                    //添加日常记录
                     dailyRecord.Id = ObjectId.NewObjectId().ToString();
                     MongoBase.Insert(dailyRecord);
+
+                    //添加公司下次送水日期
+                    Customer customer = CustomerHelper.GetById(dailyRecord.CustomerId);
+                    if (customer != null)
+                    {
+                        customer.NextDate = dailyRecord.NextDate;
+                        customer.NotifyFlag = 1;//开启通知
+                        CustomerHelper.Update(customer);
+                    }
                 }
             }
             else

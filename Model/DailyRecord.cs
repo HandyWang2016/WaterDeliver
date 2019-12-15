@@ -54,6 +54,10 @@ namespace Model
         /// 纪录日期
         /// </summary>
         public DateTime VisitDate { get; set; }
+        /// <summary>
+        /// 下次送水日期(客户表字段)
+        /// </summary>
+        public DateTime NextDate { get; set; }
 
         /// <summary>
         /// 附属产品：饮水机，水支架，手压泵
