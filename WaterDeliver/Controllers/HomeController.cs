@@ -16,8 +16,8 @@ namespace WaterDeliver.Controllers
         // GET: Home
         public ActionResult Index()
         {
-            var staffs = StaffHelper.StaffList();
-            return View(staffs);
+            var customers = CustomerHelper.CustomerList().Where(i => i.NotifyFlag == 1).OrderBy(item => item.NextDate);
+            return View(customers);
         }
 
         /// <summary>
