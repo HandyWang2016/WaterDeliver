@@ -16,8 +16,8 @@ namespace WaterDeliver.Controllers
         // GET: Home
         public ActionResult Index()
         {
-            var staffs = StaffHelper.StaffList();
-            return View(staffs);
+            var customers = CustomerHelper.CustomerList().Where(i => i.NotifyFlag == 1).OrderBy(item => item.NextDate);
+            return View(customers);
         }
 
         /// <summary>
@@ -55,9 +55,18 @@ namespace WaterDeliver.Controllers
             {
                 if (dailyRecord.EarnMonthEndPrice >= 0 || dailyRecord.EarnWaterCardPrice >= 0)
                 {
-                    //dailyRecord.SendProductId = "";
+                    //添加日常记录
                     dailyRecord.Id = ObjectId.NewObjectId().ToString();
                     MongoBase.Insert(dailyRecord);
+
+                    //添加公司下次送水日期
+                    Customer customer = CustomerHelper.GetById(dailyRecord.CustomerId);
+                    if (customer != null)
+                    {
+                        customer.NextDate = dailyRecord.NextDate;
+                        customer.NotifyFlag = 1;//开启通知
+                        CustomerHelper.Update(customer);
+                    }
                 }
             }
             else
@@ -487,6 +496,7 @@ namespace WaterDeliver.Controllers
         public ActionResult QueryDailyRecord(DailyQueryMod dailyQuery, int pageIndex, int flag)
         {
             int pageSize = PageSize();
+            //获取当页信息
             var records = FilterRecordInfo(dailyQuery, pageIndex);
             TempData["currentRecords"] = records;
             TempData["dailyQuery"] = dailyQuery;
@@ -494,7 +504,7 @@ namespace WaterDeliver.Controllers
             {
                 case 0:
                     return RedirectToAction("DailyRecord");
-                case 1:
+                case 1://附属产品交易
                     TempData["currentRecords"] = ((List<DailyRecord>)TempData["DailyRecord"]).Where(
                     item =>
                         item.WaterHolder != 0 || item.WaterDispenser != 0 || item.PushPump != 0
@@ -514,7 +524,7 @@ namespace WaterDeliver.Controllers
                  .Take(pageSize).ToList();
 
                     return RedirectToAction("AccessRecord");
-                case 2:
+                case 2://公司资金交易
                     TempData["currentRecords"] = ((List<DailyRecord>)TempData["DailyRecord"]).Where(
                             item =>
                                 item.PayDeposit > 0 || item.EarnDeposit > 0 || item.EarnMonthEndPrice > 0 ||
@@ -555,6 +565,7 @@ namespace WaterDeliver.Controllers
             {
                 temRecords = temRecords.Where(item => item.VisitDate <= dailyQuery.DateEnd.AddHours(8));
             }
+            temRecords = temRecords.Where(item => item.SendBucketAmount > 0 || item.ReceiveEmptyBucketAmount > 0);
             //获取页条数
             int pageSize = PageSize();
             var currentRecords = temRecords

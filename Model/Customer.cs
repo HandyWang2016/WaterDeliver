@@ -25,5 +25,13 @@ namespace Model
         /// 支付方式ID
         /// </summary>
         public PayTypeEnum PayType { get; set; }
+        /// <summary>
+        /// 下次送水日期
+        /// </summary>
+        public DateTime NextDate { get; set; }
+        /// <summary>
+        /// 是否接收通知
+        /// </summary>
+        public int NotifyFlag { get; set; }
     }
 }
